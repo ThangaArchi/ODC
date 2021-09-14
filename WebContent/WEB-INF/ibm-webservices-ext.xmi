@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.ibm.etools.webservice.wsext:WsExtension xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:com.ibm.etools.webservice.wsext="http://www.ibm.com/websphere/appserver/schemas/5.0.2/wsext.xmi" xmi:id="WsExtension_1137763341127">
+  <wsDescExt xmi:id="WsDescExt_1137763341126" wsDescNameLink="DropboxAccessService">
+    <pcBinding xmi:id="PcBinding_1137763341126" pcNameLink="DropboxAccessWebSvc"/>
+  </wsDescExt>
+  
+ <!-- 
+  
+  <wsDescExt xmi:id="WsDescExt_1137763341127" wsDescNameLink="DropboxAccessWithHandlerService">
+    <pcBinding xmi:id="PcBinding_1137763341127" pcNameLink="DropboxAccessWebSvc2"/>
+  </wsDescExt>
+ -->
+</com.ibm.etools.webservice.wsext:WsExtension>

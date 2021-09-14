@@ -1,0 +1,37 @@
+#!/bin/ksh
+#
+# Do pings to all listed IPs, append to outfile
+#
+#  Parms:
+#
+#      $1 - Pingid
+#      $2 - Outfile
+#
+#      $3 - Edgeid
+#      $4 - IPAddr
+#      $5 - Edgeid
+#      $6 - IPAddr
+#       ...
+#
+pingid="$1"
+outfile="$2"
+shift 2
+if [ "x$outfile" != x- ] ; then
+   exec >>$outfile
+   exec 2>&1
+fi
+sedyuk='s/^.*packets received,//;s!min/avg/max!!;s/round\-trip//;s/packet//;s/   */ /g;s!/[0-9][0-9]*/[0-9][0-9]* ms$!ms!'
+pingcmd="ping -q -n -c 1 -s 1024"
+d=$(date "+%D %T" | tr '\n' ' ')
+while [ $# -gt 0 ] ; do
+   
+   edgeid="$1"
+   ipaddr="$2"
+   shift 2
+
+   ans=$($pingcmd $ipaddr 2>&1                          | \
+         fgrep -e 'packet loss' -e round-trip           | \
+         sed "$sedyuk"                                  | \
+         tr '\n' ' ')
+   echo "$d Pingid[$pingid] Edgeid[$edgeid] IP[$ipaddr]: $ans"
+done

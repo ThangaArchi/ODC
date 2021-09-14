@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="JavaSource"/>
+	<classpathentry exported="true" kind="lib" path="imported_classes"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-beanutils.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-beanutils.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-cli.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-cli.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-collections.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-collections.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-dbcp.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-dbcp.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-digester.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-digester.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-discovery.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-discovery.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-fileupload.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-fileupload.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-httpclient-2.0-final.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-httpclient-2.0-final.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-lang.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-lang.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-logging.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-logging.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-pool-1.2.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-pool-1.2.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-pool.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-pool.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-resources.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-resources.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/commons-validator.jar" kind="lib" path="WebContent/WEB-INF/lib/commons-validator.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/dbbeans.jar" kind="lib" path="WebContent/WEB-INF/lib/dbbeans.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/hessian.jar" kind="lib" path="WebContent/WEB-INF/lib/hessian.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/i18n.jar" kind="lib" path="WebContent/WEB-INF/lib/i18n.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/jakarta-oro.jar" kind="lib" path="WebContent/WEB-INF/lib/jakarta-oro.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/jaxen-full.jar" kind="lib" path="WebContent/WEB-INF/lib/jaxen-full.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/jdbc2_0-stdext.jar" kind="lib" path="WebContent/WEB-INF/lib/jdbc2_0-stdext.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/jspsql.jar" kind="lib" path="WebContent/WEB-INF/lib/jspsql.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/jstl.jar" kind="lib" path="WebContent/WEB-INF/lib/jstl.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/saxpath.jar" kind="lib" path="WebContent/WEB-INF/lib/saxpath.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/standard.jar" kind="lib" path="WebContent/WEB-INF/lib/standard.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/struts.jar" kind="lib" path="WebContent/WEB-INF/lib/struts.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/taglibs-application.jar" kind="lib" path="WebContent/WEB-INF/lib/taglibs-application.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/taglibs-datetime.jar" kind="lib" path="WebContent/WEB-INF/lib/taglibs-datetime.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/taglibs-mailer.jar" kind="lib" path="WebContent/WEB-INF/lib/taglibs-mailer.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/taglibs-page.jar" kind="lib" path="WebContent/WEB-INF/lib/taglibs-page.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/taglibs-request.jar" kind="lib" path="WebContent/WEB-INF/lib/taglibs-request.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/taglibs-response.jar" kind="lib" path="WebContent/WEB-INF/lib/taglibs-response.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/taglibs-session.jar" kind="lib" path="WebContent/WEB-INF/lib/taglibs-session.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/taglibs-string.jar" kind="lib" path="WebContent/WEB-INF/lib/taglibs-string.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/utility.jar" kind="lib" path="WebContent/WEB-INF/lib/utility.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/xalan.jar" kind="lib" path="WebContent/WEB-INF/lib/xalan.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/xercesImpl.jar" kind="lib" path="WebContent/WEB-INF/lib/xercesImpl.jar"/>
+	<classpathentry sourcepath="WebContent/WEB-INF/lib/xml-apis.jar" kind="lib" path="WebContent/WEB-INF/lib/xml-apis.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/commons-logging.jar" kind="lib" path="/ODCEAR/commons-logging.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/commons-resources.jar" kind="lib" path="/ODCEAR/commons-resources.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/datasource.jar" kind="lib" path="/ODCEAR/datasource.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/db2java.zip" kind="lib" path="/ODCEAR/db2java.zip"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/db2jcc.jar" kind="lib" path="/ODCEAR/db2jcc.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/log4j-1.2.8.jar" kind="lib" path="/ODCEAR/log4j-1.2.8.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/log4j.jar" kind="lib" path="/ODCEAR/log4j.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/logger.jar" kind="lib" path="/ODCEAR/logger.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/struts.jar" kind="lib" path="/ODCEAR/struts.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/jakarta-oro.jar" kind="lib" path="/ODCEAR/jakarta-oro.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/w3c.jar" kind="lib" path="/ODCEAR/w3c.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/xml4j.jar" kind="lib" path="/ODCEAR/xml4j.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/commons-validator.jar" kind="lib" path="/ODCEAR/commons-validator.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/commons-digester.jar" kind="lib" path="/ODCEAR/commons-digester.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/commons-collections.jar" kind="lib" path="/ODCEAR/commons-collections.jar"/>
+	<classpathentry exported="true" sourcepath="/ODCEAR/commons-beanutils.jar" kind="lib" path="/ODCEAR/commons-beanutils.jar"/>
+	<classpathentry kind="con" path="com.ibm.wtp.server.java.core.container/com.ibm.ws.ast.st.runtime.core.runtimeTarget.v60.wbi/wbi.v6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/WebSphere v6 JRE"/>
+	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
+</classpath>

@@ -1,0 +1,76 @@
+# Don't Change!! .startxmxrc VERSION :V1.11
+#
+# .startxmxrc - user customization file for startxmx launch
+#
+# Note: This script will be sourced by the startxmx startup script
+#       You can override the default applications which will be started,
+#       and/or insert/modify the startup parameters for xmx itself
+#
+# This script is sourced BEFORE parsing the startxmx cmdline parms, so any
+# changes to positional parameters will be reflected when startxmx regains
+# control and runs parse_xmxargs "$@"
+#
+
+#
+# Parameter customization: add parms to customize the startxmx command.
+#
+#  eg. parse_xmxargs :25 -geometry 1024x768+0+0 -fpdir /usr/local/xmxfonts
+#
+# This will set the default display value to :25, change the default
+# geometry from 1100x900+0+0, and will augment the fonts known to the native
+# Xserver to include those defined in the font tree (hierarchical search)
+# '/usr/local/xmxfonts'.
+#
+# Calling parse_xmxargs with no parmeters is a NOOP
+#
+unset VNCNOATTACH
+
+#Get debug text area in xmtg
+export XMTGDEBUG=TRUE
+
+if [ -x ./xmx ] ; then
+xmx=./xmx
+runnablexmx=./xmx
+else
+   echo "Using XMX in path!"
+fi
+DBUGDISP="-display ${DBUGDISP:-$ENTRYDISPLAY}"
+dbugparms="$DBUGDISP -i13 -bw -I . -I /afs/eda/u/crichton/projects/xmx.0102/server"
+#dbug="eval LIBPATH=/afs/eda/u/crichton/public/seminar/pzv"
+#dbug="zfstart -d decathlon:0"
+case $(uname -s) in
+   AIX) winmgr="~hines/public/fvwm2/bin/fvwm2 -f ~/.fvwm2xmxrc" ;;
+   AIXNOPE) winmgr="/afs/eda/tools/bin/fvwm2 -f ~/.fvwm2xmxrc" ;;
+   HP-UX)  ;;
+   Linux)  ;;
+   SunOS)  ;;
+esac
+
+parse_xmxargs -fpstandard -rmold -debug 0Qfem -x ALL -nocopyright -yeslic
+
+export ENTRYDISPLAY
+
+#
+# Customize the applications launched at startup
+#
+# Override the startxmx version of the start_xmxapps function, which just
+#  calls another function start_default_xmxapps (aixterm, xmtg, and a
+#  window mgr).
+#
+#  The default window manager (for start_default_xmxapps) is mwm. The default
+#  can be changed by setting the $winmgr envvar.
+#
+#  Whatever applications are coded in the start_xmxapps function will
+#  be the only apps launched at startup.
+#
+# Be sure to run any application specified below in the background.
+#
+#unset -f start_xmxapps
+#start_xmxapps() {
+#xmtg &
+#mwm &
+#aixterm -fn rom10.iso1
+
+#  xclock&
+#}
+

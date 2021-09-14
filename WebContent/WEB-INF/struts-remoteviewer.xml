@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+                               "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+	<!-- Data Sources -->
+	<data-sources>
+	</data-sources>
+
+	<!-- Form Beans -->
+	<form-beans>
+
+		<form-bean 
+				name="ApplicationForm" 
+				type="oem.edge.ed.odc.remoteviewer.actions.ApplicationForm" />
+
+		<form-bean 
+				name="ProjectForm" 
+				type="oem.edge.ed.odc.remoteviewer.actions.ProjectForm" />
+
+		<form-bean 
+				name="UserProjectForm" 
+				type="oem.edge.ed.odc.remoteviewer.actions.UserProjectForm" />
+
+		<form-bean 
+				name="UserApplicationForm" 
+				type="oem.edge.ed.odc.remoteviewer.actions.UserApplicationForm" />
+
+		<form-bean 
+				name="serverForm" 
+				type="oem.edge.ed.odc.remoteviewer.actions.ServerForm" />
+
+		<form-bean 
+				name="ProjectWithServerForm" 
+				type="oem.edge.ed.odc.remoteviewer.actions.ProjectWithServerForm" />
+	</form-beans>
+
+	<!-- Global Exceptions -->
+	<global-exceptions>
+	</global-exceptions>
+
+	<!-- Global Forwards -->
+	<global-forwards>
+	</global-forwards>
+
+	<!-- Action Mappings -->
+	<action-mappings>
+
+		<action 
+  				path="/RemoteViewer"
+  				forward="/jsp/adminHome.jsp" />
+		
+		<action 
+  				path="/RemoteAdministrator"
+  				forward="/jsp/adminViewer.jsp" />
+
+
+
+
+<!-- Application Configuration START -->
+		<action 
+				name="ApplicationForm" 
+				path="/application" 
+				scope="session" 
+				type="oem.edge.ed.odc.remoteviewer.actions.ApplicationAction">
+			<forward name="success" path="/jsp/project/listProject.jsp" />
+		</action>
+
+		<action 
+				name="ApplicationForm" 
+				path="/CreateApplication" 
+				scope="session" 
+				parameter="create_application"
+				type="oem.edge.ed.odc.remoteviewer.actions.ApplicationAction">
+			<forward name="success" path="/jsp/application/showApplication.jsp" />
+		</action>
+
+		<action 
+				name="ApplicationForm" 
+				path="/ListApplication" 
+				scope="session" 
+				parameter="list_application"
+				type="oem.edge.ed.odc.remoteviewer.actions.ApplicationAction">
+			<forward name="success" path="/jsp/application/listAllApplication.jsp" />
+		</action>
+
+
+
+
+
+		<action 
+				name="ApplicationForm" 
+				path="/ListSingleApplication_Delete" 
+				scope="session" 
+				parameter="list_application_user_Delete"
+				type="oem.edge.ed.odc.remoteviewer.actions.ApplicationAction">
+			<forward name="success" path="/jsp/application/listSingleApplication.jsp" />
+		</action>
+
+		<action 
+				name="ApplicationForm" 
+				path="/ListSingleApplication_Edit" 
+				scope="session" 
+				parameter="list_application_user_Edit"
+				type="oem.edge.ed.odc.remoteviewer.actions.ApplicationAction">
+			<forward name="success" path="/jsp/application/listSingleApplication.jsp" />
+		</action>
+
+
+
+
+
+		<action 
+				name="ApplicationForm" 
+				path="/ListSingleApplication" 
+				scope="session" 
+				parameter="edit_delete_application"
+				type="oem.edge.ed.odc.remoteviewer.actions.ApplicationAction">
+			<forward name="success" path="/jsp/application/showApplication.jsp" />
+		</action>
+
+<!-- Application Configuration END -->
+
+
+
+
+
+
+
+
+<!-- project Configuration START -->
+		<action 
+				name="ProjectForm"
+				path="/CreateProject" 
+				scope="session"
+				parameter="createProject"
+				type="oem.edge.ed.odc.remoteviewer.actions.ProjectAction">
+			<forward name="success" path="/jsp/project/listProject.jsp" />
+		</action>
+
+		<action 
+				name="ProjectForm"
+				path="/ShowProject" 
+				scope="session"
+				parameter="showProject"
+				type="oem.edge.ed.odc.remoteviewer.actions.ProjectAction">
+			<forward name="success" path="/jsp/project/listProject.jsp" />
+		</action>
+
+		<action 
+				name="ProjectForm"
+				path="/ListProject" 
+				scope="session"
+				parameter="listProjects"
+				type="oem.edge.ed.odc.remoteviewer.actions.ProjectAction">
+			<forward name="success" path="/jsp/project/listAllProjects.jsp" />
+		</action>
+
+<!--
+		<action 
+				name="ProjectWithServerForm"
+				path="/ListSingleProject" 
+				scope="session"
+				parameter="listSingleProject"
+				type="oem.edge.ed.odc.remoteviewer.actions.ProjectWithServerAction">
+			<forward name="success" path="/jsp/testFolder/testJsp.jsp" />
+		</action>
+
+		<action 
+				name="ProjectForm"
+				path="/ShowSingleProject" 
+				scope="session"
+				parameter="listProjectSingleProject"
+				type="oem.edge.ed.odc.remoteviewer.actions.ProjectAction">
+			<forward name="success" path="/jsp/testFolder/testJsp.jsp" />
+		</action>
+
+		<action 
+				name="ProjectForm"
+				path="/EditProject" 
+				scope="session"
+				parameter="EditProject"
+				type="oem.edge.ed.odc.remoteviewer.actions.ProjectAction">
+			<forward name="success" path="/jsp/testFolder/testJsp.jsp" />
+		</action>
+-->
+
+		<action 
+				name="ProjectForm"
+				path="/DeleteProject" 
+				scope="session"
+				parameter="DeleteProject"
+				type="oem.edge.ed.odc.remoteviewer.actions.ProjectAction">
+			<forward name="success" path="/jsp/project/listProject.jsp" />
+		</action>
+<!-- project Configuration END -->
+
+
+
+
+
+
+
+<!-- Server Configuration Start -->
+<!--
+		<action 
+				name="serverForm" 
+				path="/servers" 
+				scope="request" 
+				type="oem.edge.ed.odc.remoteviewer.actions.ServerAction">
+			<forward name="success" path="/jsp/testFolder/testJsp.jsp" />
+		</action>
+
+		<action 
+				name="serverForm" 
+				path="/listAllServer" 
+				scope="request" 
+				parameter="List_AllServer"
+				type="oem.edge.ed.odc.remoteviewer.actions.ServerAction">
+			<forward name="success" path="/jsp/testFolder/testServerOne.jsp" />
+		</action>
+-->
+
+		<action 
+				name="serverForm" 
+				path="/CreateProjectServer" 
+				scope="request" 
+				parameter="ListAllServer"
+				type="oem.edge.ed.odc.remoteviewer.actions.ServerAction">
+			<forward name="success" path="/jsp/project/createProject.jsp" />
+		</action>
+
+		<action 
+				name="serverForm" 
+				path="/NewApplication"
+				scope="request" 
+				parameter="ListUniqueServer"
+				type="oem.edge.ed.odc.remoteviewer.actions.ServerAction">
+			<forward name="success" path="/jsp/application/createApplication.jsp" />
+		</action>
+
+<!-- Server Configuration END -->
+
+
+
+
+<!-- UserApplication Configuration END -->
+<!--	<action 
+				name="UserApplicationForm" 
+				path="/userApplication" 
+				scope="request" 
+				type="oem.edge.ed.odc.remoteviewer.actions.UserApplicationAction">
+			<forward name="success" path="/jsp/testFolder/testJsp.jsp" />
+		</action>   -->
+<!--
+		<action 
+				name="UserApplicationForm" 
+				path="/LoadUserApplication" 
+				scope="request" 
+				parameter="loadAllUserApplication"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserApplicationAction">
+			<forward name="success" path="/jsp/oem/edge/ed/odc/remoteviewer/app2user/listAllUserApplication.jsp" />
+		</action>
+-->
+		<action 
+				name="UserApplicationForm" 
+				path="/LoadUserApplication" 
+				scope="request" 
+				parameter="loadAllUserApplication"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserApplicationAction">
+			<forward name="success" path="/jsp/app2user/listSingleUserApplication.jsp" />
+		</action>
+
+		<action 
+				name="UserApplicationForm" 
+				path="/LoadUserApplication_Add" 
+				scope="request" 
+				parameter="loadUserApplication_Add"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserApplicationAction">
+			<forward name="success" path="/jsp/app2user/listSingleUserApplication.jsp" />
+		</action>
+
+		<action 
+				name="UserApplicationForm" 
+				path="/LoadUserApplication_Delete" 
+				scope="request" 
+				parameter="loadUserApplication_Delete"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserApplicationAction">
+			<forward name="success" path="/jsp/app2user/listSingleUserApplication.jsp" />
+		</action>
+
+		<action 
+				name="UserApplicationForm" 
+				path="/LoadAllUser" 
+				scope="request" 
+				parameter="loadAllUserOnly"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserApplicationAction">
+			<forward name="success" path="/jsp/app2user/listAllUserApplication.jsp" />
+		</action>
+
+		<action 
+				name="UserApplicationForm" 
+				path="/AddUserApplication" 
+				scope="request" 
+				parameter="addUserApplication"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserApplicationAction">
+			<forward name="success" path="/jsp/app2user/showUserApplication.jsp" />
+		</action>
+
+		<action 
+				name="UserApplicationForm" 
+				path="/DeleteUserApplication" 
+				scope="request" 
+				parameter="deleteUserApplication"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserApplicationAction">
+			<forward name="success" path="/jsp/app2user/showUserApplication.jsp" />
+		</action>
+
+		<action 
+				name="UserApplicationForm" 
+				path="/ListUserApplication" 
+				scope="request" 
+				parameter="loadAllUserOnly_list"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserApplicationAction">
+			<forward name="success" path="/jsp/app2user/listByUserApplication.jsp" />
+		</action>
+<!-- UserApplication Configuration END -->
+
+
+
+
+
+<!-- UserProject Configuration START -->
+<!--
+		<action 
+				name="UserProjectForm" 
+				path="/userProject" 
+				type="oem.edge.ed.odc.remoteviewer.actions.UserProjectAction">
+			<forward name="success" path="/jsp/testFolder/testJsp.jsp" />
+		</action>
+-->
+
+		<action 
+				name="UserProjectForm" 
+				path="/LoadUserProject" 
+				scope="request" 
+				parameter="loadAllUserProject"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserProjectAction">
+			<forward name="success" path="/jsp/project2user/listSingleUserProject.jsp" />
+		</action>
+
+		<action 
+				name="UserProjectForm" 
+				path="/LoadUserProject_Add" 
+				scope="request" 
+				parameter="loadUserProject_Add"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserProjectAction">
+			<forward name="success" path="/jsp/project2user/listSingleUserProject.jsp" />
+		</action>
+
+		<action 
+				name="UserProjectForm" 
+				path="/LoadUserProject_Delete" 
+				scope="request" 
+				parameter="loadUserProject_Delete"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserProjectAction">
+			<forward name="success" path="/jsp/project2user/listSingleUserProject.jsp" />
+		</action>
+
+		<action 
+				name="UserProjectForm" 
+				path="/LoadAllUsers" 
+				scope="request" 
+				parameter="loadAllUserOnly"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserProjectAction">
+			<forward name="success" path="/jsp/project2user/listAllUserProject.jsp" />
+		</action>
+
+		<action 
+				name="UserProjectForm" 
+				path="/AddUserProject" 
+				scope="request" 
+				parameter="addUserProject"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserProjectAction">
+			<forward name="success" path="/jsp/project2user/showUserProject.jsp" />
+		</action>
+
+		<action 
+				name="UserProjectForm" 
+				path="/DeleteUserProject" 
+				scope="request" 
+				parameter="deleteUserProject"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserProjectAction">
+			<forward name="success" path="/jsp/project2user/showUserProject.jsp" />
+		</action>
+
+		<action 
+				name="UserProjectForm" 
+				path="/ListUserProject" 
+				scope="request" 
+				parameter="loadAllUserOnly_list"
+				type="oem.edge.ed.odc.remoteviewer.actions.UserProjectAction">
+			<forward name="success" path="/jsp/project2user/listByUserProject.jsp" />
+		</action>
+<!-- UserProject Configuration END -->
+	</action-mappings>
+	
+	
+	
+
+	<!-- Message Resources -->
+	<message-resources parameter="com.ibm.odc.resources.ApplicationResources"/>
+
+</struts-config>

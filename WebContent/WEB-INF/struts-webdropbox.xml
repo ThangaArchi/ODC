@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+                               "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+	<!-- Data Sources -->
+	<data-sources>
+	</data-sources>
+
+	
+	<!-- Form Beans -->
+	<form-beans>
+			<form-bean name="WebDboxInboxForm" 
+					   type="oem.edge.ed.odc.webdropbox.server.WebDboxInboxForm">
+			</form-bean>
+			<form-bean name="WebDboxSentPkgForm" 
+					   type="oem.edge.ed.odc.webdropbox.server.WebDboxSentPkgForm">
+			</form-bean>
+			<form-bean name="WebDboxDraftPkgForm" 
+					   type="oem.edge.ed.odc.webdropbox.server.WebDboxDraftPkgForm">
+			</form-bean>
+			<form-bean name="WebDboxAddFileForm" 
+					   type="oem.edge.ed.odc.webdropbox.server.WebDboxAddFileForm">
+			</form-bean>	
+			<form-bean name="WebDboxCreateDraftPkgForm" 
+					   type="oem.edge.ed.odc.webdropbox.server.WebDboxCreateDraftPkgForm">
+			</form-bean>	
+				
+			<form-bean name="WebDboxCreateSentPkgForm" 
+					   type="oem.edge.ed.odc.webdropbox.server.WebDboxCreateSentPkgForm">
+			</form-bean>		
+				
+			<form-bean name="WebDboxOptionsForm" 
+					   type="oem.edge.ed.odc.webdropbox.server.WebDboxOptionsForm">
+			</form-bean>
+			
+			<form-bean name="WebDboxCreateGroupForm" 
+					   type="oem.edge.ed.odc.webdropbox.server.WebDboxCreateGroupForm">
+			</form-bean>
+			
+			<form-bean name="WebDboxDispGroupInfoForm" 
+					   type="oem.edge.ed.odc.webdropbox.server.WebDboxDispGroupInfoForm">
+			</form-bean>
+			
+			<form-bean name="WebDboxTrashForm" 
+					   type="oem.edge.ed.odc.webdropbox.server.WebDboxTrashForm">
+			</form-bean>
+								
+	</form-beans>
+
+	<!-- Global Exceptions -->
+	<global-exceptions>
+	</global-exceptions>
+
+	<!-- Global Forwards -->
+	<global-forwards>	  
+          <forward name="InboxFailure" 		path="/jsp/WebDboxInbox.jsp" />
+          <forward name="SentsFailure" 	        path="/jsp/WebDboxSentPkg.jsp" /> 
+          <forward name="DraftsFailure" 	path="/jsp/WebDboxDraftPkg.jsp" />
+          <forward name="OptionsFailure" 	path="/jsp/WebDboxOptions.jsp" />
+          <forward name="sessionExpired"        path="/jsp/WebDboxSessExp.jsp" />
+          <forward name="TrashFailure" 		path="/jsp/WebDboxTrash.jsp" />         
+          
+	</global-forwards>
+
+	<!-- Action Mappings -->
+	<action-mappings>	
+		
+		<action path="/FEDbox"
+                  type="org.apache.struts.actions.ForwardAction"
+                  validate="false"
+                  scope="request"
+                  parameter="/servlet/oem/edge/ed/odc/desktop/FEDbox">
+          </action>
+
+		 <action path="/FEDboxWeb"
+                  type="org.apache.struts.actions.ForwardAction"
+                  validate="false"
+                  scope="request"                   
+                  parameter="/servlet/oem/edge/ed/odc/desktop/FEDboxWeb">
+          </action>
+
+		 <action path="/FEDboxRep"
+                  type="org.apache.struts.actions.ForwardAction"
+                  validate="false"
+                  scope="request"                
+                  parameter="/servlet/oem/edge/ed/odc/desktop/FEDboxRep">
+          </action>
+
+		<!-- Actions to help Forward to main FE (via desktop servlet) -->
+          
+          <action path="/FE"
+                  type="org.apache.struts.actions.ForwardAction"
+                  validate="false"
+                  scope="request"                 
+                  parameter="/servlet/oem/edge/ed/odc/desktop/FEForward">
+          </action>
+
+          <action path="/DownLoadTrashFile" 
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  parameter="doDownLoadFile:trashfile:">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/> 
+        </action>
+          
+          
+          <action path="/showTrashPackageContents"  name="WebDboxTrashForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doTrash">
+         <forward name="TrashSuccess" path="/jsp/WebDboxTrash.jsp"/>
+        </action>
+          
+          <action path="/WebDboxInboxMovePkgToTrash"  scope="session" name="WebDboxInboxForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doMovePkgToTrash"
+
+                  validate="true">
+         <forward name="InboxSuccess" path="/WebDboxRefresh.do"/>
+         
+        </action>
+          
+           <action path="/WebDboxTrashMovePkgToInbox"  scope="session" name="WebDboxTrashForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doMovePkgToInbox"
+
+                  validate="true">
+         <forward name="TrashSuccess" path="/WebDboxTrashRefresh.do"/>
+         
+        </action>
+          
+          
+           <action path="/WebTrashPrev" name="WebDboxTrashForm"
+			      scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"
+                  validate="true"
+                  parameter="doGenTrashIndex:prev:">
+         <forward name="TrashSuccess" path="/jsp/WebDboxTrash.jsp"/>
+        </action>
+        
+        <action path="/WebTrashNext" name="WebDboxTrashForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"  
+                  parameter="doGenTrashIndex:next:">
+         <forward name="TrashSuccess" path="/jsp/WebDboxTrash.jsp"/>         
+        </action>
+        
+        <action path="/WebDboxTrashRefresh"  name="WebDboxTrashForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doTrash:refresh:">
+         <forward name="TrashSuccess" path="/jsp/WebDboxTrash.jsp"/>
+        </action> 
+         
+        <action path="/WebDboxTrash"  name="WebDboxTrashForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doTrash">
+         <forward name="TrashSuccess" path="/jsp/WebDboxTrash.jsp"/>
+        </action>
+        
+          <action path="/showSentPackageContents"  name="WebDboxSentPkgForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doSent">
+         <forward name="SentsSuccess" path="/jsp/WebDboxSentPkg.jsp"/>
+        </action>
+
+	<action path="/DownLoadSentFile" 
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  parameter="doDownLoadFile:sentfile:">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/> 
+        </action>	
+		
+
+     <action path="/WebDboxSentPkgUpdateView"  name="WebDboxSentPkgForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                                  
+                  parameter="doUpdateSentPkgView"               
+                  >
+         <forward name="SentsSuccess" path="/jsp/WebDboxSentPkg.jsp"/>
+        </action>
+
+         <action path="/WebDboxSentPkgEditRcpt"  scope="session" name="WebDboxCreateSentPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"    
+                  validate="false"            
+                  parameter="doEditRecipientsCrtSentPkg"
+                  input="/jsp/CreateSentPackage.jsp"
+                  >                    
+         <forward name="SentsSuccess" path="/jsp/CreateSentPackage.jsp"/>
+        </action>
+
+	<action path="/WebDboxSentPkgEditRcptFwd"  scope="session" name="WebDboxCreateSentPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"    
+                  validate="false" 
+                  input="/jsp/WebDboxSentPkg.jsp"           
+                  parameter="doFwdCreateSentPackage:editRcpt:"                
+                  >                    
+         <forward name="RcptSuccess" path="/WebDboxSentPkgEditRcpt.do"/>
+       
+        </action>
+
+	<action path="/WebDboxFwdCreateSentPage"  scope="session" name="WebDboxCreateSentPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"    
+                  validate="false"
+                  input="/jsp/WebDboxSentPkg.jsp"
+                  parameter="doFwdCreateSentPackage">
+         <forward name="SentsSuccess" path="/jsp/CreateSentPackage.jsp"/>
+        </action>
+		
+
+<action path="/WebDboxSentPkgCreate"  scope="session" name="WebDboxCreateSentPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                        
+                  parameter="doCreateSentPackage"
+                  input="/jsp/CreateSentPackage.jsp"
+                  >
+         <forward name="SentsSuccess" path="/WebDboxSentPkgRefresh.do"/>
+         <forward name="SentsFailure" path="/jsp/CreateSentPackage.jsp"/>         
+         <forward name="AddFilesSuccess" path="/AddFilesToPackage.do"/>
+        </action>
+
+<action path="/WebSentPkgPrev" name="WebDboxSentPkgForm"
+			      scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"
+                  validate="true"
+                  parameter="doGenSentIndex:prev:">
+         <forward name="SentsSuccess" path="/jsp/WebDboxSentPkg.jsp"/>         
+        </action>
+
+<action path="/WebSentPkgNext" name="WebDboxSentPkgForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"  
+                  parameter="doGenSentIndex:next:">
+         <forward name="SentsSuccess" path="/jsp/WebDboxSentPkg.jsp"/>         
+        </action>
+
+	<action path="/WebDboxSentPkgDel"  scope="session" name="WebDboxSentPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doSentPkgDelete">
+         <forward name="SentsSuccess" path="/WebDboxSentPkgRefresh.do"/>
+        </action>
+
+        <action path="/WebDboxSentPackagesDel"  scope="session" name="WebDboxSentPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doSentPackagesDelete">
+         <forward name="SentsSuccess" path="/WebDboxSentPkgRefresh.do"/>
+        </action>
+		
+<action path="/WebDboxSentPkgRefresh"  name="WebDboxSentPkgForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doSent:refresh:">
+         <forward name="SentsSuccess" path="/jsp/WebDboxSentPkg.jsp"/>
+        </action>
+
+		<action path="/WebDboxSent" name="WebDboxSentPkgForm"
+				  scope="session"
+				  validate="false"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                  
+                  parameter="doSent">
+         <forward name="SentsSuccess" path="/jsp/WebDboxSentPkg.jsp"/>
+        </action>
+		
+	<action path="/WebDboxSentPkg" name="WebDboxSentPkgForm"
+				  scope="session"
+				  validate="true"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                  
+                  parameter="doSent">
+         <forward name="SentsSuccess" path="/jsp/WebDboxSentPkg.jsp"/>
+        </action>
+        
+        <action path="/WebDboxGroupDel"  scope="session" name="WebDboxCreateGroupForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doDeleteGroup"
+                  validate="false"
+                  input="/jsp/CreateGroups.jsp"
+                  >
+         <forward name="OptionsSuccess" path="/WebDboxOptions.do"/>
+         <forward name="OptionsFailure" path="/jsp/CreateGroups.jsp"/>  
+        </action>
+	
+		<action path="/WebDboxCreateGroups"  scope="session" name="WebDboxCreateGroupForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doCreateGroups"
+                  input="/jsp/CreateGroups.jsp"
+                  >
+         <forward name="OptionsSuccess" path="/WebDboxOptions.do"/>
+         <forward name="OptionsFailure" path="/jsp/CreateGroups.jsp"/>  
+        </action>
+		
+		<action path="/WebDboxFwdCreateGroupPage"  scope="session" name="WebDboxCreateGroupForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doFwdCreateGroupPage"
+                  input="/jsp/WebDboxOptions.jsp"
+                  validate="false"
+                  >
+         <forward name="OptionsSuccess" path="/jsp/CreateGroups.jsp"/>
+        </action>
+		
+		
+		
+		<action path="/WebDboxOptions"  scope="session" name="WebDboxOptionsForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doOptions">
+         <forward name="OptionsSuccess" path="/jsp/WebDboxOptions.jsp"/>
+        </action>
+		
+		<action path="/showDraftPackageContents"  name="WebDboxDraftPkgForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doDrafts">
+         <forward name="DraftsSuccess" path="/jsp/WebDboxDraftPkg.jsp"/>
+        </action>
+		
+		<action path="/WebDboxDraftPkgDel"  scope="session" name="WebDboxDraftPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doDraftPkgDelete">
+         <forward name="DraftsSuccess" path="/WebDboxDraftPkgRefresh.do"/>
+        </action>
+		
+		<action path="/WebDboxDraftPackagesDel"  scope="session" name="WebDboxDraftPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doDraftPackagesDelete">
+         <forward name="DraftsSuccess" path="/WebDboxDraftPkgRefresh.do"/>
+        </action>
+		
+		
+		<action path="/WebDboxDraftPkgSend"  scope="session" name="WebDboxDraftPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doDraftPkgSend"
+                  validate="false"
+               	  input="/jsp/WebDboxDraftPkg.jsp"
+                  >
+         <forward name="DraftsSuccess" path="/WebDboxDraftPkgRefresh.do"/>
+         <forward name="DraftsFailure" path="/jsp/WebDboxDraftPkg.jsp"/>
+        </action>
+        
+        <action path="/WebDboxDraftPkgDelFiles"  scope="session" name="WebDboxDraftPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doDraftPkgDelFiles"
+
+                  validate="true">
+         <forward name="DraftsSuccess" path="/WebDboxDraftPkgUpdateView.do"/>
+         
+        </action>
+        
+        
+        
+		
+		<action path="/WebDboxDraftPkgAddFiles"  scope="session" name="WebDboxAddFileForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doAddFilesToPackage"
+                  input="/jsp/AddFiles.jsp"
+                  >
+         <forward name="DraftsSuccess" path="/jsp/AddFiles.jsp"/>
+           <forward name="DraftsFailure" path="/jsp/AddFiles.jsp"/>
+        </action>
+		
+		<action path="/AddFilesToPackage"  scope="session" name="WebDboxDraftPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doFwdAddFilesPage">
+         <forward name="DraftsSuccess" path="/jsp/AddFiles.jsp"/>
+        </action>
+		
+		
+		<action path="/WebDboxDraftPkgEditRcpt"  scope="session" name="WebDboxCreateDraftPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"    
+                  validate="false"            
+                  parameter="doEditRecipientsCrtPkg"
+                  input="/jsp/Createpackage.jsp"
+                  >                    
+         <forward name="DraftsSuccess" path="/jsp/Createpackage.jsp"/>
+        </action>
+		
+		
+		<action path="/WebDboxDraftPkgEditRcptFwd"  scope="session" name="WebDboxCreateDraftPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"    
+                  validate="false" 
+                  input="/jsp/WebDboxDraftPkg.jsp"           
+                  parameter="doFwdCreatePackage:editRcpt:"                
+                  >                    
+         <forward name="RcptSuccess" path="/WebDboxDraftPkgEditRcpt.do"/>
+       
+        </action>
+		
+		
+		<action path="/WebDboxFwdCreateDraftPage"  scope="session" name="WebDboxCreateDraftPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"    
+                  validate="false"
+                  input="/jsp/WebDboxDraftPkg.jsp"
+                  parameter="doFwdCreatePackage">
+         <forward name="DraftsSuccess" path="/jsp/Createpackage.jsp"/>
+        </action>
+		
+		
+		<action path="/WebDboxDraftPkgCreate"  scope="session" name="WebDboxCreateDraftPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                        
+                  parameter="doCreatePackage"
+                  input="/jsp/Createpackage.jsp"
+                  >
+         <forward name="DraftsSuccess" path="/WebDboxDraftPkgRefresh.do"/>
+         <forward name="DraftsFailure" path="/jsp/Createpackage.jsp"/>         
+         <forward name="AddFilesSuccess" path="/AddFilesToPackage.do"/>
+        </action>
+		
+		
+		
+		
+		<action path="/CreatPkgAndAddFilesToPkg"  scope="session" name="WebDboxCreateDraftPkgForm"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                
+                  parameter="doCreatePkgAndAddFiles">
+         <forward name="DraftsSuccess" path="/AddFilesToPackage.do"/>
+        </action>
+		
+		
+		<action path="/WebDraftPkgPrev" name="WebDboxDraftPkgForm"
+			      scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"
+                  validate="true"
+                  parameter="doGenDraftIndex:prev:">
+         <forward name="DraftsSuccess" path="/jsp/WebDboxDraftPkg.jsp"/>         
+        </action>
+        
+        <action path="/WebDraftPkgNext" name="WebDboxDraftPkgForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"  
+                  parameter="doGenDraftIndex:next:">
+         <forward name="DraftsSuccess" path="/jsp/WebDboxDraftPkg.jsp"/>         
+        </action>
+		
+		<action path="/WebDboxDraftPkgRefresh"  name="WebDboxDraftPkgForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doDrafts:refresh:">
+         <forward name="DraftsSuccess" path="/jsp/WebDboxDraftPkg.jsp"/>
+        </action>
+		
+		<action path="/DownLoadDraftFile" 
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  parameter="doDownLoadFile:draftfile:">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>
+        </action>
+		
+		
+		<action path="/WebDboxDraftPkg"  name="WebDboxDraftPkgForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doDrafts"
+               
+                  >
+         <forward name="DraftsSuccess" path="/jsp/WebDboxDraftPkg.jsp"/>
+         <forward name="delFilesSuccess" path="/WebDboxDraftPkgDelFiles.do"/>
+         
+        </action>
+			
+        <action path="/WebDboxDraftPkgUpdateView"  name="WebDboxDraftPkgForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                                  
+                  parameter="doUpdateDraftPkgView"               
+                  >
+         <forward name="DraftsSuccess" path="/jsp/WebDboxDraftPkg.jsp"/>
+        </action>
+        
+      <action path="/WebDboxDispGroupInfoPage"  name="WebDboxDispGroupInfoForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="false"                 
+                  parameter="doDispGroupInfo"
+               
+                  >
+         <forward name="DispGroupInfoSuccess" path="/jsp/GroupsInfo.jsp"/>
+      
+         
+        </action> 
+          
+			
+		
+		<action path="/DownLoadFile" 
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  parameter="doDownLoadFile">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>
+        </action>
+		
+       
+        <action path="/DownLoadZipPkg" 
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  parameter="doDownLoadPackage:zip:">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>
+        </action>
+        
+        <action path="/DownLoadTgzPkg" 
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  parameter="doDownLoadPackage:tgz:">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>
+        </action>
+         
+		 <action path="/DownLoadTarPkg" 
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  parameter="doDownLoadPackage:tar:">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>
+        </action>
+	  
+        <action path="/WebInboxPrev" name="WebDboxInboxForm"
+			      scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"
+                  validate="true"
+                  parameter="doGenInboxIndex:prev:">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>
+        </action>
+        
+        <action path="/WebInboxNext" name="WebDboxInboxForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"  
+                  parameter="doGenInboxIndex:next:">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>         
+        </action>
+        
+        <action path="/WebDboxRefresh"  name="WebDboxInboxForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doInbox:refresh:">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>
+        </action> 
+         
+        <action path="/WebDboxInbox"  name="WebDboxInboxForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doInbox">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>
+        </action>
+        
+        
+        
+        <action path="/showInboxPackageContents"  name="WebDboxInboxForm" 
+                  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions" 
+                  validate="true"                 
+                  parameter="doInbox">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>
+        </action>
+        
+         <!-- Main Page -->
+         
+		<action path="/WebDboxLogout" 
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"                  
+                  validate="false"
+                  parameter="doLogout">
+         <forward name="LogoutSuccess" path="/FE.do"/>
+         <forward name="LogoutFailure" path="/jsp/WebDboxSessExp.jsp" />
+        </action>
+         
+         
+		<action path="/WebDboxLogin" name="WebDboxInboxForm"
+				  scope="session"
+                  type="oem.edge.ed.odc.webdropbox.server.WebDropboxActions"
+                  validate="true"    
+                  parameter="doLogin">
+         <forward name="InboxSuccess" path="/jsp/WebDboxInbox.jsp"/>
+        </action>
+                 
+		
+        
+		
+	</action-mappings>
+
+
+	<!-- Message Resources -->
+	<message-resources parameter="WebDropboxResources"/>
+
+</struts-config>

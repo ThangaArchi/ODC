@@ -1,0 +1,18 @@
+#
+# Force no local access ... everyone needs cookie!
+#
+parse_xmxargs -auth ${XAUTHORITY:-$HOME/.Xauthority}
+
+start_default_xmxapps() {
+
+  start_window_manager 
+  
+#  typeset title="$(hostname):${DISPLAY#*:}"
+#  if [ "$(uname -s)" = AIX   ] ; then
+#     aixterm -fg plum -bg black -fn ergo15.iso1 -sb -sl 5000 -T "$title" &
+#  else
+#     xterm -fg plum -bg black -fn ergo15.iso1 -sb -sl 5000 -T "$title" &
+#  fi
+  
+  xsetroot -solid black
+}

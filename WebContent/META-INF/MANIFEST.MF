@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Class-Path: properties/ 
+ commons-logging.jar 
+ commons-resources.jar 
+ datasource.jar 
+ db2java.zip 
+ db2jcc.jar 
+ log4j-1.2.8.jar 
+ log4j.jar 
+ logger.jar 
+ struts.jar 
+ w3c.jar 
+ xml4j.jar
+Main-Class: 
+

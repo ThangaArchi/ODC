@@ -1,0 +1,25 @@
+#!/bin/ksh
+#
+# Runs the RemoteExecServer service to process a request from the
+# RemoteExecClient which is running on the web server.
+#
+
+# Need the following information
+GRIDAPPDIR=/home/pubApp/COMMON
+KEYSTORE=$GRIDAPPDIR/decathlon.ks
+TRUSTSTORE=$GRIDAPPDIR/decathlon.ts
+STOREPW=password
+LOGFILE=$GRIDAPPDIR/RemoteExecServer.log
+
+JAVA=/usr/java14/jre/bin/java
+
+CLASSPATH=$GRIDAPPDIR/EDODCRemoteViewer.jar
+
+# Run the service.
+echo "Running RemoteAdminserver" 2>>$LOGFILE 1>&2
+
+export CLASSPATH
+$JAVA oem.edge.ed.odc.remoteviewer.RemoteAdminServer $GRIDAPPDIR \
+  $KEYSTORE $STOREPW $TRUSTSTORE $STOREPW 2>>$LOGFILE
+
+exit $?

@@ -1,0 +1,1964 @@
+package oem.edge.ed.odc.dropbox.common;
+
+import  oem.edge.ed.odc.ftp.common.*;
+import  oem.edge.ed.odc.dsmp.common.*;
+
+import java.util.*;
+import java.io.*;
+import java.util.zip.*;
+
+public class DropboxDispatchBase extends FTPDispatchBase {
+
+   public static final boolean printdebug    = true;
+   public boolean bigdebug                   = true;
+   protected DropboxDispatchBase pdbg        = null;
+   
+   public void operationComplete(Operation op) {
+      ;
+   }
+   
+   public int calculateCRC(File f, long inlen) throws IOException {
+      FileInputStream fis = new FileInputStream(f);
+      byte buf[] = new byte[32768];
+      CRC32 crc32 = new CRC32();
+      long len = inlen;
+      while(len > 0) {
+         int r = (int)(len > buf.length ? buf.length : len);
+         r = fis.read(buf, 0, r);
+//         System.out.println(showbytes(buf, 0, r));
+         if (r == -1) {
+            throw new IOException("Ran out of bytes before finished CRC");
+         }
+         crc32.update(buf, 0, r);
+         len -= r;
+      }
+      
+      int ret = (int)crc32.getValue();
+//      System.out.println("CRC for " + f.getName() + 
+//                         " len[" + inlen + "] = " + ret);
+      return ret;
+   }
+   
+   public int calculateCRC(File f) throws IOException {
+      return calculateCRC(f, f.length());
+   }
+   
+  /* -------------------------------------------------------*\
+  ** Shutdown
+  \* -------------------------------------------------------*/
+   public void fireShutdownEvent(DSMPBaseHandler h) {
+      System.out.println("-----fireShutdownEvent connectionid = " + 
+                         h.getHandlerId());
+      uncaughtProtocol(h, (byte)0);
+   }
+   
+
+  /* -------------------------------------------------------*\
+  ** Commands
+  \* -------------------------------------------------------*/
+   
+   
+   public void fireLoginCommandToken(DSMPBaseHandler h, byte flags, 
+                                     byte handle, String token) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireLoginCommandToken: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\ttoken [" + token + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_LOGIN);
+   }
+   public void fireLoginCommandUserPW(DSMPBaseHandler h, byte flags, 
+                                      byte handle, String user, String pw) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireLoginCommandUserPW: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tuser [" + user + "]");
+         System.out.println("\tpw [" + pw + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_LOGIN);
+   }
+   public void fireLogoutCommand(DSMPBaseHandler h, byte flags, byte handle) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireLogoutCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_LOGIN);
+   }
+   public void fireChangeAreaCommand(DSMPBaseHandler h, byte flags, 
+                                     byte handle, String area) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireChangeAreaCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]" +
+                            "\n\tarea [" +area+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_CHANGEAREA);
+   }
+   public void fireListAreaCommand(DSMPBaseHandler h, byte flags, 
+                                   byte handle) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireListAreaCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_LISTAREA);
+   }
+   public void fireDeleteFileCommand(DSMPBaseHandler h, byte flags, 
+                                     byte handle, String file) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDeleteFileCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]" +
+                            "\n\tarea [" +file+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DELETEFILE);
+   }
+   public void fireNewFolderCommand(DSMPBaseHandler h, byte flags, 
+                                    byte handle, String folder) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireNewFolderCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]" +
+                            "\n\tfoldr[" +folder+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_NEWFOLDER);
+   }
+   public void fireUploadCommand(DSMPBaseHandler h, byte flags, 
+                                 byte handle, boolean tryRestart, 
+                                 int crc, long crcSize,
+                                 long filelen, String file) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireUploadCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\trestart[" +tryRestart+"]");
+         System.out.println("\tcrc   [" +crc+"]");
+         System.out.println("\tcrclen[" +crcSize+"]");
+         System.out.println("\tlen   [" +filelen+"]");
+         System.out.println("\tfilen [" +file+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_UPLOAD);
+   }
+   public void fireAbortUploadCommand(DSMPBaseHandler h, byte flags, 
+                                      byte handle, int id) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAbortUploadCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tid   [" +id+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ABORTUPLOAD);
+   }
+   public void fireUploadDataCommand(DSMPBaseHandler h, byte flags, 
+                                     byte handle, int id, long ofs, 
+                                     CompressInfo ci) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireUploadDataCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tid   [" +id+"]");
+         System.out.println("\tofs  [" +ofs+"]");
+         System.out.println("\tlen  [" +ci.len+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_UPLOADDATA);
+   }
+   public void fireDownloadCommand(DSMPBaseHandler h, byte flags, byte handle, 
+                                   boolean tryRestart, int crc, long filelen, 
+                                   String file) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDownloadCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\trestart[" +tryRestart+"]");
+         System.out.println("\tcrc  [" +crc+"]");
+         System.out.println("\tlen  [" +filelen+"]");
+         System.out.println("\tfilen[" +file+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DOWNLOAD);
+   }
+                         
+   public void fireAbortDownloadCommand(DSMPBaseHandler h, byte flags, 
+                                        byte handle, int id) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAbortDownloadCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tid   [" +id+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ABORTDOWNLOAD);
+   }
+   
+   public void fireOperationCompleteCommand(DSMPBaseHandler h, byte flags, 
+                                            byte handle, int id) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireOperationCompleteCommand: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tid   [" +id+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_OPERATION_COMPLETE);
+   }
+   
+  /* -=-=-=-=-=-=-=-=-=- Start of DropBox commands -=-=-=-=-=-=-=-=-=-=-=-=- */
+   
+   public void fireCreatePackageCommand(DSMPBaseHandler h, byte flags, 
+                                        byte handle, String packname) {
+      if (printdebug && dodebug) {
+         System.out.println("-----: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackname[" +packname+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_CREATE_PACKAGE);
+   }
+    
+   public void fireDeletePackageCommand(DSMPBaseHandler h, byte flags, 
+                                        byte handle, long packid) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDeletePackageCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackid[" +packid+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DELETE_PACKAGE);
+   }
+    
+   public void fireCommitPackageCommand(DSMPBaseHandler h, byte flags, 
+                                        byte handle, long packid) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireCommitPackageCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackid[" +packid+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_COMMIT_PACKAGE);
+   }
+    
+   public void fireQueryPackagesCommand(DSMPBaseHandler h, byte flags, 
+                                        byte handle, 
+                                        boolean regexpValid,
+                                        boolean ownerOrAccessor,
+                                        String regexp) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackagesCommand: " +
+                            "\n\tflags [" +flags+"] hand["+handle+"]");
+         System.out.println("\tregexpV [" +regexpValid+"]");
+         System.out.println("\tOwnOrAcc[" +ownerOrAccessor+"]");
+         System.out.println("\tregexp  [" +regexp+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGES);
+   }
+    
+   public void fireQueryPackageCommand(DSMPBaseHandler h, byte flags, 
+                                       byte handle, long packid) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackid[" +packid+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE);
+   }
+    
+   public void fireQueryPackageContentsCommand(DSMPBaseHandler h, byte flags, 
+                                               byte handle, long packid) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageContentsCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackid[" +packid+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_CONTENTS);
+   }
+    
+   public void fireQueryPackageAclsCommand(DSMPBaseHandler h, byte flags, 
+                                           byte handle, long packid) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageAclsCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackid[" +packid+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_ACLS);
+   }
+    
+   public void fireQueryPackageFileAclsCommand(DSMPBaseHandler h, byte flags, 
+                                               byte handle, long packid, 
+                                               long fileid) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageFileAclsCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackid[" +packid+"]");
+         System.out.println("\tfileid[" +fileid+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_FILE_ACLS);
+   }
+    
+   public void fireQueryFilesCommand(DSMPBaseHandler h, byte flags, 
+                                     byte handle,
+                                     boolean regexpValid,
+                                     boolean ownerOrAccessor,
+                                     String regexp) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryFilesCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tregexpV [" +regexpValid+"]");
+         System.out.println("\tOwnOrAcc[" +ownerOrAccessor+"]");
+         System.out.println("\tregexp  [" +regexp+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_FILES);
+   }
+    
+   public void fireQueryFileCommand(DSMPBaseHandler h, byte flags, 
+                                    byte handle, long fileid) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryFileCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tfileid[" +fileid+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_FILE);
+   }
+    
+   public void fireAddItemToPackageCommand(DSMPBaseHandler h, byte flags, 
+                                           byte handle, long packid, 
+                                           long itemid) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAddItemToPackageCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackid[" +packid+"]");
+         System.out.println("\titemid[" +itemid+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ADD_ITEM_TO_PACKAGE);
+   }
+    
+   public void fireUploadFileToPackageCommand(DSMPBaseHandler h, byte flags, 
+                                              byte handle, boolean tryRestart, 
+                                              long packid,
+                                              int crc, long crcSize,
+                                              long filelen, String file) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireUploadFileToPackageCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\trestart[" +tryRestart+"]");
+         System.out.println("\tpackid [" +packid+"]");
+         System.out.println("\tcrc    [" +crc+"]");
+         System.out.println("\tcrclen [" +crcSize+"]");
+         System.out.println("\tlen    [" +filelen+"]");
+         System.out.println("\tfilenam[" +file+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_UPLOAD_FILE_TO_PACKAGE);
+   }
+    
+   public void fireRemoveItemFromPackageCommand(DSMPBaseHandler h, byte flags, 
+                                                byte handle, long packid,
+                                                long itemid) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireRemoveItemFromPackageCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackid[" +packid+"]");
+         System.out.println("\titemid[" +itemid+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_REMOVE_ITEM_FROM_PACKAGE);
+   }
+    
+   public void fireDownloadPackageItemCommand(DSMPBaseHandler h, byte flags, 
+                                              byte handle, boolean tryRestart, 
+                                              long packid, int crc, 
+                                              long filelen, long fileid) { 
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDownloadPackageItemCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\trestart[" +tryRestart+"]");
+         System.out.println("\tpackid [" +packid+"]");
+         System.out.println("\tcrc    [" +crc+"]");
+         System.out.println("\tlen    [" +filelen+"]");
+         System.out.println("\tfileid [" +fileid+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DOWNLOAD_PACKAGE_ITEM);
+   }
+    
+   public void fireAddPackageAclCommand(DSMPBaseHandler h, byte flags, 
+                                        byte handle, boolean isProj,
+                                        long packid, String aclname) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAddPackageAclCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tisProj [" +isProj+"]");
+         System.out.println("\tpackid [" +packid+"]");
+         System.out.println("\taclname[" +aclname+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ADD_PACKAGE_ACL);
+   }
+    
+   public void fireRemovePackageAclCommand(DSMPBaseHandler h, byte flags, 
+                                           byte handle, boolean isProj,
+                                           long packid, String aclname) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireRemovePackageAclCommand: " +
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tisProj [" +isProj+"]");
+         System.out.println("\tpackid [" +packid+"]");
+         System.out.println("\taclname[" +aclname+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_REMOVE_PACKAGE_ACL);
+   }
+    
+   
+   
+   
+  /* -------------------------------------------------------*\
+  ** Replies
+  \* -------------------------------------------------------*/
+  
+   public void fireLoginReply(DSMPBaseHandler h, byte flags, byte handle,
+                              int  loginid, String area, String sep) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireLoginReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tloginid [" + loginid + "]");
+         System.out.println("\tarea    [" + area + "]");
+         System.out.println("\tsep     [" + sep  + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_LOGIN_REPLY);
+   }
+   
+   public void fireLogoutReply(DSMPBaseHandler h, byte flags, byte handle) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireLogoutReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_LOGOUT_REPLY);
+   }
+
+   public void fireListAreaReply(DSMPBaseHandler h, byte flags, byte handle,
+                                 Vector v) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireListAreaReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]" +
+                            "\n\tentries:");
+         
+         if (v != null) {
+            Enumeration e = v.elements();
+            while(e.hasMoreElements()) {
+               AreaContent ac = (AreaContent)e.nextElement();
+               System.out.println("\t   " + ac.toString());
+               
+            }
+         }
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_LISTAREA_REPLY);
+   }
+   public void fireChangeAreaReply(DSMPBaseHandler h, byte flags, 
+                                   byte handle) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireChangeAreaReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_CHANGEAREA_REPLY);
+   }
+   public void fireDeleteFileReply(DSMPBaseHandler h, byte flags, 
+                                   byte handle) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDeleteFileReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DELETEFILE_REPLY);
+   }
+   public void fireNewFolderReply(DSMPBaseHandler h, byte flags, byte handle) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireNewFolderReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_NEWFOLDER_REPLY);
+   }
+   public void fireUploadReply(DSMPBaseHandler h, byte flags, byte handle, 
+                               int id, long ofs) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireUploadReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]" +
+                            "\n\tid   [" + id +"]" +
+                            "\n\tofs  [" + ofs + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_UPLOAD_REPLY);
+   }
+   public void fireAbortUploadReply(DSMPBaseHandler h, byte flags, 
+                                    byte handle, 
+                                    int id) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAbortUploadReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]" +
+                            "\n\t" + id);
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ABORTUPLOAD_REPLY);
+   }
+   public void fireDownloadReply(DSMPBaseHandler h, byte flags, byte handle, 
+                                 int id, long ofs, long sz) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDownloadReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]" +
+                            "\n\tid   [" + id +"]"+
+                            "\n\tofs  [" + ofs+"]" +
+                            "\n\tsz   [" + sz+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DOWNLOAD_REPLY);
+   }
+   public void fireAbortDownloadReply(DSMPBaseHandler h, byte flags, 
+                                      byte handle, 
+                                      int id) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAbortDownloadReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]" +
+                            "\n\t" + id);
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ABORTDOWNLOAD_REPLY);
+   }
+   
+  /* -=-=-=-=-=-=-=-=-=- Start of DropBox Replies -=-=-=-=-=-=-=-=-=-=- */
+   public void fireCreatePackageReply(DSMPBaseHandler h, 
+                                      byte flags, byte handle, 
+                                      long id) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireCreatePackageReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackid[" +id+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_CREATE_PACKAGE_REPLY);
+   }
+
+   public void fireDeletePackageReply(DSMPBaseHandler h, 
+                                      byte flags, byte handle) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDeletePackageReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DELETE_PACKAGE_REPLY);
+   }
+
+   public void fireCommitPackageReply(DSMPBaseHandler h, 
+                                      byte flags, byte handle) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireCommitPackageReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_COMMIT_PACKAGE_REPLY);
+   }
+
+   public void fireQueryPackagesReply(DSMPBaseHandler h, 
+                                      byte flags, byte handle, 
+                                      boolean ownerOrAccessor, 
+                                      Vector vec) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackagesReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\townOrAcc[" +ownerOrAccessor+"]");
+         if (vec != null) {
+            Enumeration enum = vec.elements();
+            while(enum.hasMoreElements()) {
+               PackageInfo info = (PackageInfo)enum.nextElement();
+               System.out.println("\t\tpackname[" +info.getPackageName()+"]");
+               System.out.println("\t\tpackid  [" +info.getPackageId()+"]");
+               System.out.println("\t\tpack#elm[" +info.getPackageNumElements()+"]");
+               System.out.println("\t\tpackstat[" +info.getPackageStatus()+"]");
+               System.out.println("\t\tpackexpr[" +info.getPackageExpiration()+"]");
+               System.out.println("\t\tpacksize[" +info.getPackageSize()+"]");
+               System.out.println("\t-----");
+            }
+         }
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGES_REPLY);
+   }
+
+   public void fireQueryPackageReply(DSMPBaseHandler h, 
+                                     byte flags, byte handle, 
+                                     PackageInfo info) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\t\tpackname[" +info.getPackageName()+"]");
+         System.out.println("\t\tpackid  [" +info.getPackageId()+"]");
+         System.out.println("\t\tpack#elm[" +info.getPackageNumElements()+"]");
+         System.out.println("\t\tpackstat[" +info.getPackageStatus()+"]");
+         System.out.println("\t\tpackexpr[" +info.getPackageExpiration()+"]");
+         System.out.println("\t\tpacksize[" +info.getPackageSize()+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_REPLY);
+   }
+
+   public void fireQueryPackageContentsReply(DSMPBaseHandler h, 
+                                             byte flags, byte handle, 
+                                             long expire, long size,
+                                             Vector vec) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageContentsReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tpackexpr[" +expire+"]");
+         System.out.println("\tpacksize[" +size+"]");
+         if (vec != null) {
+            Enumeration enum = vec.elements();
+            while(enum.hasMoreElements()) {
+               FileInfo info = (FileInfo)enum.nextElement();
+               System.out.println("\t\tfilename[" +info.getFileName()+"]");
+               System.out.println("\t\tfilestat[" +info.getFileStatus()+"]");
+               System.out.println("\t\tfileid  [" +info.getFileId()+"]");
+               System.out.println("\t\tfilesize[" +info.getFileSize()+"]");
+               System.out.println("\t-----");
+            }
+         }
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_CONTENTS_REPLY);
+   }
+
+   public void fireQueryPackageAclsReply(DSMPBaseHandler h, 
+                                         byte flags, byte handle, 
+                                         Vector vec) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageAclsReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         if (vec != null) {
+            Enumeration enum = vec.elements();
+            while(enum.hasMoreElements()) {
+               AclInfo info = (AclInfo)enum.nextElement();
+               System.out.println("\t\taclstat[" +info.getAclStatus()+"]");
+               System.out.println("\t\talcuser[" +info.getAclUserName()+"]");
+               System.out.println("\t\taclproj[" +info.getAclProjectName()+"]");
+               System.out.println("\t-----");
+            }
+         }
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_ACLS_REPLY);
+   }
+
+   public void fireQueryPackageFileAclsReply(DSMPBaseHandler h, 
+                                             byte flags, byte handle, 
+                                             Vector vec) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageFileAclsReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         if (vec != null) {
+            Enumeration enum = vec.elements();
+            while(enum.hasMoreElements()) {
+               AclInfo info = (AclInfo)enum.nextElement();
+               System.out.println("\t\taclstat[" +info.getAclStatus()+"]");
+               System.out.println("\t\talcuser[" +info.getAclUserName()+"]");
+               System.out.println("\t-----");
+            }
+         }
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_FILE_ACLS_REPLY);
+   }
+
+   public void fireQueryFilesReply(DSMPBaseHandler h, 
+                                   byte flags, byte handle,
+                                   boolean ownerAccessor, Vector vec) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryFilesReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\townAccess[" +ownerAccessor+"]");
+         
+         if (vec != null) {
+            Enumeration enum = vec.elements();
+            while(enum.hasMoreElements()) {
+               FileInfo info = (FileInfo)enum.nextElement();
+               System.out.println("\t\tfilename[" +info.getFileName()+"]");
+               System.out.println("\t\tfilestat[" +info.getFileStatus()+"]");
+               System.out.println("\t\tfileid  [" +info.getFileId()+"]");
+               System.out.println("\t\tfilesize[" +info.getFileSize()+"]");
+               System.out.println("\t-----");
+            }
+         }
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_FILES_REPLY);
+   }
+
+   public void fireQueryFileReply(DSMPBaseHandler h, 
+                                  byte flags, byte handle, 
+                                  String name, byte status, long size, 
+                                  Vector vec) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryFileReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tfilename[" +name+"]");
+         System.out.println("\tfilestat[" +status+"]");
+         System.out.println("\tfilesize[" +size+"]");
+         
+         if (vec != null) {
+            Enumeration enum = vec.elements();
+            while(enum.hasMoreElements()) {
+               Long l = (Long)enum.nextElement();
+               System.out.println("\t\tpackid[" +l.longValue()+"]");
+            }
+            System.out.println("\t-----");
+         }
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_FILE_REPLY);
+   }
+
+   public void fireAddItemToPackageReply(DSMPBaseHandler h, 
+                                         byte flags, byte handle) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAddItemToPackageReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ADD_ITEM_TO_PACKAGE_REPLY);
+   }
+
+   public void fireUploadFileToPackageReply(DSMPBaseHandler h, 
+                                            byte flags, byte handle, 
+                                            long itemid, boolean isRestarted,
+                                            int opid, long ofs) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireUploadFileToPackageReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\titemid   [" +itemid+ "]");
+         System.out.println("\tisRestart[" +isRestarted+ "]");
+         System.out.println("\topid     [" +opid+ "]");
+         System.out.println("\tofs      [" +ofs+ "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_UPLOAD_FILE_TO_PACKAGE_REPLY);
+   }
+
+   public void fireRemoveItemFromPackageReply(DSMPBaseHandler h, 
+                                              byte flags, byte handle) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireRemoveItemFromPackageReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_REMOVE_ITEM_FROM_PACKAGE_REPLY);
+   }
+
+   public void fireDownloadPackageItemReply(DSMPBaseHandler h, 
+                                            byte flags, byte handle, 
+                                            int opid, long ofs, long size) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDownloadPackageItemReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\topid[" +opid+ "]");
+         System.out.println("\tofs [" +ofs+ "]");
+         System.out.println("\tsize[" +size+ "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DOWNLOAD_PACKAGE_ITEM_REPLY);
+   }
+
+   public void fireAddPackageAclReply(DSMPBaseHandler h, 
+                                      byte flags, byte handle) { 
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAddPackageAclReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ADD_PACKAGE_ACL_REPLY);
+   }
+
+   public void fireRemovePackageAclReply(DSMPBaseHandler h, 
+                                         byte flags, byte handle) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireRemovePackageAclReply: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_REMOVE_PACKAGE_ACL_REPLY);
+   }
+
+   
+   
+   
+  /* -------------------------------------------------------*\
+  ** Reply Errors
+  \* -------------------------------------------------------*/
+  
+   public void fireGenericReplyError(DSMPBaseHandler h, 
+                                     byte flags, byte handle, 
+                                     byte opcode, 
+                                     short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireGenericReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, opcode);
+   }
+   
+   public void fireLoginReplyError(DSMPBaseHandler h, 
+                                   byte flags, byte handle, 
+                                   short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireLoginReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_LOGIN_REPLY);
+   }
+   
+   public void fireLogoutReplyError(DSMPBaseHandler h, 
+                                    byte flags, byte handle, 
+                                    short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireLogoutReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_LOGOUT_REPLY);
+   }
+   
+   public void fireListAreaReplyError(DSMPBaseHandler h, 
+                                      byte flags, byte handle, 
+                                      short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireListAreaReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_LISTAREA_REPLY);
+   }
+   public void fireChangeAreaReplyError(DSMPBaseHandler h, 
+                                        byte flags, byte handle, 
+                                        short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireChangeAreaReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_CHANGEAREA_REPLY);
+   }
+   public void fireDeleteFileReplyError(DSMPBaseHandler h, 
+                                        byte flags, byte handle, 
+                                        short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDeleteFileReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DELETEFILE_REPLY);
+   }
+   public void fireNewFolderReplyError(DSMPBaseHandler h, 
+                                       byte flags, byte handle, 
+                                       short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireNewFolderReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_NEWFOLDER_REPLY);
+   }
+   public void fireUploadReplyError(DSMPBaseHandler h, 
+                                    byte flags, byte handle, 
+                                    short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireUploadReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_UPLOAD_REPLY);
+   }
+   public void fireAbortUploadReplyError(DSMPBaseHandler h, 
+                                         byte flags, byte handle, 
+                                         short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAbortUploadReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ABORTUPLOAD_REPLY);
+   }
+   public void fireDownloadReplyError(DSMPBaseHandler h, 
+                                      byte flags, byte handle, 
+                                      short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDownloadReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DOWNLOAD_REPLY);
+   }
+   public void fireAbortDownloadReplyError(DSMPBaseHandler h, 
+                                           byte flags, byte handle, 
+                                           short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAbortDownloadReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ABORTDOWNLOAD_REPLY);
+   }
+   
+   
+  /* -=-=-=-=-=-=-=-=-=- Start of DropBox reply errors -=-=-=-=-=-=-=-=-=- */
+   
+   public void fireCreatePackageReplyError(DSMPBaseHandler h, 
+                                           byte flags, byte handle, 
+                                           short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireCreatePackageReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_CREATE_PACKAGE_REPLY);
+   }
+
+   public void fireDeletePackageReplyError(DSMPBaseHandler h, 
+                                           byte flags, byte handle, 
+                                           short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDeletePackageReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DELETE_PACKAGE_REPLY);
+   }
+
+   public void fireCommitPackageReplyError(DSMPBaseHandler h, 
+                                           byte flags, byte handle, 
+                                           short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireCommitPackageReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_COMMIT_PACKAGE_REPLY);
+   }
+
+   public void fireQueryPackagesReplyError(DSMPBaseHandler h, 
+                                           byte flags, byte handle, 
+                                           short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackagesReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGES_REPLY);
+   }
+
+   public void fireQueryPackageReplyError(DSMPBaseHandler h, 
+                                          byte flags, byte handle, 
+                                          short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_REPLY);
+   }
+
+   public void fireQueryPackageContentsReplyError(DSMPBaseHandler h, 
+                                                  byte flags, byte handle, 
+                                                  short errorcode, 
+                                                  String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageContentsReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_CONTENTS_REPLY);
+   }
+
+   public void fireQueryPackageAclsReplyError(DSMPBaseHandler h, 
+                                              byte flags, byte handle, 
+                                              short errorcode, 
+                                              String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageAclsReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_ACLS_REPLY);
+   }
+
+   public void fireQueryPackageFileAclsReplyError(DSMPBaseHandler h, 
+                                                  byte flags, byte handle, 
+                                                  short errorcode, 
+                                                  String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryPackageFileAclsReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_PACKAGE_FILE_ACLS_REPLY);
+   }
+
+   public void fireQueryFilesReplyError(DSMPBaseHandler h, 
+                                        byte flags, byte handle, 
+                                        short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryFilesReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_FILES_REPLY);
+   }
+
+   public void fireQueryFileReplyError(DSMPBaseHandler h, 
+                                       byte flags, byte handle, 
+                                       short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireQueryFileReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_QUERY_FILE_REPLY);
+   }
+
+   public void fireAddItemToPackageReplyError(DSMPBaseHandler h, 
+                                              byte flags, byte handle, 
+                                              short errorcode, 
+                                              String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAddItemToPackageReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ADD_ITEM_TO_PACKAGE_REPLY);
+   }
+
+   public void fireUploadFileToPackageReplyError(DSMPBaseHandler h, 
+                                                 byte flags, byte handle, 
+                                                 short errorcode, 
+                                                 String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireUploadFileToPackageReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_UPLOAD_FILE_TO_PACKAGE_REPLY);
+   }
+
+   public void fireRemoveItemFromPackageReplyError(DSMPBaseHandler h, 
+                                                   byte flags, byte handle, 
+                                                   short errorcode, 
+                                                   String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireRemoveItemFromPackageReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_REMOVE_ITEM_FROM_PACKAGE_REPLY);
+   }
+
+   public void fireDownloadPackageItemReplyError(DSMPBaseHandler h, 
+                                                 byte flags, byte handle, 
+                                                 short errorcode, 
+                                                 String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDownloadPackageItemReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DOWNLOAD_PACKAGE_ITEM_REPLY);
+   }
+
+   public void fireAddPackageAclReplyError(DSMPBaseHandler h, 
+                                           byte flags, byte handle, 
+                                           short errorcode, String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAddPackageAclReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ADD_PACKAGE_ACL_REPLY);
+   }
+
+   public void fireRemovePackageAclReplyError(DSMPBaseHandler h, 
+                                              byte flags, byte handle, 
+                                              short errorcode, 
+                                              String errorStr) {
+      
+      if (printdebug && dodebug) {
+         System.out.println("-----fireRemovePackageAclReplyError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorStr + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_REMOVE_PACKAGE_ACL_REPLY);
+   }
+
+      
+  /* -------------------------------------------------------*\
+  ** Events
+  \* -------------------------------------------------------*/
+
+   public void fireDownloadFrameEvent(DSMPBaseHandler h, byte flags, 
+                                      byte handle, int id, long ofs, 
+                                      byte buf[], int bofs, int blen) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireDownloadFrameEvent: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tid   [" + id + "]");
+         System.out.println("\tofs  [" + ofs + "]");
+         System.out.println("\tblen [" + blen + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_DOWNLOADFRAME_EVENT);
+   }
+   public void fireAbortDownloadEvent(DSMPBaseHandler h, byte flags, 
+                                      byte handle, int id, int reason,
+                                      String reasonString) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireAbortDownloadEvent: " + 
+                            "\n\tflags  [" +flags+"] hand["+handle+"]");
+         System.out.println("\tid     [" + id + "]");
+         System.out.println("\treason [" + reason + "] = " + reasonString);
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_ABORTDOWNLOAD_EVENT);
+   }
+   public void fireOperationCompleteEvent(DSMPBaseHandler h, byte flags, 
+                                          byte handle, int id) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireOperationCompleteEvent: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\tid   [" +id+"]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_OPERATION_COMPLETE_EVENT);
+   }
+   
+  /* -------------------------------------------------------*\
+  ** Errors
+  \* -------------------------------------------------------*/
+   
+   public void fireUploadDataError(DSMPBaseHandler h, 
+                                   byte flags, byte handle, 
+                                   int id, short errorcode, 
+                                   String errorString) {
+      if (printdebug && dodebug) {
+         System.out.println("-----fireUploadDataError: " + 
+                            "\n\tflags[" +flags+"] hand["+handle+"]");
+         System.out.println("\terrorcode [" + errorcode + "]");
+         System.out.println("\terrorStr [" + errorString + "]");
+      }
+      uncaughtProtocol(h, DropboxGenerator.OP_UPLOADDATA_ERROR);
+   }
+   
+  /* -------------------------------------------------------*\
+  ** Checking and Dispatching
+  \* -------------------------------------------------------*/
+  
+   public void dispatchProtocolI(DSMPBaseProto proto, 
+                                 DSMPBaseHandler handler, 
+                                 boolean doDispatch) 
+                                            throws InvalidProtocolException {
+                                            
+      byte opcode = proto.getOpcode();
+      byte flags  = proto.getFlags();
+      byte handle = proto.getHandle();
+      proto.resetCursor();
+      
+      if (printdebug && dodebug && redispatch) {
+         try {
+            if (pdbg == null) {
+               pdbg = this.getClass().newInstance();
+               pdbg.setDebug(true);
+               pdbg.setRedispatch(false);
+            }
+            
+            if (bigdebug) {
+               System.out.println("==> " + proto.toString());
+            }
+            pdbg.dispatchProtocolI(proto, null, true);
+            proto.resetCursor();
+         } catch(Throwable tttt) {
+            System.out.println("Error dispatching Debug info = " + tttt.toString());
+            tttt.printStackTrace(System.out);
+         }
+         proto.resetCursor();
+      }
+      
+      if (DropboxGenerator.isReply(opcode)) {
+         boolean success = (flags & (byte)0x01) != 0;
+         if (!success) {
+            short    errorcode = proto.getShort();
+            String errorString = proto.getString8();
+            
+            proto.verifyCursorDone();
+            if (doDispatch) {
+               switch(opcode) {
+                  case DropboxGenerator.OP_LOGIN_REPLY:
+                     fireLoginReplyError(handler, flags, handle,
+                                         errorcode, errorString);
+                     break;
+                  case DropboxGenerator.OP_LOGOUT_REPLY:
+                     fireLogoutReplyError(handler, flags, handle,
+                                          errorcode, errorString);
+                     break;
+                  case DropboxGenerator.OP_LISTAREA_REPLY:
+                     fireListAreaReplyError(handler, flags, handle,
+                                            errorcode, errorString);
+                     break;
+                  case DropboxGenerator.OP_CHANGEAREA_REPLY:
+                     fireChangeAreaReplyError(handler, flags, handle,
+                                              errorcode, errorString);
+                     break;
+                  case DropboxGenerator.OP_DELETEFILE_REPLY:
+                     fireDeleteFileReplyError(handler, flags, handle,
+                                              errorcode, errorString);
+                     break;
+                  case DropboxGenerator.OP_NEWFOLDER_REPLY:
+                     fireNewFolderReplyError(handler, flags, handle,
+                                             errorcode, errorString);
+                     break;
+                  case DropboxGenerator.OP_UPLOAD_REPLY:
+                     fireUploadReplyError(handler, flags, handle,
+                                          errorcode, errorString);
+                     break;
+                  case DropboxGenerator.OP_ABORTUPLOAD_REPLY:
+                     fireAbortUploadReplyError(handler, flags, handle,
+                                               errorcode, errorString);
+                     break;
+                  case DropboxGenerator.OP_DOWNLOAD_REPLY:
+                     fireDownloadReplyError(handler, flags, handle,
+                                            errorcode, errorString);
+                     break;
+                  case DropboxGenerator.OP_ABORTDOWNLOAD_REPLY:
+                     fireAbortDownloadReplyError(handler, flags, handle,
+                                                 errorcode, errorString);
+                     break;
+                     
+                 // Dropbox Replies                 
+                     
+                  case DropboxGenerator.OP_CREATE_PACKAGE_REPLY: {
+                     fireCreatePackageReplyError(handler, flags, handle,
+                                                 errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_DELETE_PACKAGE_REPLY: {
+                     fireDeletePackageReplyError(handler, flags, handle,
+                                                 errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_COMMIT_PACKAGE_REPLY: {
+                     fireCommitPackageReplyError(handler, flags, handle,
+                                                 errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_QUERY_PACKAGES_REPLY: {
+                     fireQueryPackagesReplyError(handler, flags, handle,
+                                                 errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_QUERY_PACKAGE_REPLY: {
+                     fireQueryPackageReplyError(handler, flags, handle,
+                                                errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_QUERY_PACKAGE_CONTENTS_REPLY: {
+                     fireQueryPackageContentsReplyError(handler, flags, handle,
+                                                       errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_QUERY_PACKAGE_ACLS_REPLY: {
+                     fireQueryPackageAclsReplyError(handler, flags, handle,
+                                                    errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_QUERY_PACKAGE_FILE_ACLS_REPLY: {
+                     fireQueryPackageFileAclsReplyError(handler, flags, handle,
+                                                       errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_QUERY_FILES_REPLY: {
+                     fireQueryFilesReplyError(handler, flags, handle,
+                                              errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_QUERY_FILE_REPLY: {
+                     fireQueryFileReplyError(handler, flags, handle,
+                                             errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_ADD_ITEM_TO_PACKAGE_REPLY: {
+                     fireAddItemToPackageReplyError(handler, flags, handle,
+                                                    errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_UPLOAD_FILE_TO_PACKAGE_REPLY: {
+                     fireUploadFileToPackageReplyError(handler, flags, handle,
+                                                       errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_REMOVE_ITEM_FROM_PACKAGE_REPLY: {
+                     fireRemoveItemFromPackageReplyError(handler, flags, 
+                                                         handle,
+                                                         errorcode, 
+                                                         errorString);
+                  }
+                  case DropboxGenerator.OP_DOWNLOAD_PACKAGE_ITEM_REPLY: {
+                     fireDownloadPackageItemReplyError(handler, flags, handle,
+                                                       errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_ADD_PACKAGE_ACL_REPLY: {
+                     fireAddPackageAclReplyError(handler, flags, handle,
+                                                 errorcode, errorString);
+                  }
+                  case DropboxGenerator.OP_REMOVE_PACKAGE_ACL_REPLY: {
+                     fireRemovePackageAclReplyError(handler, flags, handle,
+                                                    errorcode, errorString);
+                  }
+                     
+               }
+            }
+         } else {
+            switch(opcode) {
+               case DropboxGenerator.OP_LOGIN_REPLY: {
+                  
+                  int loginid  = proto.getInteger();
+                  String area  = proto.getString16();
+                  String sep   = proto.getString8();
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireLoginReply(handler, flags, handle, loginid, 
+                                    area, sep);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_LOGOUT_REPLY:
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireLogoutReply(handler, flags, handle);
+                  }
+                  break;
+               case DropboxGenerator.OP_LISTAREA_REPLY: {
+                  Vector v = null;
+                  int num = proto.get3ByteInteger();
+                  if (num > 0) {
+                     v = new Vector();
+                     while(num-- > 0) {
+                        AreaContent ac = new AreaContent();
+                        ac.setType(proto.getByte());
+                        ac.setTimeDate(proto.getLong());
+                        ac.setSize(proto.getLong());
+                        ac.setArea(proto.getString16());
+                        ac.setName(proto.getString16());
+                        v.addElement(ac);
+                     }
+                  }
+                  
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireListAreaReply(handler, flags, handle, v);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_CHANGEAREA_REPLY:
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireChangeAreaReply(handler, flags, handle);
+                  }
+                  break;
+               case DropboxGenerator.OP_DELETEFILE_REPLY:
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireDeleteFileReply(handler, flags, handle);
+                  }
+                  break;
+               case DropboxGenerator.OP_NEWFOLDER_REPLY:
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireNewFolderReply(handler, flags, handle);
+                  }
+                  break;
+               case DropboxGenerator.OP_UPLOAD_REPLY: {
+                  int  id  = proto.getInteger();
+                  long ofs = proto.getLong();
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireUploadReply(handler, flags, handle, id, ofs);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_ABORTUPLOAD_REPLY: {
+                  int id = proto.getInteger();
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireAbortUploadReply(handler, flags, handle, id);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_DOWNLOAD_REPLY: {
+                  int id   = proto.getInteger();
+                  long ofs = proto.getLong();
+                  long sz  = proto.getLong();
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireDownloadReply(handler, flags, handle, id, ofs, sz);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_ABORTDOWNLOAD_REPLY: {
+                  int id = proto.getInteger();
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireAbortDownloadReply(handler, flags, handle, id);
+                  }
+                  break;
+               }
+               
+              // Dropbox Replies
+               case DropboxGenerator.OP_CREATE_PACKAGE_REPLY: {
+                  long id = proto.getLong();
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireCreatePackageReply(handler, flags, handle, id);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_DELETE_PACKAGE_REPLY: {
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireDeletePackageReply(handler, flags, handle);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_COMMIT_PACKAGE_REPLY: {
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireCommitPackageReply(handler, flags, handle);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_QUERY_PACKAGES_REPLY: {
+                  int num = proto.getInteger();
+                  Vector vec = new Vector();
+                  for(int i=0 ; i < num; i++) {
+                     PackageInfo info = new PackageInfo();
+                     info.setPackageId(proto.getLong());
+                     info.setPackageNumElements(proto.getInteger());
+                     info.setPackageStatus(proto.getByte());
+                     info.setPackageExpiration(proto.getLong());
+                     info.setPackageSize(proto.getLong());
+                     info.setPackageName(proto.getString16());
+                     vec.addElement(info);
+                  }
+                  if (doDispatch) {
+                     fireQueryPackagesReply(handler, flags, handle,
+                                            (flags & (byte)2) != 0, vec);
+                  }
+               }
+               case DropboxGenerator.OP_QUERY_PACKAGE_REPLY: {
+                  PackageInfo info = new PackageInfo();
+                  info.setPackageId(proto.getLong());
+                  info.setPackageNumElements(proto.getInteger());
+                  info.setPackageStatus(proto.getByte());
+                  info.setPackageExpiration(proto.getLong());
+                  info.setPackageSize(proto.getLong());
+                  info.setPackageName(proto.getString16());
+                  if (doDispatch) {
+                     fireQueryPackageReply(handler, flags, handle, info);
+                                           
+                  }
+               }
+               case DropboxGenerator.OP_QUERY_PACKAGE_CONTENTS_REPLY: {
+                  int  num     = proto.getInteger();
+                  long expires = proto.getLong();
+                  long size    = proto.getLong();
+                  Vector vec = new Vector();
+                  for(int i=0 ; i < num; i++) {
+                     FileInfo info = new FileInfo();
+                     info.setFileName(proto.getString16());
+                     info.setFileStatus(proto.getByte());
+                     info.setFileId(proto.getLong());
+                     info.setFileSize(proto.getLong());
+                     vec.addElement(info);
+                  }
+                  fireQueryPackageContentsReply(handler, flags, handle, 
+                                                expires, size, vec);
+               }
+               case DropboxGenerator.OP_QUERY_PACKAGE_ACLS_REPLY: {
+                  int  num   = proto.getInteger();
+                  Vector vec = new Vector();
+                  for(int i=0 ; i < num; i++) {
+                     AclInfo info = new AclInfo();
+                     info.setAclStatus(proto.getByte());
+                     info.setAclUserName(proto.getString16());
+                     info.setAclProjectName(proto.getString16());
+                     vec.addElement(info);
+                  }
+                  fireQueryPackageAclsReply(handler, flags, handle, vec);
+               }
+               case DropboxGenerator.OP_QUERY_PACKAGE_FILE_ACLS_REPLY: {
+                  int  num   = proto.getInteger();
+                  Vector vec = new Vector();
+                  for(int i=0 ; i < num; i++) {
+                     AclInfo info = new AclInfo();
+                     info.setAclStatus(proto.getByte());
+                     info.setAclUserName(proto.getString16());
+                     vec.addElement(info);
+                  }
+                  fireQueryPackageFileAclsReply(handler, flags, handle, vec);
+               }
+               case DropboxGenerator.OP_QUERY_FILES_REPLY: {
+                  int  num     = proto.getInteger();
+                  Vector vec = new Vector();
+                  for(int i=0 ; i < num; i++) {
+                     FileInfo info = new FileInfo();
+                     info.setFileName(proto.getString16());
+                     info.setFileStatus(proto.getByte());
+                     info.setFileId(proto.getLong());
+                     info.setFileSize(proto.getLong());
+                     vec.addElement(info);
+                  }
+                  fireQueryFilesReply(handler, flags, handle, 
+                                      (flags & (byte)2) != 0, vec);
+               }
+               case DropboxGenerator.OP_QUERY_FILE_REPLY: {
+                  String fname  = proto.getString16();
+                  byte   status = proto.getByte();
+                  long   size   = proto.getLong();
+                  int    num    = proto.getInteger();
+                  
+                  Vector vec = new Vector();
+                  for(int i=0 ; i < num; i++) {
+                     vec.addElement(new Long(proto.getLong()));
+                  }
+               
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireQueryFileReply(handler, flags, handle, 
+                                        fname, status, size, vec);
+                  }
+               }
+               case DropboxGenerator.OP_ADD_ITEM_TO_PACKAGE_REPLY: {
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireAddItemToPackageReply(handler, flags, handle);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_UPLOAD_FILE_TO_PACKAGE_REPLY: {
+                  long itemid  = proto.getLong();
+                  int  opid    = proto.getInteger();
+                  long ofs     = proto.getLong();
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireUploadFileToPackageReply(handler, flags, handle, 
+                                                  itemid,
+                                                  (flags & (byte)2) != 0,
+                                                   opid, ofs);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_REMOVE_ITEM_FROM_PACKAGE_REPLY: {
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireRemoveItemFromPackageReply(handler, flags, handle);
+                  }
+               }
+               case DropboxGenerator.OP_DOWNLOAD_PACKAGE_ITEM_REPLY: {
+                  int id   = proto.getInteger();
+                  long ofs = proto.getLong();
+                  long sz  = proto.getLong();
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireDownloadReply(handler, flags, handle, id, ofs, sz);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_ADD_PACKAGE_ACL_REPLY: {
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireAddPackageAclReply(handler, flags, handle);
+                  }
+                  break;
+               }
+               case DropboxGenerator.OP_REMOVE_PACKAGE_ACL_REPLY: {
+                  proto.verifyCursorDone();
+                  if (doDispatch) {
+                     fireRemovePackageAclReply(handler, flags, handle);
+                  }
+               }
+               
+            }
+         }
+      } else if (DropboxGenerator.isError(opcode)) {
+         int extra          = proto.getExtraInt();
+         short errorcode    = proto.getShort();
+         String errorString = proto.getString8();
+         proto.verifyCursorDone();
+         if (doDispatch) {
+            switch(opcode) {
+               case DropboxGenerator.OP_UPLOADDATA_ERROR:
+                  fireUploadDataError(handler, flags, handle, extra,
+                                      errorcode, errorString);
+                  break;
+            }
+         }
+      } else if (DropboxGenerator.isEvent(opcode)) {
+         
+         switch(opcode) {
+            case DropboxGenerator.OP_DOWNLOADFRAME_EVENT: {
+               int id          = proto.getInteger();
+               long ofs        = proto.getLong();
+               CompressInfo ci = proto.getDataAtCursor();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireDownloadFrameEvent(handler, flags, handle, 
+                                         id, ofs, ci.buf, ci.ofs, ci.len);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_ABORTDOWNLOAD_EVENT: {
+               int    id          = proto.getInteger();
+               int    reason      = proto.getInteger();
+               String reasonStr   = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireAbortDownloadEvent(handler, flags, handle, id, 
+                                         reason, reasonStr);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_OPERATION_COMPLETE_EVENT: {
+               int  id = proto.getInteger();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireOperationCompleteEvent(handler, flags, handle, id);
+               }
+               break;
+            }
+         }            
+      } else if (DropboxGenerator.isCommand(opcode)) {
+      
+         switch(opcode) {
+            case DropboxGenerator.OP_LOGIN: {
+               String tokenUser = proto.getString16();
+               String pw        = proto.getString8();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  if ((flags & (byte)0x01) != 0) {
+                     fireLoginCommandToken(handler, flags, handle, tokenUser);
+                  } else {
+                     fireLoginCommandUserPW(handler, flags, handle, 
+                                            tokenUser, pw);
+                  }
+               }
+               break;
+            }
+            case DropboxGenerator.OP_LOGOUT: {
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireLogoutCommand(handler, flags, handle);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_CHANGEAREA: {
+               String area = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireChangeAreaCommand(handler, flags, handle, area);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_LISTAREA: {
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireListAreaCommand(handler, flags, handle);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_DELETEFILE: {
+               String file = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireDeleteFileCommand(handler, flags, handle, file);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_NEWFOLDER: {
+               String folder = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireNewFolderCommand(handler, flags, handle, folder);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_UPLOAD: {
+               int  crc     = proto.getInteger();
+               long crcsz   = proto.getLong();
+               long filelen = proto.getLong();
+               String file  = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireUploadCommand(handler, flags, handle, 
+                                    (flags & (byte)1) != 0, crc, crcsz,
+                                    filelen, file);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_ABORTUPLOAD: {
+               int  id = proto.getInteger();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireAbortUploadCommand(handler, flags, handle, id);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_UPLOADDATA: {
+               int  id         = proto.getInteger();
+               long ofs        = proto.getLong();
+               CompressInfo ci = proto.getDataAtCursor();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireUploadDataCommand(handler, flags, handle,
+                                        id, ofs, ci);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_DOWNLOAD: {
+               int  crc     = proto.getInteger();
+               long filelen = proto.getLong();
+               String file  = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireDownloadCommand(handler, flags, handle, 
+                                      (flags & (byte)1) != 0, 
+                                      crc, filelen, file);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_ABORTDOWNLOAD: {
+               int  id = proto.getInteger();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireAbortDownloadCommand(handler, flags, handle, id);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_OPERATION_COMPLETE: {
+               int  id = proto.getInteger();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireOperationCompleteCommand(handler, flags, handle, id);
+               }
+               break;
+            }
+         
+         
+           // Start of DropBox specific commands
+            case DropboxGenerator.OP_CREATE_PACKAGE: {
+               String packname = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireCreatePackageCommand(handler, flags, handle, packname);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_DELETE_PACKAGE: {
+               long packid = proto.getLong();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireDeletePackageCommand(handler, flags, handle, packid);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_COMMIT_PACKAGE: {
+               long packid = proto.getLong();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireCommitPackageCommand(handler, flags, handle, packid);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_QUERY_PACKAGES: {
+               String regexp = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireQueryPackagesCommand(handler, flags, handle, 
+                                           (flags & (byte)1) != 0,  
+                                           (flags & (byte)2) != 0,  
+                                           regexp);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_QUERY_PACKAGE: {
+               long packid = proto.getLong();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireQueryPackageCommand(handler, flags, handle, packid);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_QUERY_PACKAGE_CONTENTS: {
+               long packid = proto.getLong();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireQueryPackageContentsCommand(handler, flags, handle, 
+                                                  packid);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_QUERY_PACKAGE_ACLS: {
+               long packid = proto.getLong();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireQueryPackageAclsCommand(handler, flags, handle, packid);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_QUERY_PACKAGE_FILE_ACLS: {
+               long packid = proto.getLong();
+               long fileid = proto.getLong();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireQueryPackageFileAclsCommand(handler, flags, handle, 
+                                                  packid, fileid);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_QUERY_FILES: {
+               String regexp = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireQueryFilesCommand(handler, flags, handle, 
+                                        (flags & (byte)1) != 0,  
+                                        (flags & (byte)2) != 0,  
+                                        regexp);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_QUERY_FILE: {
+               long fileid = proto.getLong();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireQueryFileCommand(handler, flags, handle, fileid);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_ADD_ITEM_TO_PACKAGE: {
+               long packid = proto.getLong();
+               long fileid = proto.getLong();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireAddItemToPackageCommand(handler, flags, handle, 
+                                              packid, fileid);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_UPLOAD_FILE_TO_PACKAGE: {
+               long packid  = proto.getLong();
+               int  crc     = proto.getInteger();
+               long crcsz   = proto.getLong();
+               long filelen = proto.getLong();
+               String file  = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireUploadFileToPackageCommand(handler, flags, handle, 
+                                                 (flags & (byte)1) != 0, 
+                                                 packid, crc, crcsz,
+                                                 filelen, file);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_REMOVE_ITEM_FROM_PACKAGE: {
+               long packid = proto.getLong();
+               long fileid = proto.getLong();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireRemoveItemFromPackageCommand(handler, flags, handle, 
+                                                   packid, fileid);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_DOWNLOAD_PACKAGE_ITEM: {
+               long packid  = proto.getLong();
+               int  crc     = proto.getInteger();
+               long filelen = proto.getLong();
+               long fileid  = proto.getLong();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireDownloadPackageItemCommand(handler, flags, handle, 
+                                                 (flags & (byte)1) != 0, 
+                                                 packid, crc, filelen, fileid);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_ADD_PACKAGE_ACL: {
+               long packid    = proto.getLong();
+               String aclname = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireAddPackageAclCommand(handler, flags, handle, 
+                                           (flags & (byte)1) != 0, 
+                                           packid, aclname);
+               }
+               break;
+            }
+            case DropboxGenerator.OP_REMOVE_PACKAGE_ACL: {
+               long packid    = proto.getLong();
+               String aclname = proto.getString16();
+               proto.verifyCursorDone();
+               if (doDispatch) {
+                  fireRemovePackageAclCommand(handler, flags, handle, 
+                                              (flags & (byte)1) != 0, 
+                                              packid, aclname);
+               }
+               break;
+            }
+         }
+            
+      } else {
+         super.dispatchProtocolI(proto, handler, doDispatch);
+      }
+   }
+}

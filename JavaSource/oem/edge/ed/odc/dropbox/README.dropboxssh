@@ -1,0 +1,13 @@
+1) openssh-3.6.1p1.tar.gz contains the vanilla openssh code as downloaded from 
+   openssh.org
+  
+2) sftpdropbox.tar contains all the modifications to the base to accomplish
+   our goals for sshd/sftp-server. 
+   
+3) to build, gunzip openssh tar, untar it, then untar the contents of    
+   sftpdropbox.tar into the openssh subdir. Run ksh ./joebuild  ... when
+   complete, gmake, then gmake install to install it.  See the README.JMC
+   and README.DROPBOXSSH readme files contained in sftpdropbox.tar
+
+4) A built/installed version of the dropboxssh code is in 
+   content/lib/dropboxssh.tar.Z

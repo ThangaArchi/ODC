@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib
+ PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+ "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<!-- a tag library descriptor -->
+
+<taglib>
+  <!-- after this the default space is
+        "http://java.sun.com/j2ee/dtds/jsptaglibrary_1_2.dtd"
+   -->
+
+  <tlibversion>1.0</tlibversion>
+  <jspversion>1.1</jspversion>
+  <shortname>webdbx</shortname>
+  <info>
+    Provides various utils based on opstr..opstr=sizeunits,value1=10
+  </info>
+
+<tag>
+    <name>webdbxutils</name>
+    <tagclass>oem.edge.ed.odc.webdropbox.server.WebDbxUtils</tagclass>
+    <bodycontent>empty</bodycontent>
+    <info>Provides various utils based on opstr..opstr=sizeunits,value1=10</info>
+    <attribute>
+      <name>opstr</name>
+      <required>false</required>
+    </attribute>
+	<attribute>
+      <name>value1</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+	<attribute>
+      <name>value2</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+	<attribute>
+      <name>value3</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+	<attribute>
+      <name>utilstr1</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+	<attribute>
+      <name>utilstr2</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+	<attribute>
+      <name>utilstr3</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+</taglib>

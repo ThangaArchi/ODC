@@ -1,0 +1,168 @@
+#!/bin/ksh
+
+#
+# Create a sed filter from the dsmaster.properties file which can be run 
+#  to adjust Postinstall and Properties orig files
+#
+# Assumption is that any line which has an equalsign and does NOT begin with '#'
+#  is a valid property for which we want to substitute
+#
+if [ "x$1" = x -o ! -r "$1" ] ; then
+   print "Usage: $(basename $0) master-xxx.properties <SD | ODC>   [ODC is default]"
+   print
+   print "   This file will process the provided master-xxx.properties file and "
+   print "   adjust the -orig version of the postinstall and properties files for"
+   print "   the install. It figures out the install point by looking in the"
+   print "   dsmaster-xxx.properties file for MASTER_ODC_EARTOP (or SD) and working"
+   print "   down from there"
+   exit 4
+fi
+
+masterfile=$1
+
+
+EAR="ODC"
+if [ "x$2" != x ] ; then
+   EAR="$2"
+fi
+
+tmpfile=/tmp/sedupdate.tmp.$$
+newmasterfile=/tmp/masterfile.tmp.$$
+
+fgrep '=' $masterfile | grep -v '^#.*' | \
+awk -v sq="'" -v dq='"' -v dollar='$' -v tmpfile="$tmpfile" \
+                                      -v newmaster="$newmasterfile" '
+  BEGIN {
+     printf "" > tmpfile
+     printf "" > newmaster
+  }
+  {
+     idx=index($0, "=")
+     pre  = substr($0, 1, idx-1)
+     sub(/^ */, "", pre)
+     sub(/ *$/, "", pre)
+     post = substr($0, idx+1)
+     sub(/^ */, "", post)
+     sub(/ *$/, "", post)
+     
+     if (keyarr[pre] != "") {
+        printf("Key %s already specified in master file. Ignoring entry", pre)
+     } else {
+      #  printf("Adding [%s=%s]\n", pre, post)
+        keyarr[pre] = post
+     }
+  }
+  
+  END { 
+  
+    # Make a pass till clean, or till we do it 100 times
+     for (key in keyarr) {
+        pass = 1
+        didit = 1
+        
+        for(pass=1; didit == 1 && pass <= 100; pass++) {
+        
+           didit = 0;
+           
+           val = keyarr[key]
+           
+           v1 = val
+           pre=""
+#           printf("Serarching for match in %s\n", v1)
+           while((i1 = match(v1, /\${.*}/)) > 0) {
+#              printf("Got initial match at %d\n", i1)
+              if (i1 > 1) {
+                 pre = pre substr(v1, 1, i1-1)
+              }
+              
+              v1 = substr(v1, i1+2)
+              v2 = index(v1, "}")
+              post = substr(v1, v2+1)
+              newvar = substr(v1, 1, v2-1)
+              
+#              printf("Index v2=%d  post=%s  newvar = %s\n", v2, post, newvar)
+                 
+              if (newvar in keyarr) {
+                 didit = 1
+                 newval = pre keyarr[newvar] post
+                 keyarr[key] = newval
+#                 printf("Info: [%s=%s] => [%s=%s]\n", key, val, key, newval)
+                 break
+              } else {
+                 pre = pre "${" newvar "}" 
+                 v1 = post
+              }
+           }
+        }
+     }
+     
+    # Now create sed script
+     rec=1
+     for (key in keyarr) {
+        val = keyarr[key]
+        printf("Adding [%s=%s]\n", key, val)
+        printf("%s = %s\n", key, val) >> newmaster
+        
+        sep = "#"
+        sep = findsep(key val)
+        printf ("s%s\\%s{%s}%s%s%sg;\n", sep, dollar, key, 
+                                      sep, val, sep) >> tmpfile
+        rec++
+     }
+  }
+  
+  function findsep(s) {
+     ts="#,@!%_=|abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+     ret="#"
+     l=length(ts)
+     for(i=1; i <= l; i++) {
+        ret = substr(ts, i, 1)
+        if (index(s, ret) <= 0) return ret
+     }
+     return ","
+  }
+'
+
+MV="MASTER_$EAR""_EARTOP"
+eartop="$(fgrep $MV $newmasterfile | sed 's/.*=[ ]*\([^ ].*\)[ ]*$/\1/')"
+
+print "Updating files found in $eartop"
+
+#
+# We apply to ALL properties, but only to -orig bins. Thought here is we only
+#  ship/keep -orig versions when the main prop is modified. If there IS an
+#  orig, then we use that, otherwise we create an orig. If, after doing the 
+#  sed, they are identical, we will simply leave things as we found them. 
+#
+for i in $eartop/properties/*.properties  $eartop/$EAR.war/bin/*-orig ; do
+   if [ -r "$i" ] ; then
+      print "Fixing $i"
+      overridefile="${i%-orig}"
+      if [ "x$overridefile" = "x$i" ] ; then
+         overridefile="$i"
+         i="$i""-orig"
+         
+        # If -orig file exists ... use that
+         if [ -r "$i" ] ; then
+            sed -f $tmpfile $i > $overridefile
+         else 
+            mv "$overridefile" "$i"
+            if [ $? = 0 ] ; then
+               sed -f $tmpfile $i > $overridefile
+               cmp "$overridefile" "$i" > /dev/null 2>&1
+               if [ $? = 0 ] ; then
+                  rm -f "$overridefile"
+                  mv "$i" "$overridefile"
+               fi
+            else
+               print -u2 "Error backing up file $overridefile to -orig"
+            fi
+         fi
+      else
+         sed -f $tmpfile $i > $overridefile
+      fi
+   fi
+done
+
+rm -f $tmpfile
+rm -f $newmasterfile

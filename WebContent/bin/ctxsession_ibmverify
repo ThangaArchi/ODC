@@ -1,0 +1,35 @@
+#
+# This file should be sourced (dotted) on all Hosting CPUs in the
+# ctxsession.sh file, just below the setting of IP_ALL and IP_BASE
+#
+# The IP_ALL value is actually the company name. This file checks that
+# the passed in company is listed in the hostingverify.file. This is a
+# secondary check to prevent inappropriate access to a hosting box if
+# a human error occurs when modifying the hmapping file.
+#
+# The actual filename/location for the HOSTINGVERIFYFILE and ERRORFILE
+# are arbitrary, but the loginid for the user logging in must be able to
+# read HOSTINGVERIFYFILE, and write ERRORFILE. The syntax for the
+# HOSTINGVERIFYFILE is simply a list of company names which are allowed to
+# login to the hosting CPU. Its probably a good idea to put IBM in this list
+#
+HOSTINGVERIFYFILE=/usr/lpp/CTXSmf/lib/hostingverify.file
+ERRORFILE=/tmp/ctx.exited.$(whoami)
+if [ -z "$IP_ALL" ] ; then
+   echo "Exited login: $(date) NULL value for IP_ALL!" >> "$ERRORFILE"
+   exit 4
+fi
+
+if [ -e "$HOSTINGVERIFYFILE" ] ; then
+   grep -w $(echo "$IP_ALL" | tr ' \t' '__') "$HOSTINGVERIFYFILE"
+   if [ $? != 0 ] ; then
+      echo "Exited login: $(date) [$IP_ALL] not in file!" >> "$ERRORFILE"
+      exit 4
+   fi
+else
+   echo "Exited login: $(date) [$IP_ALL] $HOSTINGVERIFYFILE not found!" >> "$ERR
+ORFILE"
+   exit 4
+fi
+unset IP_ALL
+unset IP_BASE

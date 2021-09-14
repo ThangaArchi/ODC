@@ -1,0 +1,301 @@
+# ERROR CODES
+# 101 - Could not decode the token
+# 102 - Could not find an available afs id to map the user to
+# 103 - ISPROD value is neither I nor P
+# 104 - Invalid Grid Dir
+# 105 - Could not read adminID
+# 106 - Could not login as adminID
+# 107 - Could Not change to the grid dir
+# 108 - Could Not change to the linked path
+# 109 - Could Not set acls for the user
+# 110 - Could Not login with the user id
+# 111 - Could Not find the projects dir in the mapped userids profile
+# 112 - Could Not create the sym links in the users profile
+# 113 - Could not copy the XAUTH File
+# 114 - Could not LaunchPubApp
+# 115 - Could not remove XAUTH
+# 116 - Could not change to install dir
+# 117 - Could not change to grid dir
+# 118 - Could not unset the acls for the userid
+# 119 - Could not return the id to the idmanager 
+set -x
+tokenvalue=$1
+echo token value is  $tokenvalue  
+export CLASSPATH=./EDODCRemoteViewer.jar
+error="Error"
+echo `pwd` | read installDir
+echo installdir is $installDir
+export INSTALLDIR=$installDir
+echo `grep "^ISPROD=" PubApp.properties `| cut -f2 -d = | read deployedEnv 
+
+if [ $deployedEnv = 'I' ]
+then
+	echo `grep "^IgridDir=" PubApp.properties `| cut -f2 -d = | read gridDir
+
+elif [ $deployedEnv = 'P' ]
+then
+	echo `grep "^PgridDir=" PubApp.properties `| cut -f2 -d = | read gridDir
+else
+	echo Delpoyed environment Unrecognozed
+	exit 103
+fi
+
+echo gridDir is $gridDir
+
+if [[ -z $gridDir ]]
+then
+	echo Invalid Grid Dir
+ 	exit 104
+fi
+
+
+echo  Original Tokens `/usr/afsws/bin/tokens`
+
+echo Tokens after unlogging `/usr/afsws/bin/tokens`
+
+# Decoding the token
+echo `java oem.edge.ed.odc.remoteviewer.ValidatePubApp token $tokenvalue decodekey PubAppTest_Decode.key` | read decodedToken 
+decodedToken="pubApp@crichton"
+echo decodedtoken is $decodedToken
+
+# Splitting into userid and pubApp
+
+echo $decodedToken |cut -f2 -d @   | read userid
+echo $decodedToken |cut -f1 -d @   | read pubApp
+echo userid $userid appname $pubApp
+
+# Checking for error in decoding the token
+if [ $pubApp = $error ]
+then
+echo test error is $userid >&2
+exit 101
+fi
+
+# Mapping the userid to the afs userid to be used
+#echo `grep $userid $mappingfile `| cut -f2 -d : | read login 
+echo `pwd` 
+$installDir/idManager obtainid |  read mappedID
+echo mapped id is $mappedID
+echo $mappedID | cut -f1 -d : | read login
+
+if [ $login = $error	]
+then
+echo $userid does not have the required permissions 
+exit 102
+fi
+
+
+#Opening the adminID file to get the admin userid and password
+adminIDfile="$installDir/adminID"
+adminID="adminID"
+echo `grep $adminID $adminIDfile `| cut -f2 -d : | read adminlogin
+
+if [[ -z $adminID ]]
+then
+        echo Could Not read admin id  
+        exit 105
+fi
+
+# KLOGing with the adminID and the decoded password from the adminID file
+grep "^$adminID:" $adminIDfile  | cut -f3 -d :  | java oem.edge.ed.odc.remoteviewer.Base64DecoderForPubApp | /usr/afsws/bin/klog $adminlogin -pipe
+
+if [ "$?" -ne "0" ]
+then
+        echo Could Not login with the admin id
+        exit 106
+fi
+
+echo `pwd`| read pwd
+echo this is the present working order $pwd
+
+echo Tokens after Klogging as admin `/usr/afsws/bin/tokens`
+
+# Getting a list of all the projects the ccid should have access to
+ 
+cd $gridDir
+cd ccid
+cd $userid
+if [ "$?" -ne "0" ]
+then
+        echo Could Not change to the grid dir
+        exit 107
+fi
+echo `ls -l | tr -s "\t" " " | cut -f11 -d" "` | read  projectlinks
+echo $projectlinks
+temp=$projectlinks 
+print ${#temp}
+i=0
+ while [ temp ]
+ do
+	path=${temp%% *}
+        echo path is $path
+        cd $path
+       	if [ "$?" -ne "0" ]
+	then
+        	echo Could Not change to the linked path
+        	exit 108
+	fi
+	echo `pwd` | read realpath
+        echo realpath is $realpath
+        assignedProject[i=i+1]=${realpath#$gridDir/}
+        
+	
+	temp=${temp#${path} }
+ 	if [ $path = $temp ]
+	then
+		break
+	exit
+	fi
+
+done
+echo i is $i 
+
+# Setting the acls for the project dirs in the grid home
+
+cd $gridDir 
+j=0
+while [ i -gt j ]
+do
+	projdir=${assignedProject[j=j+1]%%/*}
+	echo projdir is $projdir
+	$pwd/_set_acl $projdir $login read
+	if [ "$?" -ne "0" ]
+	then
+        	echo Could Not set acls for the id in the grid dir
+        	exit 109
+	fi
+done
+print ${assignedProject[@]}
+ 
+echo `pwd`
+/usr/afsws/bin/unlog
+cd $pwd
+passwdfile=/etc/passwd 
+
+
+# KLOGing with the userid and the decoded password from the mapping file 
+
+#grep "^$userid:" $mappingfile  | cut -f3 -d :  | java oem.edge.ed.odc.remoteviewer.Base64DecoderForPubApp | /usr/afsws/bin/klog -setpag $login -pipe
+
+
+echo $mappedID | cut -f2 -d : | java oem.edge.ed.odc.remoteviewer.Base64DecoderForPubApp | /usr/afsws/bin/klog -setpag $login -pipe
+if [ "$?" -ne "0" ]
+then
+        echo Could Not login with the user id
+        exit 110
+fi
+
+
+grep "^$login:" $passwdfile  | cut -f6 -d :  | read logindir
+echo logindir is $logindir
+cd $logindir
+cd projects
+
+if [ "$?" -ne "0" ]
+then
+        echo Could Not find the projects dir in the mapped userids profile 
+        exit 111
+fi
+
+rm -f *
+
+k=0
+while [ i -gt k ]
+do
+        projlinkdir=$gridDir"/"${assignedProject[k=k+1]}
+        echo projlinkdir is $projlinkdir
+ 	projname=${projlinkdir##*/}
+	echo projname is $projname
+	echo Creating Links in `pwd`
+	ln -s $projlinkdir $projname
+	if [ "$?" -ne "0" ]
+	then
+       		echo Could not create the sym links in the users dir
+        	exit 112
+	fi
+  
+done
+
+
+# Checking the tokens obtained
+echo `/usr/afsws/bin/tokens`
+
+# Copying the current userid's .Xauthority file to the Klogged user id's home
+
+dest="/afs/eda/u/$login/public/.Xauthority$$"
+echo $dest
+cp "$HOME/.Xauthority" $dest 
+if [ "$?" -ne "0" ]
+then
+	echo Could not copy the XAUTH File 
+        exit 113
+fi
+
+
+echo home $HOME
+
+cd $pwd
+
+# Starting the program to start the viewer
+$installDir/LaunchPubApp $login $pubApp $dest
+echo $?
+if [ "$?" -ne "0" ]
+then
+        echo Could not LaunchPubApp
+        exit 114
+fi
+
+echo `whoami` 
+
+# Removing the .Xauthority file from the Klogged user id's home
+rm $dest
+if [ "$?" -ne "0" ]
+then
+        echo Could not remove XAUTH
+        exit 115
+fi
+
+# Removing the tokens for the Klogged userid's cell
+/usr/afsws/bin/unlog
+
+cd $pwd
+if [ "$?" -ne "0" ]
+then
+        echo Could not change to install dir
+        exit 116
+fi
+echo $pwd
+echo $adminlogin
+# KLOGing with the adminID and the decoded password from the adminID file
+grep "^$adminID:" $adminIDfile  | cut -f3 -d :  | java oem.edge.ed.odc.remoteviewer.Base64DecoderForPubApp | /usr/afsws/bin/klog $adminlogin -pipe
+
+
+cd $gridDir
+if [ "$?" -ne "0" ]
+then
+        echo Could not change to grid dir
+        exit 117
+fi
+j=0
+while [ i -gt j ]
+do
+	projdir=${assignedProject[j=j+1]%%/*}
+        echo $projdir
+        $pwd/_set_acl $projdir $login none
+	if [ "$?" -ne "0" ]
+	then
+        	echo Could not unset the acls for the userid
+        exit 118
+	fi
+ 
+done
+
+cd $pwd
+
+$installDir/idManager returnid $login
+	if [ "$?" -ne "0" ]
+        then
+                echo Could not return the id to the idmanager
+        exit 119
+        fi
+

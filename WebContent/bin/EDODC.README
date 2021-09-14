@@ -1,0 +1,155 @@
+
+        
+          EDesign Collaboration (EDODC)
+        
+        
+                
+        
+Build, Installation, Customization, and Runtime notes        
+-----------------------------------------------------
+
+
+Build
+-----
+
+To build the EDODC component, simply export the environment variable TREE_TOP
+to be the top of the source tree (containing java, bin, config, ...)
+
+  (for ksh) export TREE_TOP=/fullpath/edodc/com
+  (for csh) setenv TREE_TOP /fullpath/edodc/com
+
+Once TREE_TOP is correctly set, simply run 'make all'
+
+
+The EDOCCollab.tar file will be generated.   It is assumed that javac is in
+your PATH.
+
+
+
+Delivery        
+--------
+
+The EDesign Collaboration component is delivered in a single tar file,
+
+  EDOCCollab.tar
+  
+  
+This tar contains multiple jar files as well as this README, the collaboration
+properties file, ..., and a postinstall script which will customize the shells
+with the proper values.
+
+
+Installation
+------------
+
+To install, simply untar the EDODCCollab.tar file in the 'correct' place, edit
+the bin/EDODCPostinstall script to set the specific information needed, and 
+then run said postinstall.
+
+To untar:
+
+   tar -xvf EDODCCollab.tar
+   
+   
+The following envvars should be customized:
+
+EDCITRIXHOST - The Citrix hostname
+EDWSHOST     - The Websphere hostname
+EDJARDIR     - The directory where the EDODC jar files are installed
+EDBINDIR     - The directory where the EDODC bin files are installed
+XMXINSTDIR   - Root directory for XMX install
+
+If EDJARDIR and EDBINDIR are not modified, then the current directory will
+be used and /jars and /bin will be the locations respectively.  In anycase, 
+the EDODCPostinstall must be run after the files are untarred, and the 'bin'
+directory must be in the current directory (we modify bin/xxx).  This will be
+true if the untar is immediately followed by bin/EDODCPostinstall.
+
+
+   
+Customization
+-------------
+
+Some customization is accomplished above, by running the EDODCPostinstall.
+
+When setting up Websphere to run the EDODC component, there are 3 servlets 
+which must be properly defined:
+
+
+Servlets:
+-----------------------------------------------------------------------------
+oem.edge.edodc.cntl.DesktopServlet 
+
+   direct: EDODCDesktopBackend.jar   depend: ConfigIni.jar
+                                             EDODCTunnelBackend.jar
+                                             edesign_edodc_desktop.properties
+                                             
+   uri: /servlet/oem/edge/edodc/desktop
+   
+
+  Customize the servlet initialization parameters contained in edodc/com/data/edesign_edodc_desktop.properties  
+
+                                              
+-----------------------------------------------------------------------------
+oem.edge.edodc.tunnel.servlet.ReceiveFromClient
+oem.edge.edodc.tunnel.servlet.SendToClient
+
+   direct: EDODCTunnelBackend.jar    depend: EDODCDesktopBackend.jar
+                                             ConfigIni.jar
+
+   uri: /servlet/oem/edge/edodc/tunnel/servlet/<ServletName>
+
+-----------------------------------------------------------------------------
+                                             
+                                             
+If the jars are being added to the classpath, then just ensure the direct and 
+depend jars are in the classpath. If they are being extracted, then simply 
+extract all of them (jar -vxf) into a directory which is in the classpath.
+
+The EDODCWebAccess.jar is duplication of code coming from the edcm component,
+so said jar may be left out if served with edcm.
+
+
+Applets:
+-----------------------------------------------------------------------------
+oem.edge.edodc.tunnel.applet.HttpTunnelClient
+
+   direct: EDODCTunnelClient.jar    depend: none
+-----------------------------------------------------------------------------
+   
+The tunnel applet is a self contained JAR file. What needs to be done, however,
+is the jar needs to be signed, AND a signed CAB also needs to be generated.
+
+Once generated, the signed jar/cab files should be placed in the document
+root directory of the websphere server.
+
+Please contact Joe Crichton (tl/532-9718) for more information.
+
+
+Applications:
+-----------------------------------------------------------------------------
+oem.edge.edodc.gui.CollaborationManager
+
+   direct: EDODCDesktopGUI.jar      depend: EDODCDesktopBackend.jar
+                                            ConfigIni.jar
+-----------------------------------------------------------------------------
+
+The desktop is started via the 'startdesktop' script. The EDODCPostinstall 
+customizes said script to set the classpath appropriately so this application
+will launch. The assumption is that all the jars which are unpacked from the
+EDODCCollab.tar file live in the jars directory. If this is not true, then
+the startdesktop script will have to be modified accordingly.
+
+
+DB2
+---
+
+ Customize the servlet initialization parameters contained in edodc/com/data/edesign_edodc_desktop.properties  
+
+ Customize the DB2 initialization  parameters contained in edodc/com/data/edodcdb.ddl
+ 
+
+
+
+
+

@@ -1,0 +1,1476 @@
+package oem.edge.ed.odc.dropbox.common;
+
+import  oem.edge.ed.odc.ftp.common.*;
+import  oem.edge.ed.odc.dsmp.common.*;
+
+import java.lang.*;
+import java.util.*;
+
+public class DropboxGenerator extends FTPGenerator {
+
+  // Status values
+   public final static byte STATUS_NONE                = 1;
+   public final static byte STATUS_INCOMPLETE          = 2;
+   public final static byte STATUS_COMPLETE            = 3;
+   public final static byte STATUS_FAIL                = 4;
+   public final static byte STATUS_PROJECT             = 5;
+   public final static byte STATUS_PARTIAL             = 6;
+
+  // Using bit7 is offlimits! Used for proto-morphing
+   public final static byte FLAGS_BIT0                 = (byte)0x01;
+   public final static byte FLAGS_BIT1                 = (byte)0x02;
+   public final static byte FLAGS_BIT2                 = (byte)0x04;
+   public final static byte FLAGS_BIT3                 = (byte)0x08;
+   public final static byte FLAGS_BIT4                 = (byte)0x10;
+   public final static byte FLAGS_BIT5                 = (byte)0x20;
+   public final static byte FLAGS_BIT6                 = (byte)0x40;
+   public final static byte FLAGS_XTRAINT              = (byte)0x80;
+
+   public final static byte OPCOMMAND                  = (byte)1;
+   public final static byte OPREPLY                    = (byte)41;
+   public final static byte OPEVENT                    = (byte)81;
+   public final static byte OPERROR                    = (byte)101;
+
+      
+  // FTP Commands
+   public final static byte OP_LOGIN                   = (OPCOMMAND+1);
+   public final static byte OP_LOGOUT                  = (OPCOMMAND+2);
+   public final static byte OP_LISTAREA                = (OPCOMMAND+3);
+   public final static byte OP_CHANGEAREA              = (OPCOMMAND+4);
+   public final static byte OP_DELETEFILE              = (OPCOMMAND+5);
+   public final static byte OP_NEWFOLDER               = (OPCOMMAND+6);
+   public final static byte OP_UPLOAD                  = (OPCOMMAND+7);
+   public final static byte OP_ABORTUPLOAD             = (OPCOMMAND+8);
+   public final static byte OP_UPLOADDATA              = (OPCOMMAND+9);
+   public final static byte OP_DOWNLOAD                = (OPCOMMAND+10);
+   public final static byte OP_ABORTDOWNLOAD           = (OPCOMMAND+11);
+   public final static byte OP_OPERATION_COMPLETE      = (OPCOMMAND+12);
+   
+  // Dropbox Commands
+   public final static byte OP_CREATE_PACKAGE          = (OPCOMMAND+13);
+   public final static byte OP_DELETE_PACKAGE          = (OPCOMMAND+14);
+   public final static byte OP_COMMIT_PACKAGE          = (OPCOMMAND+15);
+   public final static byte OP_QUERY_PACKAGES          = (OPCOMMAND+16);
+   public final static byte OP_QUERY_PACKAGE           = (OPCOMMAND+17);
+   public final static byte OP_QUERY_PACKAGE_CONTENTS  = (OPCOMMAND+18);
+   public final static byte OP_QUERY_PACKAGE_ACLS      = (OPCOMMAND+19);
+   public final static byte OP_QUERY_PACKAGE_FILE_ACLS = (OPCOMMAND+20);
+   public final static byte OP_QUERY_FILES             = (OPCOMMAND+21);
+   public final static byte OP_QUERY_FILE              = (OPCOMMAND+22);
+   public final static byte OP_ADD_ITEM_TO_PACKAGE     = (OPCOMMAND+23);
+   public final static byte OP_UPLOAD_FILE_TO_PACKAGE  = (OPCOMMAND+24);
+   public final static byte OP_REMOVE_ITEM_FROM_PACKAGE =(OPCOMMAND+25);
+   public final static byte OP_DOWNLOAD_PACKAGE_ITEM   = (OPCOMMAND+26);
+   public final static byte OP_ADD_PACKAGE_ACL         = (OPCOMMAND+27);
+   public final static byte OP_REMOVE_PACKAGE_ACL      = (OPCOMMAND+28);
+   public final static byte OPLASTCOMMAND           = (OP_REMOVE_PACKAGE_ACL);
+   
+  // FTP Replies
+   public final static byte OP_LOGIN_REPLY             = (OPREPLY  +1);
+   public final static byte OP_LOGOUT_REPLY            = (OPREPLY  +2);
+   public final static byte OP_LISTAREA_REPLY          = (OPREPLY  +3);
+   public final static byte OP_CHANGEAREA_REPLY        = (OPREPLY  +4);
+   public final static byte OP_DELETEFILE_REPLY        = (OPREPLY  +5);
+   public final static byte OP_NEWFOLDER_REPLY         = (OPREPLY  +6);
+   public final static byte OP_UPLOAD_REPLY            = (OPREPLY  +7);
+   public final static byte OP_ABORTUPLOAD_REPLY       = (OPREPLY  +8);
+   public final static byte OP_DOWNLOAD_REPLY          = (OPREPLY  +9);
+   public final static byte OP_ABORTDOWNLOAD_REPLY     = (OPREPLY  +10);
+                                        
+  // Dropbox Replies
+   public final static byte OP_CREATE_PACKAGE_REPLY           = (OPREPLY  +11);
+   public final static byte OP_DELETE_PACKAGE_REPLY           = (OPREPLY  +12);
+   public final static byte OP_COMMIT_PACKAGE_REPLY           = (OPREPLY  +13);
+   public final static byte OP_QUERY_PACKAGES_REPLY           = (OPREPLY  +14);
+   public final static byte OP_QUERY_PACKAGE_REPLY            = (OPREPLY  +15);
+   public final static byte OP_QUERY_PACKAGE_CONTENTS_REPLY   = (OPREPLY  +16);
+   public final static byte OP_QUERY_PACKAGE_ACLS_REPLY       = (OPREPLY  +17);
+   public final static byte OP_QUERY_PACKAGE_FILE_ACLS_REPLY  = (OPREPLY  +18);
+   public final static byte OP_QUERY_FILES_REPLY              = (OPREPLY  +19);
+   public final static byte OP_QUERY_FILE_REPLY               = (OPREPLY  +20);
+   public final static byte OP_ADD_ITEM_TO_PACKAGE_REPLY      = (OPREPLY  +21);
+   public final static byte OP_UPLOAD_FILE_TO_PACKAGE_REPLY   = (OPREPLY  +22);
+   public final static byte OP_REMOVE_ITEM_FROM_PACKAGE_REPLY = (OPREPLY  +23);
+   public final static byte OP_DOWNLOAD_PACKAGE_ITEM_REPLY    = (OPREPLY  +24);
+   public final static byte OP_ADD_PACKAGE_ACL_REPLY          = (OPREPLY  +25);
+   public final static byte OP_REMOVE_PACKAGE_ACL_REPLY       = (OPREPLY  +26);
+   
+   public final static byte OPLASTREPLY        = (OP_REMOVE_PACKAGE_ACL_REPLY);
+                                        
+   
+   public final static byte OP_DOWNLOADFRAME_EVENT     = (OPEVENT  +1);
+   public final static byte OP_ABORTDOWNLOAD_EVENT     = (OPEVENT  +2);
+   public final static byte OP_OPERATION_COMPLETE_EVENT= (OPEVENT  +3);
+   public final static byte OPLASTEVENT                
+                                        = (OP_OPERATION_COMPLETE_EVENT);
+
+   public final static byte OP_UPLOADDATA_ERROR        = (OPERROR  +1);
+   public final static byte OPLASTERROR                = (OP_UPLOADDATA_ERROR);
+   
+   static boolean isError(byte op) {
+      return op >= OPERROR && op <= OPLASTERROR;
+   }
+   static boolean isReply(byte op) {
+      return op >= OPREPLY && op <= OPLASTREPLY;
+   }
+   static boolean isEvent(byte op) {
+      return op >= OPEVENT && op <= OPLASTEVENT;
+   }
+   static boolean isCommand(byte op) {
+      return op >= OPCOMMAND && op <= OPLASTCOMMAND;
+   }
+   
+   public static String opcodeToString(byte opcode) {
+      String s = null;
+      switch(opcode) {
+         case OP_LOGIN:
+            s = "LOGIN"; break;
+         case OP_LOGOUT:
+            s = "LOGOUT"; break;
+         case OP_LISTAREA:
+            s = "LISTAREA"; break;
+         case OP_CHANGEAREA:
+            s = "CHANGEAREA"; break;
+         case OP_DELETEFILE:
+            s = "DELETEFILE"; break;
+         case OP_NEWFOLDER:
+            s = "NEWFOLDER"; break;
+         case OP_UPLOAD:
+            s = "UPLOAD"; break;
+         case OP_ABORTUPLOAD:
+            s = "ABORTUPLOAD"; break;
+         case OP_UPLOADDATA:
+            s = "UPLOADDATA"; break;
+         case OP_DOWNLOAD:
+            s = "DOWNLOAD"; break;
+         case OP_ABORTDOWNLOAD:
+            s = "ABORTDOWNLOAD"; break;
+         case OP_OPERATION_COMPLETE:
+            s = "OPERATION_COMPLETE"; break;
+         case OP_LOGIN_REPLY:
+            s = "LOGIN_REPLY"; break;
+         case OP_LOGOUT_REPLY:
+            s = "LOGOUT_REPLY"; break;
+         case OP_LISTAREA_REPLY:
+            s = "LISTAREA_REPLY"; break;
+         case OP_CHANGEAREA_REPLY:
+            s = "CHANGEAREA_REPLY"; break;
+         case OP_DELETEFILE_REPLY:
+            s = "DELETEFILE_REPLY"; break;
+         case OP_UPLOAD_REPLY:
+            s = "UPLOAD_REPLY"; break;
+         case OP_ABORTUPLOAD_REPLY:
+            s = "ABORTUPLOAD_REPLY"; break;
+         case OP_DOWNLOAD_REPLY:
+            s = "DOWNLOAD_REPLY"; break;
+         case OP_ABORTDOWNLOAD_REPLY:
+            s = "ABORTDOWNLOAD_REPLY"; break;
+         case OP_DOWNLOADFRAME_EVENT:
+            s = "DOWNLOADFRAME_EVENT"; break;
+         case OP_ABORTDOWNLOAD_EVENT:
+            s = "ABORTDOWNLOAD_EVENT"; break;
+         case OP_OPERATION_COMPLETE_EVENT:
+            s = "OPERATION_COMPLETE_EVENT"; break;
+         case OP_UPLOADDATA_ERROR:
+            s = "UPLOADDATA_ERROR"; break;
+            
+        // Dropbox
+         case OP_CREATE_PACKAGE:
+            s = "OP_CREATE_PACKAGE"; break;
+         case OP_DELETE_PACKAGE:
+            s = "OP_DELETE_PACKAGE"; break;
+         case OP_COMMIT_PACKAGE:
+            s = "OP_COMMIT_PACKAGE"; break;
+         case OP_QUERY_PACKAGES:
+            s = "OP_QUERY_PACKAGES"; break;
+         case OP_QUERY_PACKAGE:
+            s = "OP_QUERY_PACKAGE"; break;
+         case OP_QUERY_PACKAGE_CONTENTS:
+            s = "OP_QUERY_PACKAGE_CONTENTS"; break;
+         case OP_QUERY_PACKAGE_ACLS:
+            s = "OP_QUERY_PACKAGE_ACLS"; break;
+         case OP_QUERY_PACKAGE_FILE_ACLS:
+            s = "OP_QUERY_PACKAGE_FILE_ACLS"; break;
+         case OP_QUERY_FILES:
+            s = "OP_QUERY_FILES"; break;
+         case OP_QUERY_FILE:
+            s = "OP_QUERY_FILE"; break;
+         case OP_ADD_ITEM_TO_PACKAGE:
+            s = "OP_ADD_ITEM_TO_PACKAGE"; break;
+         case OP_UPLOAD_FILE_TO_PACKAGE:
+            s = "OP_UPLOAD_FILE_TO_PACKAGE"; break;
+         case OP_REMOVE_ITEM_FROM_PACKAGE:
+            s = "OP_REMOVE_ITEM_FROM_PACKAGE"; break;
+         case OP_DOWNLOAD_PACKAGE_ITEM:
+            s = "OP_DOWNLOAD_PACKAGE_ITEM"; break;
+         case OP_ADD_PACKAGE_ACL:
+            s = "OP_ADD_PACKAGE_ACL"; break;
+         case OP_REMOVE_PACKAGE_ACL:
+            s = "OP_REMOVE_PACKAGE_ACL"; break;
+         case OP_CREATE_PACKAGE_REPLY:
+            s = "OP_CREATE_PACKAGE_REPLY"; break;
+         case OP_DELETE_PACKAGE_REPLY:
+            s = "OP_DELETE_PACKAGE_REPLY"; break;
+         case OP_COMMIT_PACKAGE_REPLY:
+            s = "OP_COMMIT_PACKAGE_REPLY"; break;
+         case OP_QUERY_PACKAGES_REPLY:
+            s = "OP_QUERY_PACKAGES_REPLY"; break;
+         case OP_QUERY_PACKAGE_REPLY:
+            s = "OP_QUERY_PACKAGE_REPLY"; break;
+         case OP_QUERY_PACKAGE_CONTENTS_REPLY:
+            s = "OP_QUERY_PACKAGE_CONTENTS_REPLY"; break;
+         case OP_QUERY_PACKAGE_ACLS_REPLY:
+            s = "OP_QUERY_PACKAGE_ACLS_REPLY"; break;
+         case OP_QUERY_PACKAGE_FILE_ACLS_REPLY:
+            s = "OP_QUERY_PACKAGE_FILE_ACLS_REPLY"; break;
+         case OP_QUERY_FILES_REPLY:
+            s = "OP_QUERY_FILES_REPLY"; break;
+         case OP_QUERY_FILE_REPLY:
+            s = "OP_QUERY_FILE_REPLY"; break;
+         case OP_ADD_ITEM_TO_PACKAGE_REPLY:
+            s = "OP_ADD_ITEM_TO_PACKAGE_REPLY"; break;
+         case OP_UPLOAD_FILE_TO_PACKAGE_REPLY:
+            s = "OP_UPLOAD_FILE_TO_PACKAGE_REPLY"; break;
+         case OP_REMOVE_ITEM_FROM_PACKAGE_REPLY:
+            s = "OP_REMOVE_ITEM_FROM_PACKAGE_REPLY"; break;
+         case OP_DOWNLOAD_PACKAGE_ITEM_REPLY:
+            s = "OP_DOWNLOAD_PACKAGE_ITEM_REPLY"; break;
+         case OP_ADD_PACKAGE_ACL_REPLY:
+            s = "OP_ADD_PACKAGE_ACL_REPLY"; break;
+         case OP_REMOVE_PACKAGE_ACL_REPLY:
+            s = "OP_REMOVE_PACKAGE_ACL_REPLY"; break;
+            
+         default: 
+            s = "Invalid Opcode: " + opcode; break;
+      }
+      return s;
+   }
+   
+   
+  /*--------------------------------------------------------*\
+  ** Generic Reply Error
+  \*--------------------------------------------------------*/
+   public static DSMPBaseProto genericReplyError(byte opcode, byte handle, 
+                                             int errorcode, String msg) {
+      DSMPBaseProto ret = new DSMPBaseProto(opcode, (byte)0x00, handle);
+      ret.appendShort(errorcode);
+      ret.appendString8(msg!=null?msg:"");
+      return ret;
+   }
+   
+  /*--------------------------------------------------------*\
+  ** Generic Error
+  \*--------------------------------------------------------*/
+   public static DSMPBaseProto genericError(byte handle, byte opcode,
+                                            int errorcode, String msg) {
+      
+      DSMPBaseProto ret = new DSMPBaseProto(opcode, (byte)0, handle);
+      ret.appendShort(errorcode);
+      ret.appendString8(msg!=null?msg:"");
+      return ret;
+   }
+   
+  
+  /*--------------------------------------------------------*\
+  ** Login/Logout
+  \*--------------------------------------------------------*/
+  /*
+  **   ======================================================================
+  **   Login                  -  Log into Transfer system
+  **      
+  **      flags   : bit0 set data area contains TOKEN describing user 
+  **                properties otherwise data area contains userid & pw
+  **
+  **      String16: Token or Username
+  **      String8 : Password
+  **
+  **   LoginReply             - 
+  **
+  **      flags   : Bit0 set if success
+  **
+  **      Long    : login ID# if success
+  **      String16: area string
+  **      String8 : file separator String
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   Logout                 -  Log out of system, abort any operations, etc
+  **
+  **      None
+  ** 
+  **   LogoutReply
+  **      
+  **      flags   : Bit0 set if success.
+  **
+  **                Connection will be closed by server soon after
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  */
+  
+   public static DSMPBaseProto loginToken(byte handle, String token) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_LOGIN, (byte)0x01, handle);
+      ret.appendString16(token);
+      ret.appendString8("");
+      return ret;
+   }
+   
+   public static DSMPBaseProto loginUserPW(byte handle, String user, 
+                                           String pw) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_LOGIN, (byte)0x00, handle);
+      ret.appendString16(user);
+      ret.appendString8(pw);
+      return ret;
+   }
+   
+   public static DSMPBaseProto loginReply(byte handle, int loginid,
+                                          String area, String filesep) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_LOGIN_REPLY, (byte)0x01, 
+                                            handle);
+      ret.appendInteger(loginid);
+      ret.appendString16(area);
+      ret.appendString8(filesep);
+      return ret;
+   }
+   
+   public static DSMPBaseProto logout(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_LOGOUT, (byte)0x00, handle);
+      return ret;
+   }
+   
+   public static DSMPBaseProto logoutReply(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_LOGOUT_REPLY, (byte)0x01, 
+                                            handle);
+      return ret;
+   }
+   
+   
+  /*--------------------------------------------------------*\
+  ** ChangeArea, ListArea, DeleteFile, NewFolder
+  \*--------------------------------------------------------*/
+  /*   
+  **   ======================================================================
+  **   ChangeArea             -  Essentially, change directory
+  **      
+  **      String16: new area string
+  **      
+  **   ChangeAreaReply        -  Success or failure for change
+  **
+  **      flags   : Bit0 set if success.
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   ListArea               -  List contents of current area
+  **
+  **      flags   : None 
+  **
+  **      
+  **   ListAreaReply          -  Returns contents of List operation
+  **
+  **      flags   : Bit0 set if success.
+  **
+  **      Integer3: num entries
+  ** 
+  **    x Byte    : type (1 = file, 2 = dir)
+  **    x Long    : timedate (lastmodified)
+  **    x Long    : size
+  **    x String16: area name
+  **    x String16: name
+  **       
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   DeleteFile             -  delete the specified 'file'
+  ** 
+  **      flags   : None
+  **      
+  **      B1-B2   : len for 'file' string
+  **      B3-Bn   : 'file' name (no path info). Must be in current area
+  **      
+  **   DeleteFileReply        -  Success or failure for delete
+  **
+  **      flags   : Bit0 set if success.
+  **       
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   NewFolder              -  Create a new 'folder'
+  **
+  **      flags   : None
+  **      
+  **      String16: New 'folder' name (to be created in current area)
+  **      
+  **   NewFolderReply         -  Success or failure for create
+  **
+  **      flags  : Bit0 set if success.
+  **       
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **   ======================================================================
+  */   
+   
+   public static DSMPBaseProto changeArea(byte handle, String newarea) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_CHANGEAREA, (byte)0x00, handle);
+      ret.appendString16(newarea);
+      return ret;
+   }
+   
+   public static DSMPBaseProto changeAreaReply(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_CHANGEAREA_REPLY, (byte)0x01,
+                                            handle);
+      return ret;
+   }
+   
+   public static DSMPBaseProto listArea(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_LISTAREA, (byte)0x00, handle);
+      return ret;
+   }
+   
+   public static DSMPBaseProto listAreaReply(byte handle, Vector v) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_LISTAREA_REPLY, (byte)0x01,
+                                            handle);
+      int num = (v == null)?0:v.size();
+      ret.append3ByteInteger(num);
+      if (num != 0) {
+         Enumeration e = v.elements();
+         while(e.hasMoreElements()) {
+            AreaContent ac = (AreaContent)e.nextElement();
+            ret.appendByte(ac.getType());
+            ret.appendLong(ac.getTimeDate());
+            ret.appendLong(ac.getSize());
+            ret.appendString16(ac.getArea());
+            ret.appendString16(ac.getName());
+         }
+      }
+      return ret;
+   }
+   
+   public static DSMPBaseProto deleteFile(byte handle, String toDelete) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_DELETEFILE, (byte)0x00, handle);
+      ret.appendString16(toDelete);
+      return ret;
+   }
+   
+   public static DSMPBaseProto deleteFileReply(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_DELETEFILE_REPLY, (byte)0x01,
+                                            handle);
+      return ret;
+   }
+   
+   public static DSMPBaseProto newFolder(byte handle, String folder) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_NEWFOLDER, (byte)0x00, handle);
+      ret.appendString16(folder);
+      return ret;
+   }
+   
+   public static DSMPBaseProto newFolderReply(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_NEWFOLDER_REPLY, (byte)0x01,
+                                            handle);
+      return ret;
+   }
+   
+  /*--------------------------------------------------------*\
+  ** Upload, AbortUpload, UploadData, UploadDataError
+  \*--------------------------------------------------------*/
+  /*   
+  **   ======================================================================
+  **   Upload                 -  Begin Upload operation
+  **      
+  **      flags   : Bit0 set if restart is requested (CRC is valid below)
+  ** 
+  **      Integer : CRC for restart (using implied length of server file)
+  **      Long    : crc length
+  **      Long    : file length
+  **      String16: 'filename' to upload to current area
+  **      
+  **      
+  **   UploadReply            -  Success or failure for upload start
+  **
+  **      flags   : Bit0 set if success.
+  **                Bit1 set if restartable
+  ** 
+  **      Integer : ID for upload operation
+  **      Long    : starting offset  (will be 0 if restart not possible)
+  **       
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   AbortUpload            -  Abort the Upload operation indicated 
+  **
+  **      flags   : None
+  ** 
+  **      Integer : ID for upload
+  **      
+  **   AbortUploadReply       -  
+  **
+  **      flags   : Bit0 set if success.
+  ** 
+  **      Integer : ID for upload
+  **       
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   UploadData             -  Data for frame in upload process
+  **      
+  **      flags   : None
+  **
+  **      Integer : Upload ID
+  **      Long    : data ofs
+  **      Byte[]  : frame data
+  ** 
+  **      
+  **   UploadDataError        -  If error uploading data
+  **
+  **      flags   : None
+  ** 
+  **      xtraInt : uploadID
+  **       
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  */   
+   
+   public static DSMPBaseProto upload(byte handle, boolean tryRestart, 
+                                      int crc, long crcSize,
+                                      long size, String filename) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_UPLOAD, (byte)(tryRestart?1:0),
+                                            handle);
+      ret.appendInteger(crc);
+      ret.appendLong(crcSize);
+      ret.appendLong(size);
+      ret.appendString16(filename);
+      return ret;
+   }
+   
+   public static DSMPBaseProto uploadReply(byte handle, int id, long ofs) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_UPLOAD_REPLY, 
+                                            (byte)((ofs>0)?3:1), handle);
+      ret.appendInteger(id);
+      ret.appendLong(ofs);
+      return ret;
+   }
+   
+   public static DSMPBaseProto abortUpload(byte handle, int id) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_ABORTUPLOAD, (byte)0, handle);
+      ret.appendInteger(id);
+      return ret;
+   }
+   
+   public static DSMPBaseProto abortUploadReply(byte handle, int id) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_ABORTUPLOAD_REPLY, (byte)1, handle);
+      ret.appendInteger(id);
+      return ret;
+   }
+   
+   public static DSMPBaseProto uploadData(byte handle, int id, long ofs, 
+                                          byte buf[], int bofs, int blen) {
+      DSMPBaseProto ret = new DSMPBaseProto(blen+12, OP_UPLOADDATA, 
+                                            (byte)0x00, handle);
+      ret.appendInteger(id);
+      ret.appendLong(ofs);
+      ret.appendData(buf, bofs, blen);
+      
+      return ret;
+   }
+   
+   public static DSMPBaseProto uploadDataError(byte handle, 
+                                               int errorcode, String msg, 
+                                               int id) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_UPLOADDATA_ERROR, (byte)0, 
+                                            handle);
+      ret.setExtraInt(id);
+      ret.appendShort(errorcode);
+      ret.appendString8(msg!=null?msg:"");
+      return ret;
+   }
+   
+  /*--------------------------------------------------------*\
+  ** Download, AbortDownload, DownloadFrameEvent AbortDownloadEvent
+  \*--------------------------------------------------------*/
+  /*   
+  **   ======================================================================
+  **   Download               -  Begin Download operation
+  **      
+  **      flags   : Bit0 set if restart is requested (CRC/len valid below)
+  ** 
+  **      Integer : CRC for restart
+  **      Long    : file length
+  **      String16: 'filename' to download from current area
+  **      
+  **      
+  **   DownloadReply          -  Success or failure for download start
+  **
+  **      flags   : Bit0 set if success.
+  **                Bit1 set if restartable
+  ** 
+  **      Integer : ID for download operation
+  **      Long    : starting offset  (will be 0 if restart not possible)
+  **      Long    : total file size
+  **       
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   AbortDownload          -  Abort the Download operation indicated 
+  **
+  **      flags   : None
+  **
+  **      Integer : ID for download
+  **      
+  **   AbortDownloadReply     -  
+  **
+  **      flags   : Bit0 set if success.
+  **
+  **      Integer : ID for download
+  **       
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   DownloadFrameEvent     -  Data for frame in upload process
+  **      
+  **      flags   : None
+  **
+  **      Integer : Download ID
+  **      Long    : data ofs
+  **      Byte[]  : frame data
+  ** 
+  **      
+  **   AbortDownloadEvent     -  Sent if server self aborts the download
+  **
+  **      flags   : None
+  ** 
+  **      Integer : downloadID
+  **      Integer : reasonCode
+  **      String16: reason text
+  **
+  **   ======================================================================
+  */   
+   
+   public static DSMPBaseProto download(byte handle, boolean tryRestart, 
+                                        int crc, long size, String filename) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_DOWNLOAD,
+                                            (byte)(tryRestart?1:0), handle);
+      ret.appendInteger(crc);
+      ret.appendLong(size);
+      ret.appendString16(filename);
+      return ret;
+   }
+   
+   public static DSMPBaseProto downloadReply(byte handle, int id, 
+                                             long ofs, long sz) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_DOWNLOAD_REPLY, 
+                                            (byte)((ofs>0)?3:1), handle);
+      ret.appendInteger(id);
+      ret.appendLong(ofs);
+      ret.appendLong(sz);
+      return ret;
+   }
+   
+   public static DSMPBaseProto abortDownload(byte handle, int id) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_ABORTDOWNLOAD, (byte)0, handle);
+      ret.appendInteger(id);
+      return ret;
+   }
+   
+   public static DSMPBaseProto abortDownloadReply(byte handle, int id) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_ABORTDOWNLOAD_REPLY, 
+                                            (byte)1, handle);
+      ret.appendInteger(id);
+      return ret;
+   }
+   
+   public static DSMPBaseProto downloadFrameEvent(byte handle, int id, 
+                                                  long ofs, 
+                                                  byte buf[], int bofs, 
+                                                  int blen) {
+      DSMPBaseProto ret = new DSMPBaseProto(blen+12, OP_DOWNLOADFRAME_EVENT,
+                                            (byte)0x00, handle);
+      ret.appendInteger(id);
+      ret.appendLong(ofs);
+      ret.appendData(buf, bofs, blen);
+      
+      return ret;
+   }
+   
+   public static DSMPBaseProto abortDownloadEvent(byte handle, int id,
+                                                  int reason, String resStr) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_ABORTDOWNLOAD_EVENT, (byte)0, 
+                                            handle);
+      ret.appendInteger(id);
+      ret.appendInteger(reason);
+      ret.appendString16(resStr);
+      return ret;
+   }
+  /* 
+  **   ======================================================================
+  **   OperationComplete, OperationCompleteEvent -  Transfer operation complete
+  **      
+  **   OperationComplete      -  Download operation complete
+  ** 
+  **      flags   : None
+  **
+  **      Integer : Download ID
+  **      
+  **   OperationCompleteEvent -  Upload operation complete
+  **
+  **      flags   : None
+  ** 
+  **      Integer : uploadID
+  **
+  **   ======================================================================
+  */   
+   public static DSMPBaseProto operationComplete(byte handle, int id) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_OPERATION_COMPLETE, (byte)0, handle);
+      ret.appendInteger(id);
+      return ret;
+   }
+   public static DSMPBaseProto operationCompleteEvent(byte handle, int id) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_OPERATION_COMPLETE_EVENT,(byte)0, handle);
+      ret.appendInteger(id);
+      return ret;
+   }
+   
+   
+  /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*/ 
+  /*                        Start of DropBox specific code                  */ 
+  /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*/
+  
+  /*--------------------------------------------------------*\
+  ** CreatePackage/DeletePackage/CommitPackage
+  \*--------------------------------------------------------*/
+  /*
+  **   ======================================================================
+  **   CreatePackage          -  Create a new non-committed named package
+  **      
+  **      flags   : None
+  **               
+  **      String16: packagename
+  **
+  **   CreatePackageReply     - 
+  **
+  **      flags   : Bit0 set if success
+  **
+  **      Long    : packageid # if success
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode 
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   DeletePackage          -  Delete the specified package
+  **      
+  **      flags   : None
+  **               
+  **      Long    : packageid
+  **
+  **   DeletePackageReply     - 
+  **
+  **      flags   : Bit0 set if success
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   CommitPackage          -  Commit the specified package
+  **      
+  **      flags   : None
+  **               
+  **      Long    : packageid
+  **
+  **   CommitPackageReply     - 
+  **
+  **      flags   : Bit0 set if success
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **   ======================================================================
+  */
+   public static DSMPBaseProto createPackage(byte handle, String packname) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_CREATE_PACKAGE, (byte)0, 
+                                            handle);
+      ret.appendString16(packname);
+      return ret;
+   }
+   public static DSMPBaseProto createPackageReply(byte handle, long packid) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_CREATE_PACKAGE_REPLY, (byte)1, 
+                                            handle);
+      ret.appendLong(packid);
+      return ret;
+   }
+   public static DSMPBaseProto deletePackage(byte handle, long packid) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_DELETE_PACKAGE, (byte)0, 
+                                            handle);
+      ret.appendLong(packid);
+      return ret;
+   }
+   public static DSMPBaseProto deletePackageReply(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_DELETE_PACKAGE_REPLY, (byte)1, 
+                                            handle);
+      return ret;
+   }
+   public static DSMPBaseProto commitPackage(byte handle, long packid) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_COMMIT_PACKAGE, (byte)0, 
+                                            handle);
+      ret.appendLong(packid);
+      return ret;
+   }
+   public static DSMPBaseProto commitPackageReply(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_COMMIT_PACKAGE_REPLY, (byte)1, 
+                                            handle);
+      return ret;
+   }
+  
+  /*--------------------------------------------------------*\
+  ** QueryPackages/QueryPackage/QueryPackageContents
+  \*--------------------------------------------------------*/
+  /*
+  **   ======================================================================
+  **   QueryPackages          -  Get list of packages
+  **      
+  **      flags   : Bit0 set if regexp valid
+  **                Bit1 set if Owned by caller, else assessible by caller
+  **               
+  **      String16: regexp
+  **
+  **   QueryPackagesReply     - 
+  **
+  **      flags   : Bit0 set if success
+  **                Bit1 set if Owned by caller, else assessible by caller
+  **
+  **      Integer : number of matching packages
+  **      
+  **    x Long    : packageid
+  **    x Integer : number of package entries
+  **    x Long    : packagestatus   [STATUS_INCOMPLETE, STATUS_COMPLETE]
+  **    x Long    : package expires (MS since 70 GMT)
+  **    x Long    : package size
+  **    x String16: packagename
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   QueryPackage           -  Get highlevel package info
+  **      
+  **      flags   : None
+  **               
+  **      Long    : packageid
+  **
+  **   QueryPackageReply      - 
+  **
+  **      flags   : Bit0 set if success
+  **
+  **      Long    : packageid
+  **      Integer : number of package entries
+  **      Long    : packagestatus   [STATUS_INCOMPLETE, STATUS_COMPLETE]
+  **      Long    : package expires (MS since 70 GMT)
+  **      Long    : package size
+  **      String16: packagename
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   QueryPackageContents   -  Get innerds of a package
+  **      
+  **      flags   : None
+  **               
+  **      Long    : packageid
+  **
+  **   QueryPackageContentsReply - 
+  **
+  **      flags   : Bit0 set if success
+  **
+  **      Long    : package expires (MS since 70 GMT)
+  **      Long    : package size
+  **      Integer : number of package entries
+  **
+  **    x String16: filename
+  **    x Byte    : status       [STATUS_INCOMPLETE, STATUS_COMPLETE]
+  **    x Long    : fileid
+  **    x Long    : file size
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  */
+   public static DSMPBaseProto queryPackages(byte handle, String regexp,
+                                             boolean ownerOrAccessor) {
+      byte v = (byte)(((regexp != null)?0x1:0) | (ownerOrAccessor?0x2:0));
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_PACKAGES, (byte)v, 
+                                            handle);
+      ret.appendString16(regexp!=null?regexp:"");
+      return ret;
+   }
+   public static DSMPBaseProto queryPackagesReply(byte handle,
+                                                  boolean ownerOrAccessor,
+                                                  Vector reply) {
+                                               
+      byte v = (byte)((0x1) | (ownerOrAccessor?0x2:0));
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_PACKAGES_REPLY, (byte)v, 
+                                            handle);
+      if (reply == null || reply.size() == 0) {
+         ret.appendInteger(0);
+      } else {
+         ret.appendInteger(reply.size());
+         Enumeration enum = reply.elements();
+         while(enum.hasMoreElements()) {
+            PackageInfo packinfo = (PackageInfo)enum.nextElement();
+            ret.appendLong(packinfo.getPackageId());
+            ret.appendInteger(packinfo.getPackageNumElements());
+            ret.appendByte(packinfo.getPackageStatus());
+            ret.appendLong(packinfo.getPackageExpiration());
+            ret.appendLong(packinfo.getPackageSize());
+            ret.appendString16(packinfo.getPackageName());
+         }
+      }
+      return ret;
+   }
+   public static DSMPBaseProto queryPackage(byte handle, long packid) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_PACKAGE, (byte)0,
+                                            handle);
+      ret.appendLong(packid);
+      return ret;
+   }
+   public static DSMPBaseProto queryPackageReply(byte handle, 
+                                                 PackageInfo packinfo) {
+                                               
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_PACKAGE_REPLY, 
+                                            (byte)1, handle);
+      ret.appendLong(packinfo.getPackageId());
+      ret.appendInteger(packinfo.getPackageNumElements());
+      ret.appendByte(packinfo.getPackageStatus());
+      ret.appendLong(packinfo.getPackageExpiration());
+      ret.appendLong(packinfo.getPackageSize());
+      ret.appendString16(packinfo.getPackageName());
+      return ret;
+   }
+   public static DSMPBaseProto queryPackageContents(byte handle, long packid) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_PACKAGE_CONTENTS, (byte)0,
+                                            handle);
+      ret.appendLong(packid);
+      return ret;
+   }
+   public static DSMPBaseProto queryPackageContentsReply(byte handle, 
+                                                         long expires,
+                                                         long packsize,
+                                                         Vector reply) {
+                                               
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_PACKAGE_CONTENTS_REPLY, 
+                                            (byte)1, handle);
+                                            
+      ret.appendLong(expires);
+      ret.appendLong(packsize);
+      if (reply == null || reply.size() == 0) {
+         ret.appendInteger(0);
+      } else {
+         ret.appendInteger(reply.size());
+         Enumeration enum = reply.elements();
+         while(enum.hasMoreElements()) {
+            FileInfo fileinfo = (FileInfo)enum.nextElement();
+            ret.appendString16(fileinfo.getFileName());
+            ret.appendByte(fileinfo.getFileStatus());
+            ret.appendLong(fileinfo.getFileId());
+            ret.appendLong(fileinfo.getFileSize());
+         }
+      }
+      return ret;
+   }
+  
+  /*--------------------------------------------------------*\
+  ** QueryPackageAcls/QueryPackageFileAcls/QueryFiles/QueryFile
+  \*--------------------------------------------------------*/
+  /*
+  **   ======================================================================
+  **   QueryPackageAcls       -  Get Access list for package
+  **      
+  **      flags   : None
+  **               
+  **      Long    : packageid
+  **
+  **   QueryPackageAclsReply  - 
+  **
+  **      flags   : Bit0 set if success
+  **
+  **      Integer : number of acl entries
+  **
+  **    x Byte    : downloadStatus  [STATUS_PROJECT,  STATUS_NONE,    
+  **                                 STATUS_PARTIAL,  STATUS_COMPLETE ]
+  **    x String16: username
+  **    x String16: projectname
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   QueryPackageFileAcls   -  Query who has accessed a file
+  **      
+  **      flags   : None
+  **               
+  **      Long    : packageid
+  **      Long    : itemid
+  **
+  **   QueryPackageFileAclsReply  - 
+  **
+  **      flags   : Bit0 set if success
+  **
+  **      Integer : number of acl entries
+  **
+  **    x Byte    : downloadStatus  [STATUS_NONE,STATUS_FAIL,STATUS_COMPLETE]
+  **    x String16: username 
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   QueryFiles             -  Query files
+  **      
+  **      flags   : Bit0 set if regexp valid
+  **                Bit1 set if Owned by caller, else assessible by caller
+  **                
+  **      String16: regexp
+  **
+  **   QueryFilesReply        - 
+  **
+  **      flags   : Bit0 set if success
+  **                Bit1 set if Owned by caller, else assessible by caller
+  **
+  **      Integer : number of entries
+  **
+  **    x String16: filename
+  **    x Byte    : status       [STATUS_INCOMPLETE, STATUS_COMPLETE]
+  **    x Long    : fileid
+  **    x Long    : file size
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   QueryFile              -  Query file
+  **      
+  **      flags   : None
+  **               
+  **      Long    : fileid
+  **
+  **   QueryFileReply         - 
+  **
+  **      flags   : Bit0 set if success
+  **
+  **      String16: filename
+  **      Byte    : status       [STATUS_INCOMPLETE, STATUS_COMPLETE]
+  **      Long    : file size
+  **      Integer : number of entries
+  **
+  **    x Long    : packageid
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  */   
+   public static DSMPBaseProto queryPackageAcls(byte handle, long packid) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_PACKAGE_ACLS, (byte)0,
+                                            handle);
+      ret.appendLong(packid);
+      return ret;
+   }
+   public static DSMPBaseProto queryPackageAclsReply(byte handle, 
+                                                     Vector reply) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_PACKAGE_ACLS_REPLY, 
+                                            (byte)1, handle);
+      if (reply == null || reply.size() == 0) {
+         ret.appendInteger(0);
+      } else {
+         ret.appendInteger(reply.size());
+         Enumeration enum = reply.elements();
+         while(enum.hasMoreElements()) {
+            AclInfo aclinfo = (AclInfo)enum.nextElement();
+            ret.appendByte(aclinfo.getAclStatus());
+            ret.appendString16(aclinfo.getAclUserName());
+            ret.appendString16(aclinfo.getAclProjectName());
+         }
+      }
+      return ret;
+   }
+   public static DSMPBaseProto queryPackageFileAcls(byte handle, long packid, 
+                                                    long fileid){
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_PACKAGE_FILE_ACLS, 
+                                            (byte)0, handle);
+      ret.appendLong(packid);
+      ret.appendLong(fileid);
+      return ret;
+   }
+   public static DSMPBaseProto queryPackageFileAclsReply(byte handle, 
+                                                         Vector reply) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_PACKAGE_FILE_ACLS_REPLY, 
+                                            (byte)1, handle);
+      if (reply == null || reply.size() == 0) {
+         ret.appendInteger(0);
+      } else {
+         ret.appendInteger(reply.size());
+         Enumeration enum = reply.elements();
+         while(enum.hasMoreElements()) {
+            AclInfo aclinfo = (AclInfo)enum.nextElement();
+            ret.appendByte(aclinfo.getAclStatus());
+            ret.appendString16(aclinfo.getAclUserName());
+         }
+      }
+      return ret;
+   }
+   public static DSMPBaseProto queryFiles(byte handle, String regexp,
+                                          boolean ownerOrAccessor) {
+      byte v = (byte)(((regexp != null)?0x1:0) | (ownerOrAccessor?0x2:0));
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_FILES, (byte)v, 
+                                            handle);
+      ret.appendString16(regexp!=null?regexp:"");
+      return ret;
+   }
+   public static DSMPBaseProto queryFilesReply(byte handle,
+                                               boolean ownerOrAccessor,
+                                               Vector reply) {
+                                               
+      byte v = (byte)((0x1) | (ownerOrAccessor?0x2:0));
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_FILES_REPLY, (byte)v, 
+                                            handle);
+      if (reply == null || reply.size() == 0) {
+         ret.appendInteger(0);
+      } else {
+         ret.appendInteger(reply.size());
+         Enumeration enum = reply.elements();
+         while(enum.hasMoreElements()) {
+            FileInfo fileinfo = (FileInfo)enum.nextElement();
+            ret.appendString16(fileinfo.getFileName());
+            ret.appendByte(fileinfo.getFileStatus());
+            ret.appendLong(fileinfo.getFileId());
+            ret.appendLong(fileinfo.getFileSize());
+         }
+      }
+      return ret;
+   }
+   public static DSMPBaseProto queryFile(byte handle, long fileid) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_FILE, (byte)0, 
+                                            handle);
+      ret.appendLong(fileid);
+      return ret;
+   }
+   public static DSMPBaseProto queryFileReply(byte handle, FileInfo fileinfo,
+                                              Vector reply) {
+
+      DSMPBaseProto ret = new DSMPBaseProto(OP_QUERY_FILE_REPLY, (byte)1, 
+                                            handle);
+      ret.appendString16(fileinfo.getFileName());
+      ret.appendByte(fileinfo.getFileStatus());
+      ret.appendLong(fileinfo.getFileSize());
+      if (reply == null || reply.size() == 0) {
+         ret.appendInteger(0);
+      } else {
+         ret.appendInteger(reply.size());
+         Enumeration enum = reply.elements();
+         while(enum.hasMoreElements()) {
+            Long packid = (Long)enum.nextElement();
+            ret.appendLong(packid.longValue());
+         }
+      }
+      return ret;
+   }
+  
+  /*--------------------------------------------------------*\
+  ** AddItemToPackage/UploadFileToPackage/RemoveItemFromPackage
+  ** DownloadPackageItem
+  \*--------------------------------------------------------*/
+  /*
+  **   ======================================================================
+  **   AddItemToPackage       -  Add already uploaded item to package
+  **      
+  **      flags   : None
+  **               
+  **      Long    : packageid
+  **      Long    : itemid
+  **
+  **   AddItemToPackageReply  - 
+  **
+  **      flags   : Bit0 set if success
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  ** 
+  **   ======================================================================
+  **   UploadFileToPackage    -  Upload a new file to a package
+  **      
+  **      flags   : Bit0 set if restart is requested (CRC is valid below)
+  **               
+  **      Long    : packageid  
+  **      Integer : CRC for restart (using implied length of server file)
+  **      Long    : crc length
+  **      Long    : file length
+  **      String16: 'filename' to upload to package
+  **
+  **   UploadFileToPackageReply - 
+  **
+  **      flags   : Bit0 set if success
+  **                Bit1 set if restartable
+  **
+  **      Long    : itemid
+  **      Integer : Operation Id
+  **      Long    : starting ofs
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   RemoveItemFromPackage  -  Remove a file from a package  
+  **      
+  **      flags   : None
+  **               
+  **      Long    : packageid
+  **      Long    : itemid
+  **
+  **   RemoveItemFromPackageReply -
+  **
+  **      flags   : Bit0 set if success
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   DownloadPackageItem    - Download the specified file from package
+  **      
+  **      flags   : Bit0 set if restart is requested (CRC/len valid below)
+  ** 
+  **      Long    : packageid
+  **      Integer : CRC for restart
+  **      Long    : file length
+  **      Long    : item to download
+  **
+  **   DownloadPackageItemReply -
+  **
+  **      flags   : Bit0 set if success.
+  **                Bit1 set if restartable
+  ** 
+  **      Integer : ID for download operation
+  **      Long    : starting offset  (will be 0 if restart not possible)
+  **      Long    : total file size
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  */
+   public static DSMPBaseProto addItemToPackage(byte handle, long packid, 
+                                                long itemid){
+      DSMPBaseProto ret = new DSMPBaseProto(OP_ADD_ITEM_TO_PACKAGE, 
+                                            (byte)0, handle);
+      ret.appendLong(packid);
+      ret.appendLong(itemid);
+      return ret;
+   }
+   public static DSMPBaseProto addItemToPackageReply(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_ADD_ITEM_TO_PACKAGE_REPLY, 
+                                            (byte)1, handle);
+      return ret;
+   }
+   public static DSMPBaseProto uploadFileToPackage(byte handle, 
+                                                   long packid,
+                                                   boolean tryRestart,
+                                                   int crc, long crcSize,
+                                                   long size, 
+                                                   String filename) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_UPLOAD_FILE_TO_PACKAGE, 
+                                            (byte)(tryRestart?1:0),
+                                            handle);
+      ret.appendLong(packid);
+      ret.appendInteger(crc);
+      ret.appendLong(crcSize);
+      ret.appendLong(size);
+      ret.appendString16(filename);
+      return ret;
+   }
+   public static DSMPBaseProto uploadFileToPackageReply(byte handle, 
+                                                        long itemid,
+                                                        boolean isRestarted, 
+                                                        int operationid,
+                                                        long startingofs) {
+      byte v = (byte)((isRestarted?2:0) | 1);
+      DSMPBaseProto ret = new DSMPBaseProto(OP_UPLOAD_FILE_TO_PACKAGE_REPLY, v,
+                                            handle);
+      ret.appendLong(itemid);
+      ret.appendInteger(operationid);
+      ret.appendLong(startingofs);
+      return ret;
+   }
+   public static DSMPBaseProto removeItemFromPackage(byte handle, long packid, 
+                                                     long itemid){
+      DSMPBaseProto ret = new DSMPBaseProto(OP_REMOVE_ITEM_FROM_PACKAGE, 
+                                            (byte)0, handle);
+      ret.appendLong(packid);
+      ret.appendLong(itemid);
+      return ret;
+   }
+   public static DSMPBaseProto removeItemFromPackageReply(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_REMOVE_ITEM_FROM_PACKAGE_REPLY, 
+                                            (byte)1, handle);
+      return ret;
+   }
+   public static DSMPBaseProto downloadPackageItem(byte handle, long packid,
+                                                   boolean tryRestart, 
+                                                   int crc, long size, 
+                                                   long itemid) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_DOWNLOAD_PACKAGE_ITEM,
+                                            (byte)(tryRestart?1:0), handle);
+      ret.appendLong(packid);
+      ret.appendInteger(crc);
+      ret.appendLong(size);
+      ret.appendLong(itemid);
+      return ret;
+   }
+   public static DSMPBaseProto downloadPackageItemReply(byte handle, 
+                                                        boolean isRestarted, 
+                                                        int operationid,
+                                                        long startingofs,
+                                                        long totsize) {
+      byte v = (byte)((isRestarted?2:0) | 1);
+      DSMPBaseProto ret=new DSMPBaseProto(OP_DOWNLOAD_PACKAGE_ITEM_REPLY,
+                                          v, handle);
+      ret.appendInteger(operationid);
+      ret.appendLong(startingofs);
+      ret.appendLong(totsize);
+      return ret;
+   }
+   
+  
+  /*--------------------------------------------------------*\
+  ** AddPackageAcl/RemovePackageAcl
+  \*--------------------------------------------------------*/
+  /*
+  **   ======================================================================
+  **   AddPackageAcl          - Add a user to the access list for package
+  **      
+  **      flags   : Bit0 set if username is a Project
+  **               
+  **      Long    : packageid
+  **      String16: username
+  **
+  **   AddPackageAclReply     -
+  **
+  **      flags   : Bit0 set if success
+  **
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  **   RemovePackageAcl       - Remove a user from the access list for package
+  **      
+  **      flags   : Bit0 set if username is a Project
+  **               
+  **      Long    : packageid
+  **      String16: username
+  **
+  **   RemovePackageAclReply  -
+  **
+  **      flags   : Bit0 set if success
+  **
+  **
+  **  -- errorcase
+  **
+  **      Short   : errorcode
+  **      String8 : contains error indicator
+  **
+  **   ======================================================================
+  */  
+   public static DSMPBaseProto addPackageAcl(byte handle, 
+                                             long packid,
+                                             String name,
+                                             boolean isProject) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_ADD_PACKAGE_ACL, 
+                                            (byte)(isProject?1:0),
+                                            handle);
+      ret.appendLong(packid);
+      ret.appendString16(name);
+      return ret;
+   }
+   public static DSMPBaseProto addPackageAclReply(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_ADD_PACKAGE_ACL_REPLY, 
+                                            (byte)1, handle);
+      return ret;
+   }
+   public static DSMPBaseProto removePackageAcl(byte handle, 
+                                                long packid,
+                                                String name,
+                                                boolean isProject) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_REMOVE_PACKAGE_ACL, 
+                                            (byte)(isProject?1:0),
+                                            handle);
+      ret.appendLong(packid);
+      ret.appendString16(name);
+      return ret;
+   }
+   public static DSMPBaseProto removePackageAclReply(byte handle) {
+      DSMPBaseProto ret = new DSMPBaseProto(OP_REMOVE_PACKAGE_ACL_REPLY, 
+                                            (byte)1, handle);
+      return ret;
+   }
+}

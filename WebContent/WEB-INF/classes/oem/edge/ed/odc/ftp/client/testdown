@@ -1,0 +1,239 @@
+#!/bin/ksh
+# Searching $HOME/bin and current directory last is usually a BIG time
+# saver. (Most users don't have commands that match system command names.)
+# if you don't have a bin directory in $HOME you can delete it from PATH.
+
+export XAUTHORITY=$HOME/.private/.Xauthority
+set -o monitor  # Make sure job control is enabled
+export  RSU_LICENSE_MAP=/afs/eda/sun4x_57/prod/purify_5.3/config/PurifyPlus_License_Map
+
+EDGERELEASE=3.2
+
+#
+# Uncomment this to play with Flex licensing ...
+#
+#IFOR_NCS_GLB_SITE=lalala
+
+typeset -x          \
+    FCEDIT=e3       \
+    HISTSIZE=200    \
+    ENV=$HOME/.kshrc    \
+    VISUAL=vi
+. $HOME/.kshrc
+
+
+export PATH=$HOME/bin/@sys:$HOME/bin:/bin:/usr/afsws/bin:/usr/bin:/etc:/usr/ucb:/usr/bin/X11:.
+
+#To run html stuff
+#/afs/torolab.ibm.com/common/progs/flex/bin:/afs/eds/u/crichton/misc/html/Frame2html-0.8.9a
+
+#export SOCKS_NS=9.14.1.100
+#export SOCKS_SERVER=9.14.1.100
+#export SOCKS_NS=9.14.1.30
+export SOCKS_SERVER=socks.raleigh.ibm.com
+#export SOCKS4_SERVER=$SOCKS_SERVER
+#export SOCKS_NS=$SOCKS_SERVER
+
+export LSTP_CERTFILE=~/certs/client.pem       
+export LSTP_KEYFILE=~/certs/client.pem 
+export LSTP_CAPATH=~/certs            
+
+export TKG_LMHOST=edaw3.fishkill.ibm.com
+
+#
+# For PCXWARE
+#
+export XREMOTETMPDIR=$HOME
+
+#
+# ENVVars for idsframe
+#
+export AFSDAILY=/afs/eda/edalib/daily
+export AFSFRAME01=$AFSDAILY/idsframe.0101/idsframe
+export AFSFRAME02=$AFSDAILY/idsframe.0102/idsframe
+export AFSFRAME03=$AFSDAILY/idsframe.0103/idsframe
+export AFSFRAME04=$AFSDAILY/ProFrame/ProFrame.0104/idsframe
+export BFWRELEASE=ProFrame.9104
+export BFWCOMPONENT=idsframe
+BFWTREE_TOP=$HOME/projects/idsframe/0104
+TREE_TOP=$BFWTREE_TOP
+export IDSFILES TREE_TOP
+export PFGPSLIBDIR=/afs/eda/project/appfunc/pfgpsDEV/0101.rs324/lib
+export PFGPSINCDIR=/afs/eda/project/appfunc/pfgpsDEV/0101.rs324/include
+
+# Buildtree is in shared AFS space
+export LPPTOP=/afs/eda/project/ProFrame
+export BLDTREE=/afs/eda/u/crichton/NIIIPCODE
+
+usexlC
+usebfw
+useforceG
+
+hname=`uname -n | cut -c1-3`
+osname=`uname -s`
+osrev=`uname -r`
+osver=`uname -v`
+
+#
+# NOT SUN machine
+#
+if [ "$osname" != "SunOS" -a "$osname" != HP-UX ] ; then
+
+# Get the nice path functions defined
+
+[[ "$TERM" = dumb ]] && export TERM=hft
+
+if [ -r /loctools/bin/sysprof ] ; then
+  .  /loctools/bin/sysprof
+fi
+#localbin=/usr/local/bin:/usr/local/shbin
+#localbin=""
+#PATH=$HOME/bin:$HOME/bin/bldbin:/usr/bin:$AFSpath:/etc:/usr/ucb\
+#:/usr/bin/X11:$localbin:.:/afs/eda/shadow/bldenv/rs/bin\
+#:/usr/lpp/cmvc/bin:$HOME/bin/cback:/usr/sbin:/afs/eda/@sys/prod/bin:$PATH:$JAVAPATH:/opt/lotus/bin
+
+PATH=$HOME/bin/@sys:$HOME/bin:$HOME/bin/bldbin:/bin:/etc:/usr/bin:/usr/sbin:/usr/ucb:
+PATH=$PATH:/opt/lotus/bin:/usr/afsws/bin:/usr/bin/X11:/usr/lpp/X11/bin
+PATH=$PATH:/usr/lpp/cmvc/bin:/afs/eda.fishkill.ibm.com/common/prod/bin
+PATH=$PATH:/afs/eda.fishkill.ibm.com/@sys/prod/bin
+PATH=$PATH:/afs/eda.fishkill.ibm.com/common/contrib/bin
+PATH=$PATH:/afs/eda.fishkill.ibm.com/@sys/contrib/bin
+PATH=$PATH:.:$JAVAPATH:/afs/eda/shadow/bldenv/rs/bin
+PATH=$PATH:/afs/eda/tools/gnu/bin:/afs/eda/tools/bin
+export PATH
+
+
+#. ~staten/bin/roseinit
+
+export EDITOR=e3
+export epath=$HOME/bin/e3
+
+
+export CFG_HOME=/afs/eda/shadow/bldenv/rs/etc
+
+export cppC=$HOME/bin/Xcpp
+export VISUAL=vi
+export PS1="$LOGNAME@"`uname -n`">"
+#export NNTPSERVER=aides.watson.ibm.com
+#export NNTPSERVER=hawnews.watson.ibm.com
+#export NNTPSERVER=rchnews.rchland.ibm.com
+#export NNTPSERVER=sernews.rchland.ibm.com
+#export NNTPSERVER=postoffice.manassas.ibm.com
+export NNTPSERVER=edanews.fishkill.ibm.com
+#export NNTPSERVER=awdprime.austin.ibm.com
+export PRTHDR='-to=crichton-E17x'
+
+export IEECE_COMPRESSED=ON
+
+#
+# For builds
+#
+. /afs/eda/shadow/bldenv/rs/bin/bld.setflags
+
+#
+# CMVC Variable
+#
+export CMVC_FAMILY=eda@edacmvc.fishkill.ibm.com@1601
+#export CMVC_RELEASE=idsframe.0102   # optional
+unset CMVC_COMPONENT
+export CMVC_AUTH_METHOD=PW
+if [ "$osname" = AIX -a "$osver" -ge 4 -a "$osrev" -ge 3 ] ; then
+   export PATH=/afs/eda/project/spyder/cmvc1.7/usr/lpp/cmvc/bin:$PATH
+fi
+
+unset MAIL
+
+if [ -s "$MAIL" ]           # This is at Shell startup.  In normal
+then echo "$MAILMSG"        # operation, the Shell checks
+fi                          # periodically.
+
+
+export hnkshrc=`hostname -s`
+export MYPWD=`pwd`
+export PS1="$LOGNAME@$hnkshrc>"
+
+#
+# Some code to open ksh if main console hft
+#
+# THIS SHOULD ALWAYS BE LAST SO THAT NEWLY STARTED ksh has all .profile env
+#
+D=`tty 2>&1`
+if [ "$D" = "/dev/hft/0" ]
+then
+   chhwkbd -d'500' -r'30'
+   echo This is console ... open second ksh
+   open ksh
+fi
+
+elif [ "$osname" = SunOS ] ; then
+   #export LD_LIBRARY_PATH=.:$JAVAHOME/lib/sparc:/usr/openwin/lib
+
+#
+# Machines with the name SUN
+#
+
+   export SE_HOME=/afs/eda.fishkill.ibm.com/u/crichton/SentinelII
+   export PURIFYOPTIONS=-cache-dir=/tmp/purcacheJoe" -always-use-cache-dir -chain-length=12"
+   export M_ROOT=/afs/edpe/wst/Xrunner/2.1b.sun/xrunner
+#   export MERCURY_ELMHOST=edpeafs3
+
+  # 5.3 = Solaris
+   if [ "$osrev" != "4.1.3" ] ; then
+      MOTIF=/afs/eda/sun4m_53/prod/motif/1.2
+      export PATH=$HOME/bin/sunbin:$HOME/bin:/opt/SUNWspro/bin:/bin:/usr/etc:/usr/afsws/bin:/usr/bin:/etc:/usr/ccs/bin:/usr/ucb:/usr/bin/X11:.:/usr/etc:/afs/eda/@sys/prod/purify:/afs/eda/@sys/contrib/bin:/usr/X/bin:$MOTIF/bin:/afs/eda/shadow/bldenv/solaris/bin:/afs/eda/tools/bin:/afs/eda/tools/gnu/bin
+
+      export IMAKEINCLUDE=-I/usr/openwin/lib/config
+      #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MOTIF/lib:/usr/openwin/lib
+   else
+
+      export PATH=$HOME/bin:$HOME/bin/sunbin:/bin:/usr/etc:/usr/afsws/bin:/usr/bin:/etc:/usr/ucb:/usr/bin/X11:.:/usr/etc:/usr/openwin/bin:/usr/openwin:/afs/eda/tools/bin
+      export XLIBDIR=/usr/local/R4/lib
+      export XINCDIR=/usr/local/R4/include
+      export MOTIFLIBDIR=/usr/local/motif/lib
+      export MOTIFINCDIR=/usr/local/motif/include
+
+   fi
+   export hnkshrc=`hostname | cut -d. -f1`
+   export PS1="$LOGNAME@$hnkshrc>"
+   export PS1="$hnkshrc>"
+   set -o vi
+   alias li="ls -C"
+   stty erase ^H
+   . sunset
+
+  # Buildtree is in shared AFS space
+   export LPPTOP=/afs/eda/project/ProFrame
+   export CFG_HOME=/afs/eda/shadow/bldenv/sun/etc
+   export BLDTREE=$LPPTOP
+
+elif [ "$osname" = HP-UX ] ; then
+   if [ "$hname" = tdahp3 ] ; then
+     #
+     # tdahp3 is NOT on our lan ... so we dot this profile to get some good
+     #  settings (above)
+     #
+       echo "Done with HP profile init"
+   else
+      alias -x li=ls
+      export CFG_HOME=/afs/eda/shadow/bldenv/hp/etc
+      export PATH=$HOME/bin/hpbin:$PATH:/afs/eda/shadow/bldenv/hp/bin:/afs/eda/u/crichton/bin/bldbin:/afs/eda/shadow/bldenv/rs/bin:/afs/eda/tools/gnu/bin:/opt/imake/bin
+      export CPLPL=CC
+      unset BLD_OPT_G
+      unset BLD_OPT_O
+      unset BLD_FORCE_O
+      export BLD_FORCE_G=-g
+      export BLD_LIBSUF=_G
+      export TREE_TOP=/afs/eda/project/ProFrame/ProFrame.0104/idsframe/hpux9
+      . /afs/eda/project/ProFrame/ProFrame.0104/idsframe/set.config.hpux9
+
+      stty intr ^C
+      stty erase ^H
+      stty susp ^Z
+   fi
+else
+   echo "Don't know the OS type = '$osname' ... can't customize env"
+fi
+
+if [ x"$DISPLAY" = x ] ; then
+   . /afs/eda/rs_aix41/contrib/xmx/current/bin/xmxsetdisplay
+fi

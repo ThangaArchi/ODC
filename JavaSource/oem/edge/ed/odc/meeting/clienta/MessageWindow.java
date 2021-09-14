@@ -1,0 +1,1562 @@
+package oem.edge.ed.odc.meeting.clienta;
+
+import java.io.*;
+import java.awt.datatransfer.*;
+import java.awt.*;
+import java.awt.event.*;
+import oem.edge.ed.odc.meeting.common.*;
+/**
+ * Insert the type's description here.
+ * Creation date: (7/29/2002 4:20:00 PM)
+ * @author: Mike Zarnick
+ */
+public class MessageWindow extends Frame implements MessageListener {
+	private MenuItem ivjClearMI = null;
+	private MenuItem ivjClose = null;
+	private Button ivjCloseBtn = null;
+	private Panel ivjContentsPane = null;
+	private MenuItem ivjCopyMI = null;
+	private MenuItem ivjCutMI = null;
+	private Menu ivjEditM = null;
+	IvjEventHandler ivjEventHandler = new IvjEventHandler();
+	private MenuItem ivjMenuSeparator1 = null;
+	private MenuItem ivjMenuSeparator2 = null;
+	private Menu ivjMessageM = null;
+	private MenuBar ivjMessageWindowMenuBar = null;
+	private MenuItem ivjPasteMI = null;
+	private MenuItem ivjSaveMI = null;
+	private Button ivjSendBtn = null;
+	private MessageTextArea ivjMessageTA = null;
+	private TextArea ivjSendTA = null;
+	private MenuItem ivjClearPMI = null;
+	private MenuItem ivjCopyPMI = null;
+	private MenuItem ivjCutPMI = null;
+	private PopupMenu ivjEditPU = null;
+	private MenuItem ivjMenuSeparator3 = null;
+	private MenuItem ivjPastePMI = null;
+	public int ownerID;
+	public int toID;
+	private String ownerName;
+	private String toName;
+	private TextArea editTarget;
+	private DSMPDispatcher dispatcher;
+	private Label ivjMsgLbl = null;
+	private Label ivjStatusLbl = null;
+	private FileDialog ivjFileDlg = null;
+
+class IvjEventHandler implements java.awt.event.ActionListener, java.awt.event.ComponentListener, java.awt.event.KeyListener, java.awt.event.MouseListener, java.awt.event.TextListener, java.awt.event.WindowListener {
+		public void actionPerformed(java.awt.event.ActionEvent e) {
+			if (e.getSource() == MessageWindow.this.getCutMI()) 
+				connEtoC2(e);
+			if (e.getSource() == MessageWindow.this.getCopyMI()) 
+				connEtoC3(e);
+			if (e.getSource() == MessageWindow.this.getPasteMI()) 
+				connEtoC4(e);
+			if (e.getSource() == MessageWindow.this.getClearMI()) 
+				connEtoC5(e);
+			if (e.getSource() == MessageWindow.this.getSaveMI()) 
+				connEtoC6(e);
+			if (e.getSource() == MessageWindow.this.getCutPMI()) 
+				connEtoC7(e);
+			if (e.getSource() == MessageWindow.this.getCopyPMI()) 
+				connEtoC8(e);
+			if (e.getSource() == MessageWindow.this.getPastePMI()) 
+				connEtoC9(e);
+			if (e.getSource() == MessageWindow.this.getClearPMI()) 
+				connEtoC10(e);
+			if (e.getSource() == MessageWindow.this.getClose()) 
+				connEtoC13(e);
+			if (e.getSource() == MessageWindow.this.getCloseBtn()) 
+				connEtoC14(e);
+			if (e.getSource() == MessageWindow.this.getSendBtn()) 
+				connEtoC16(e);
+		};
+		public void componentHidden(java.awt.event.ComponentEvent e) {};
+		public void componentMoved(java.awt.event.ComponentEvent e) {};
+		public void componentResized(java.awt.event.ComponentEvent e) {
+			if (e.getSource() == MessageWindow.this.getContentsPane()) 
+				connEtoC11(e);
+		};
+		public void componentShown(java.awt.event.ComponentEvent e) {};
+		public void keyPressed(java.awt.event.KeyEvent e) {
+			if (e.getSource() == MessageWindow.this.getSendTA()) 
+				connEtoC24(e);
+		};
+		public void keyReleased(java.awt.event.KeyEvent e) {};
+		public void keyTyped(java.awt.event.KeyEvent e) {};
+		public void mouseClicked(java.awt.event.MouseEvent e) {};
+		public void mouseEntered(java.awt.event.MouseEvent e) {};
+		public void mouseExited(java.awt.event.MouseEvent e) {
+			if (e.getSource() == MessageWindow.this.getSendTA()) 
+				connEtoC17(e);
+			if (e.getSource() == MessageWindow.this.getMessageTA()) 
+				connEtoC18(e);
+		};
+		public void mousePressed(java.awt.event.MouseEvent e) {
+			if (e.getSource() == MessageWindow.this.getSendTA()) 
+				connEtoC20(e);
+			if (e.getSource() == MessageWindow.this.getMessageTA()) 
+				connEtoC19(e);
+		};
+		public void mouseReleased(java.awt.event.MouseEvent e) {
+			if (e.getSource() == MessageWindow.this.getSendTA()) 
+				connEtoC12(e);
+		};
+		public void textValueChanged(java.awt.event.TextEvent e) {
+			if (e.getSource() == MessageWindow.this.getMessageTA()) 
+				connEtoC22(e);
+		};
+		public void windowActivated(java.awt.event.WindowEvent e) {
+			if (e.getSource() == MessageWindow.this) 
+				connEtoC21(e);
+		};
+		public void windowClosed(java.awt.event.WindowEvent e) {};
+		public void windowClosing(java.awt.event.WindowEvent e) {
+			if (e.getSource() == MessageWindow.this) 
+				connEtoC1(e);
+		};
+		public void windowDeactivated(java.awt.event.WindowEvent e) {};
+		public void windowDeiconified(java.awt.event.WindowEvent e) {};
+		public void windowIconified(java.awt.event.WindowEvent e) {};
+		public void windowOpened(java.awt.event.WindowEvent e) {};
+	};
+/**
+ * MessageWindow constructor comment.
+ */
+public MessageWindow() {
+	super();
+	initialize();
+}
+/**
+ * MessageWindow constructor comment.
+ * @param title java.lang.String
+ */
+public MessageWindow(String title) {
+	super(title);
+}
+/**
+ * Comment
+ */
+public void adjustEditMenu(MouseEvent e) {
+	// Mouse pressed in one of the text areas. It will
+	// become the target of the edit menu items.
+	if (e.getID() == MouseEvent.MOUSE_PRESSED) {
+		editTarget = (TextArea) e.getSource();
+	}
+
+	// Mouse exited the target text area. Adjust menu items
+	// according to text selection. Paste is managed by
+	// the cut/copy methods and by window activation.
+	else {
+		boolean selected = editTarget.getSelectionStart() != editTarget.getSelectionEnd();
+		getCutMI().setEnabled(selected);
+		getCopyMI().setEnabled(selected);
+	}
+
+	return;
+}
+/**
+ * Comment
+ */
+public void adjustPaste() {
+	getPasteMI().setEnabled(Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this) != null);
+}
+/**
+ * Comment
+ */
+public void centerWindow() {
+	// Center the window over this frame (or the screen if w is frame itself).
+	Dimension scrSize = Toolkit.getDefaultToolkit().getScreenSize();
+	Dimension winSize = getSize();
+
+	//System.out.println("Window size: " + winSize.width + "x" + winSize.height);
+	//System.out.println("Relative to window size: " + frmSize.width + "x" + frmSize.height + " at: (" + frmPos.x + "," + frmPos.y + ")");
+	//System.out.println("Placing window at: " + (frmPos.x + (frmSize.width - winSize.width) / 2) + "," + (frmPos.y + (frmSize.height - winSize.height) / 2));
+
+	int x = (scrSize.width - winSize.width) / 2;
+	int y = (scrSize.height - winSize.height) / 2;
+
+	int dx = x + winSize.width - scrSize.width;
+	if (dx > 0)
+		x -= dx;
+
+	if (x < 0)
+		x = 0;
+
+	int dy = y + winSize.height - scrSize.height;
+	if (dy > 0)
+		y -= dy;
+
+	if (y < 0)
+		y = 0;
+
+	setLocation(x,y);
+	setVisible(true);
+}
+/**
+ * connEtoC1:  (MessageWindow.window.windowClosing(java.awt.event.WindowEvent) --> MessageWindow.dispose()V)
+ * @param arg1 java.awt.event.WindowEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC1(java.awt.event.WindowEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doClose();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC10:  (ClearPMI.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doClear()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC10(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doClear();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC11:  (ContentsPane.component.componentResized(java.awt.event.ComponentEvent) --> MessageWindow.contentsPaneResized()V)
+ * @param arg1 java.awt.event.ComponentEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC11(java.awt.event.ComponentEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.contentsPaneResized();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC12:  (SendTA.mouse.mouseClicked(java.awt.event.MouseEvent) --> MessageWindow.doMouse(Ljava.awt.event.MouseEvent;)V)
+ * @param arg1 java.awt.event.MouseEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC12(java.awt.event.MouseEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doMouse(arg1);
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC13:  (Close.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doClose()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC13(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doClose();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC14:  (CloseBtn.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doClose()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC14(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doClose();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC15:  (MessageWindow.initialize() --> MessageWindow.setup()V)
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC15() {
+	try {
+		// user code begin {1}
+		// user code end
+		this.setup();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC16:  (SendBtn.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doSend()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC16(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doSend();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC17:  (SendTA.mouse.mouseExited(java.awt.event.MouseEvent) --> MessageWindow.adjustEditMenu(Ljava.awt.event.MouseEvent;)V)
+ * @param arg1 java.awt.event.MouseEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC17(java.awt.event.MouseEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.adjustEditMenu(arg1);
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC18:  (MessageTA.mouse.mouseExited(java.awt.event.MouseEvent) --> MessageWindow.adjustEditMenu(Ljava.awt.event.MouseEvent;)V)
+ * @param arg1 java.awt.event.MouseEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC18(java.awt.event.MouseEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.adjustEditMenu(arg1);
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC19:  (MessageTA.mouse.mousePressed(java.awt.event.MouseEvent) --> MessageWindow.adjustEditMenu(Ljava.awt.event.MouseEvent;)V)
+ * @param arg1 java.awt.event.MouseEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC19(java.awt.event.MouseEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.adjustEditMenu(arg1);
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC2:  (CutMI.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doCut()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC2(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doCut();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC20:  (SendTA.mouse.mousePressed(java.awt.event.MouseEvent) --> MessageWindow.adjustEditMenu(Ljava.awt.event.MouseEvent;)V)
+ * @param arg1 java.awt.event.MouseEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC20(java.awt.event.MouseEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.adjustEditMenu(arg1);
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC21:  (MessageWindow.window.windowActivated(java.awt.event.WindowEvent) --> MessageWindow.adjustPaste()V)
+ * @param arg1 java.awt.event.WindowEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC21(java.awt.event.WindowEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.adjustPaste();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC22:  (MessageTA.text.textValueChanged(java.awt.event.TextEvent) --> MessageWindow.textChg()V)
+ * @param arg1 java.awt.event.TextEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC22(java.awt.event.TextEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.textChg();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC24:  (SendTA.key.keyTyped(java.awt.event.KeyEvent) --> MessageWindow.doKey(Ljava.awt.event.KeyEvent;)V)
+ * @param arg1 java.awt.event.KeyEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC24(java.awt.event.KeyEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doKey(arg1);
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC3:  (CopyMI.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doCopy()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC3(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doCopy();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC4:  (PasteMI.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doPaste()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC4(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doPaste();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC5:  (ClearMI.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doClear()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC5(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doClear();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC6:  (SaveMI.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doSave()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC6(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doSave();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC7:  (CutPMI.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doCut()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC7(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doCut();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC8:  (CopyPMI.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doCopy()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC8(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doCopy();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * connEtoC9:  (PastePMI.action.actionPerformed(java.awt.event.ActionEvent) --> MessageWindow.doPaste()V)
+ * @param arg1 java.awt.event.ActionEvent
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void connEtoC9(java.awt.event.ActionEvent arg1) {
+	try {
+		// user code begin {1}
+		// user code end
+		this.doPaste();
+		// user code begin {2}
+		// user code end
+	} catch (java.lang.Throwable ivjExc) {
+		// user code begin {3}
+		// user code end
+		handleException(ivjExc);
+	}
+}
+/**
+ * Comment
+ */
+public void contentsPaneResized() {
+	// Get component sizes.
+	Dimension cp = getContentsPane().getSize();
+	Dimension sa = getSendTA().getSize();
+	Dimension sb = getSendBtn().getSize();
+	Dimension cb = getCloseBtn().getSize();
+	Dimension sl = getStatusLbl().getSize();
+	Dimension ml = getMsgLbl().getSize();
+
+	// Position the buttons and status label.
+	int x = cp.width - cb.width - 10;
+	int y = cp.height - cb.height - 10;
+	getCloseBtn().setLocation(x,y);
+	x -= sb.width + 10;
+	getSendBtn().setLocation(x,y);
+	getStatusLbl().setSize(x - 20,sl.height);
+	getStatusLbl().setLocation(10,y);
+	int w = cp.width - 20;
+
+	// If the message area is showing:
+	if (getMessageTA().isVisible()) {
+		// Position the send area.
+		y -= 55 + 10;
+		getSendTA().setSize(w,55);
+		getSendTA().setLocation(10,y);
+
+		// Position the message label.
+		y -= ml.height + 2;
+		getMsgLbl().setSize(w,ml.height);
+		getMsgLbl().setLocation(10,y);
+
+		// Position the message area.
+		getMessageTA().setSize(w,y - 20);
+	}
+
+	// Message area is not showing.
+	else {
+		// Position the message label.
+		getMsgLbl().setSize(w,ml.height);
+		getMsgLbl().setLocation(10,10);
+
+		// Position the send area.
+		y -= ml.height + 22;
+		getSendTA().setSize(w,y);
+		getSendTA().setLocation(10,ml.height + 12);
+	}
+}
+/**
+ * Comment
+ */
+public void doClear() {
+	if (editTarget != null)
+		editTarget.setText("");
+}
+/**
+ * Comment
+ */
+public void doClose() {
+	dispose();
+}
+/**
+ * Comment
+ */
+public void doCopy() {
+	if (editTarget != null) {
+		Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+		StringSelection s = new StringSelection(editTarget.getSelectedText());
+		c.setContents(s,s);
+		getPasteMI().setEnabled(true);
+	}
+}
+/**
+ * Comment
+ */
+public void doCut() {
+	if (editTarget != null) {
+		Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+		StringSelection s = new StringSelection(editTarget.getSelectedText());
+		c.setContents(s,s);
+		getPasteMI().setEnabled(true);
+		editTarget.replaceRange("",editTarget.getSelectionStart(),editTarget.getSelectionEnd());
+	}
+}
+/**
+ * Comment
+ */
+public void doKey(KeyEvent e) {
+	if (e.getKeyCode() == KeyEvent.VK_ENTER && ! e.isShiftDown()) {
+		e.consume();
+		doSend();
+	}
+}
+/**
+ * Comment
+ */
+public void doMouse(MouseEvent e) {
+	boolean showPopup = ((e.getModifiers() & (InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK)) != 0);
+
+	if (showPopup) {
+		boolean enable = getSendTA().getSelectionStart() != getSendTA().getSelectionEnd();
+		getCopyPMI().setEnabled(enable);
+		getCutPMI().setEnabled(enable);
+
+		enable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this) != null;
+		getPastePMI().setEnabled(enable);
+
+		getEditPU().show(getSendTA(),e.getX(),e.getY());
+
+		e.consume();
+	}
+
+	return;
+}
+/**
+ * Comment
+ */
+public void doPaste() {
+	if (editTarget != null) {
+		Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this);
+		if (t != null) {
+			try {
+				String text = (String) t.getTransferData(DataFlavor.stringFlavor);
+				editTarget.replaceRange(text,editTarget.getSelectionStart(),editTarget.getSelectionEnd());
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}	
+	}
+}
+/**
+ * Comment
+ */
+public void doSave() {
+	getFileDlg().setVisible(true);
+	String file = getFileDlg().getFile();
+	if (file != null) {
+		String directory = getFileDlg().getDirectory();
+		File textFile;
+		if (directory != null)
+			textFile = new File(directory,file);
+		else
+			textFile = new File(file);
+
+		try {
+			FileWriter f = new FileWriter(textFile);
+			PrintWriter p = new PrintWriter(f);
+			StringReader s = new StringReader(getMessageTA().getText());
+			BufferedReader r = new BufferedReader(s);
+			String line;
+			while ((line = r.readLine()) != null)
+				p.println(line);
+			p.close();
+		}
+		catch (IOException e) {
+			dispatcher.fireMeetingEvent(new MeetingEvent(MeetingEvent.CHAT_FAILED,(byte) 0,(byte) 0,e.getMessage()));
+		}
+	}
+}
+/**
+ * Comment
+ */
+public void doSend() {
+	String msg = getSendTA().getText();
+
+	if (msg != null) {
+		DSMPProto p = DSMPGenerator.chatMessage((byte) 0,dispatcher.meetingID,toID,msg);
+		dispatcher.dispatchProtocol(p);
+		getSendTA().setText("");
+		getMessageTA().postMessage(ownerName + ": " + msg);
+	}
+}
+/**
+ * 
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private static void getBuilderData() {
+/*V1.1
+**start of data**
+	D0CB838494G88G88GD5E503AEGGGGGGGGGGGG8CGGGE2F5E9ECE4E5F2A0E4E1F4E15DDDFDDCD4D57AE70BDAEB5D555D450D52B6AAAA5BD833A434220DAD5AA5F34B4ADAED29EC2332D2170A0A526AB28C020A088A0A020A0A020A880A0AC4050AAFA4AAAAAA852683F30551E1E61A398824556FB9AF4F19BB17BB3C2D6E9FBFBE1F07FB6F771C6765BC675C73FE4FC8E94B8392628CE9129417A0713FEDF11214F723A49936DF3B8C31A41F9003247ADB81B4CF72BFE404EB860455E60DB424
+	CA2B57A441F3BEBC27AE99E9D884778B24F5EB46DF8FB7DE748C07305D03FFF823EBBD8D5F221EC47ADCF1B4992EA9C0050055G85901DD27D518C0E3743F38A3FA79487D24BFEC1623C1C13214223F83CD4884B814A3E0244E9BB1A4543FD819B829489947D8B96B789624C2456DDD5DA4263557FF61094B3FA25F18E5125120F54FC85636D4F2F59521F6209A36225CAD7B6DC4B2A4FB5FDD9D631FB4F0EE3D5B5DF4AE6D3E969815965B2B549A7ACB6333DEDBA35ABE1F592651124F0F86EF7A541FEDCCDFCD1
+	8E7735C00EAB5136276714F15DFE6786C9D92156995EEC9BF3A533A97ACA37ED4A681219813EC4FEG75B561AB0467E6A0E6F7D456E6345BAE37944866A6997E95584D0D85AD322CD8ECCD850DD60BECD334C911D8DAA69D4534C479E2DABE19C1F4E5DD95E2A8862A3A8A71114984B74373C5A03F2BB00DDF64E29AEBAF84CA318D3B0DF33D24B168AA1636F1D73953983BFDF462E2DA1E265611B211FAB568855A87E4856A8F948414C94B711D5F2E036B0E86E5173D2545EE5B61F06C341A1D876CE6598A7725
+	25904231A3F2235DE916A4D6D6E72D4E573187A97CEA4FF2CA08256D0404E5AB6848E0C9D1BEB7A66824AD78399C63F8AEE372556E34C57C12786D21DC6237E438A7FC5FGB17CDD0677F363AC2F2F24E5094603B03FDF211FEBD35016AA63GA935E82FB1D147967FC74A0C27FF43ECE87F0D5B96666308134447010007810D870A86CA9D90E2A89C00BEFE6F5B4D5D7938522648CE1B49FA343541E1F2AABBDBADD6336C643E3E7DE8D73E56A346975CEBBE6617211B55F994B9E20F2EDFA2072EB7D68DE07EB0
+	8FF07B05691E62D5376F004EE5A3C564617709A42F7C8730BCCC94780F949F2E42D95E46D31C4603307C01A18696FF5A9C028F9C4862EF94F2B2D3889E2B42191C07683BC81ECF7F966A455F0598D87E1EB9C56A4CDA3F900382549FA890A89CE8A2D00C9F667117F59BFB789ED52B721771FED837902EF23B62B4D55ADC0A4956A89FB7B9AD26862B6C12F89C291E24314103AF211E143DC65031D73649CE13E2315BC03A29C5064264E2F1D26A6711B8CE190656D8DAE4D0506210D06E42FA10ADD9CDAE651843
+	ECD2E4F78C963E2C1E1409732663A0918440FD45A0622F95344ECE037B42C1682B5F1FA6D8BFF88E9804FE393EFEBEDC77C361162D25259516C6E206495901E574515C6164FD077859FFGBE2069C04D57059846G957BC3BB85E43C9E6AAE2031C0A5B7C09EG258E8EB18C840A85B28F01BA8DA86D469003BFD0769FC38CC30172EF8219C041C091C0D1C031C0498190872898E89F1099289D28BFD0GD0B0D084D094D0AC893B99729BA8862879962CBF265662FBD2B16786A97F395D3A6FC94D866B0C48DBD8
+	190F39C57B1E445274E75D9AE2A8832A873A88B484A894A892E8BAD0D6A004835583DD849A82948A9489B49DA86BB688872A873A88B484A894A892E8BAD0766DA106F22053C0BEC001C061C0D1C046BB200FGD481548C548FE8A8D08450A4202421A106BC20FDC04DC07D06E2FF651A55E1866FF58971AB39923F75246EA1F91F9D609917648B49CF12A7A43FC999A0F99C538319244C6861242C60BDA9BF5AF0D2EE3A13CD4A1FE82B86F9460F8A68D9FA89756FA6AEA97F24DC13725BFCCB77F2C9D9A7D7721E
+	84F359244C97F723073CE3315C9749BD303F1D3F935E4249BB93F1D34F7D20267CAE78C81DC05F1FBFF846A1F5C22C060F3C3F591A3C1C2E62EB6632D8D9AEDB53D5D95E412F47FA1886A2738B8D368BE8ADD0A550D220F420DC0974083A1737408B3ECAF53FDCA7FCC38FE4E72A6E63B5E107FA11EFFB3B89A7FD5855C024AF74CD8F649571AB99EF6D67775B003E6A060F34F7AB787D67BD50339B68E8976107013674428FEA5A58C5589CFECD506024AD5D2E418EG2D57E0B3D57733D53C732438865217998A
+	75F4B8D054D0EC0B4755E7CB340F3253641231D7F248899D8A596CEE19D95C27CF127C124F43C827C2F648B6B35C38F81FE07CC9221B77D74E58A56CCB3CC4F152FF5D859D8A174023CE4EE3B848D077FEB0FCB28DB7A90A5352502A48C7E5050C335C7CB1549617C7575845539A5FC852BA9D5218F6A734E3F7E2DAFF7C0E3CB3586F28325B4F35BAEAC80F0A77DF0CB5242FD282712B6F44762C0D76A595F89E8894A870ABA9CE620D820A94784C44DA1DFCA57C6A6740BB3D57E7833B88E3BAD66A6A503E2709
+	DD14B3ED796A2CA3AE25DEE27D16193CAC1132B9D7E26F9271A3292B967172C56AAED2571077183CE7643DA76F87294BC87D7685AF77243C1277F5355033026A117E847D8920EA20F620G208820E8200C3B201F82548CB490E89450C42024A068E782558279G8D859A8B948B147DE7681BGB97E0C7972E832A32EF3BF2CA7E9CBD1258F6B10552A3461BB086F75E61E76EDAABD5AFA3FA7F5637F876265F58E713D36FCA670702E72A0C5D346504F2BF89E206F5772EBA64FA3F59B172BE317DE3B787F0DD81D
+	67B8653D4EEEBB25DFE77FF8CA3F4E3E72D457F5722FCE695549AC6CF727C8FE5B5BEC2ABA7E3AD3E49C58E83759E45A508896094D3BCD2DA1693058AC4A890B39C9D60EDAFE10A5A96C4F242EAE21E3CDFF388F7AB30E3D5AD66158AB6707BFC8E12732F567117CEF7B4AE89C466A580CE16E319733497FB42957E52B5C820E5AE5EF35A98C7FA39D47F25C95CF31FB1ACF915EBC0FB93F7CB6FAA9E017DDD63B8BFC14F756F45ED4E0EAD38AE8CE9430283B497D5A6C8D9B3E4C7694E136389CF6171C3776785A
+	C209697A604477D457D148421A9D79AD76D617DCC07F6F32DA9A4F49E62D0A83A44C3B86BB8D4F2B724A75B9A8AFAA16A42E7F0ED907047E1D0AAD5FC4F32C00DD2AE567993B33253391BBE8304A8AEE3E8205EE6D262DDC762FBE3FDCFE3493BE8FBF1EBFF9026A5A552A9C286CEBAABAE9E9D5080EE22E630D1F3EE1BA6C0E0ECB28842491ADDBC41E04386A281EEA13CB11AF1DA2AA0EE8427C39B61D6959E515CD4ECB18A0A20E68594675CC5A467CF654F47E92A607C8A3DACA045F5A9755E299283E6405E0
+	BB53E159DEA74A4025D4428BC1911667BB6BCE3A4B40A5D4A48AC1D11170DB75CFA75D6560D2A68A8BC251A6212B596174D25F9D01CA9846AA172D42E37A9FDC7FADCFABD4A017AE213CB6AA5A02FAC69EBC695673DFD42CDED5EDF257973317156A543324FD35182C5036666909F249CA2B035A3C956504B656DD0A3620530B8A6208224DDB381E9B125A3C14015D6D962537A540E4BE5B6AD2F61BAD4A8159565ACDC190EDD3DE6B8FEA1F7D2F4D5806BE7FFC45856FF6D4BB813D2C069415F0BBEEB9506EA5CF
+	7E87C6703A759F65E73A6BAF1042F65E2413B95D749818BD22725BD4087EDFD6C07AFFBC7281066D4D1E81D756DAE13CA71BD2E8BCDB6BD1993A41A6456E5C04E1CD9BC8FF143E19621D3C66C702D18788EC50D29A0F74D084E6E9A23AD80F8231DB4B487809377E9C9BEE6F243F8863176ECC247AE9AB4E31F71CB3387E6AE3986F6FBF4EE07A2B5D3AC69DC8647A2B85EF21A3897583487D145EC97FE614B1EDFB926A97711B67AA3C1D34A924E7DDED3249790D7696075DC632CB5C9D11DDD0C3F54A4EDD986E
+	B5C79BD502D18829E48A197EA79655E95EAB52B7ADA07F0E1B2C2D722EE6132D29335E9A88772A12B06FEAEE22852808277D09F2623FBD962BDCE1ED625816AD327ADDBAA7F794G55F4B8BA6B5BAFF7F4D1F3C2E827D787B9E8B532D91423446DCDBABA3D3C3B7F35D6B69F3755CC46D4A5B0562A82B28F437938A5A6920E73F1FC52F1175DEAE543C1880B98C646FAB5F9E92A715B45E1EC9FCC0A8877518DCF3DBB44404263562A43F36E5672EFD82B47EF967C43F4435BC57846F5FA617DC578F05D70G91DE
+	34DEAFBCD8045F2B9B9EA142B7676B05C70A70E05D70E8913EE503DE38F1B806076806E70870ED85FA6179A2FC14EEF839885F3ED1AF3CC604BF209B5EAC42BFAF548B3FA842C3F543870A70AF0A744283C578DFF443C709702FB669050F9161E13A6193A11C6D535A31D93DCFABE6B8775FBD6023FBD0460FDB54B2EA6FE1F17CC4782E2D6A702177E84B38FD2B9E7F64FB5006AD5B74EC106E8DB1245D0BBA2C5B75E4640B70CD25FA6165A27C535DFA61B5A2BCFCCF57E9085E23475FFCAF26A1E42FDE9AAEC2
+	78C021E3CA251E0C21A2FC4457FA6121A23CE33FDE78D8917ED5D557E9B8D725479FA5780B8E681515D891FE2FEEF87288D1979CD407E70FE06155A2FC58E15D3ACE04EFBC622D2EE5F5F6E2C3AADCDD72772D322DD1A60BA7D065633E1206791AB05A040A7DAA8B9B48BC2FD5356E4270190D7AF3EEF39B49DE48F3C27E02C652AFB94FE532B94261A6A253613434181C9DE4A1096FFD4C2CD11705F6C89F59A7698F572091382F6F5BE3E44E59F3471E54C53F48338DE7FAA29255FA42391EC9F01DBE824BE571
+	9CF51C34E096278C2E55C06302C91C66945C07599C4C561FFCF83C50E03E1F0F46DBBF9763E55F97E2A8812A3D0F276DBEF53C56F40C9784F838AADE14C73C358BB15EF44053C25C710AC35471A609F8D5001BD571FCBD628DD9047106G9E2C0AB74EA3DEF586461B8C38F12437F49897E33C9C08D3B652DBBAC609F87590C79969AD9D56A5984F8F62840D74160E6CCC0CB78662C48199C731F865235471DE957194407B0FF24B734C376B32C4FEC01CF02028D1FA716A160A745E4F4B893F565C2F0E173ECC14
+	9740FD0082F83C099E71A608F8317733F424BE40626DFBC09DEF70F20C6773G0B672F9B6F3BEC0CB76E81D6CEA773F8798F2A632DDC01717681FE9A4877C196EF0CC73CC9A2DE7403CCEFD2A8CFF728BA5E1DABB11E95F0DF20C09EEF22C7BC6BAA11DE9ECFBF3D6BF3B0DE6AC3AC1EB63DF98F11F80744BE640D82BBC33175D099B4A5607E4883296A7D51E6D7096E5A83357FA1A65F67A16D3E51F3B2119BG787007300F7C6BC6751A758E174B5EE8215B76F85DD9E6D62FCBB0EC07F996DC4FD81CAE2552E6
+	165B317E5DEBA63612FDFD9C66F568DD6B497A24F61FA2297B6CCE5C92300B0D19EB6C3B6CE6F99FD4613B44324DF10BCC6ACD66079F772877E2074E5DE01C6D458F61BC7DD1AABF94170ECEE4FB26C766215FF37E0275F575DE3DBD333AF6EA2CE3B24DEBD1E6BD48E458EB8273935819F5080D91589B82B3BE0CD873FA444A8476264094011D4DC7ACC8E0EF8BACCAE0568D08E505A1B6C5E0B5823395A056DFE07F91D838409C9B911BAE30F784D67CD7441C0508D985761E4082852694A196A9307785167688
+	E267B7A1D6A5308F85667B88666756A432EECB775543B83F405250D250FA3E254054G23C948D432195E56FA5C62EAB5D9E94BAE71FC6C581C444BEE68A338EFFEF4B169C34440F37223A1061CC7D147CB099B3A57D12948ADBAFA0237087C9572DC9DDB3B16A726BD7484B33937EF95E564D174CF4BB6CCD3502318267BCBC81A22C89C2034F00CFB6BF6644F97182594B13340366CC1EC0840F277A2B6CEE0D377226E6447D0F7E9A551DD814F75C04AE398B767EBD176847616404285B6FC3FA8FB823B25CA14
+	3D3F09F76800A8FB82FBD3E001FFC33F3F39F0E5376FFEE5A319B4606F5CC1A2037457A2055C578E0B327AF714FB7F02B44CCF1C4AA8AD5DC376CBB31E2B681EA0D237D57D9DFD33C3A13E710567A1C041C2565E640C4E322A6D0ED687A98BCC1E14A46A96A14FAF0948B3C6049832000AA3D05E706D0BF5ECA35DCF0B49EAEF926554BA8753DA9501B20DF46F3AAFBC8F818A86E2FB5AFFCB773A9379E3GB3BE9EE2E0FD5B5814C23876F64D15591979B3E9EF5CEB8E58965C32201C5775E3068D104AFECE517D
+	E6255F5C8CE359637C1B01475DEDC1797E5019B5C04C6E1A39E877F008B369F19C2FFCDB6FB15E999DE228GEA9E0D695A11CE5614FA3FC201ED633073C9ACEDF4F50F597247F43465A268899E0D36E41F5433E572E84C4F626FE7B2D9EC91CF426F8C0EACC4F952935027FF82653D2EAB4F71844A1B321B799D272BD15E3CC5A84F9762068AF94ED3FA72E2043C4985180FECBD8E65BDA664A50D017E6F98147764892D3CF6889BB2866535ADE56965AB30A23D9D99A2AFA16EA4A16F70CC2DBC3237AE7B9FD8F6
+	B7ACC63EE2402C7FC03E2CD9FAFC01026F9541B78A30E84177EFDD3E3CA711EF509264AB83CCF99279EC49FAFCC1022FB2937942G0B95FCF3BD66218A1FE27D621A27302C8E4FAC00EB6F16BA311CDE17311A7A3A872B1CA29F1233504EE630A160A971CEFD23172F631F427405893E4900650CC53E7571EA3E7A31ACFDBEE3B1FD39CB7B7AAEB23D3ECBD12F9F489CA3643ECDF175BAA67349B534CF048B18CC46174BD00671E998E3BC0D36D74469592EBC0DBAEEDB765F55A3933671F701ADF20ABCB0ACC7FB
+	7A012EB0214F32BC5F33ACF43B564874A871042FB74BEA4C0EF0E1C7AC58D0788C5A31BEFB03279D5DAF7309347DB2DB14AF1097A0E4CE4D5E24EDEBFA34DE073E4CB42608B4EA6B3E7DABD067F850177AAC4E41FC202867E076BD4B462E4DF03D78AC5AF56F8A32473A4F0BCF925A57BFF5A115233770A46A681522AC037EB142067615E43FE28F17E5383E0A0BABE8596AE6C1C6644BB3C237F19C78E79C3E830FF4285F81E59CFB87C60DC35B362FA2E360DE2E0FF19B738D33B8AFDB99C3DB862D927D9150E3
+	FC8E6B181A9CD1778226BC07FB7CCEECD20F3343A666FB9DE787BD477A92E14FE94759071AC83D9089F874F3B84EFE44CC76B662B87B880C9DA1DDD632BE4777D14A71ACDF7833A2933DF4AED242BD767D1B097F0C4FC31B85D482D48D64F89EF5CC133B7D66F3F7FB975FFC066675665B4D014F635EE74B5A5E70858A3E37FA45B7CA701DDB579B3EB102EFF22F78A68A3E16753D610B91FCD3FB451774CF6433677706AFCB70C5770A2FD070FD3F21B7FC95026F5DDE71558ABED7C1EF782C02AF26D7FCBE022F
+	F5E3EF787C845F873D629BAA785A8AFB4397AA78E2FB45B7D670F5947506AFCA70FD5CAB3ED841F7E1D3EF781247A35F74DE71E58B3E1FB6F745D7BC5E7DBD4BBEFE4F3E3B7EF28B29636B47336F2E63843E17624DAA1C3589E30B71FC868542468B7D77EF69295DE593545F775D353527FC559EFC4EEDDD7119A738535BBEC11D5E8D5B097D7DA7E8533B15627E933469FD3884539B88E1C9AFE0FA07EE6F295D569754F65BCAFB4A676341D73A2727FCFE9EFC79FBFB4AB754036F3DAE79C2DFF07BF76C8BEA7F
+	8E23F3D6D1AFE87DBB126251AFE87DDBDE097E1D8EE1277F057EDD7BF5CF6D8E7F175A6E7F7418EF3C875FFD7BFB4AB759036F0E2A1E72C911EA3E16833DF94F53A2C5FB59AB3EBC41E7BF2865AB0BF467E1356A5E6CE167DB07FB232FDD683B36067075D7498D607741F00DD061C82C1C5CC76775A2A3D9B909977843941F2C42D97959CBF1BA4789E127DFC47D89C9BDAEBFAF2A4BEF52CCA2EF7C0BCC4FEC01AF24F82C8AE77AEF20730664B963A598473CA47A8BF3347AA7C2D84CCB7A5F95A63D0C67E33453
+	B9432C17356F4FAFA81E7732767D19150C6FCFB104793F0C7A2FCB516A1F7E32276E0C091E4F0C6F36CEFC855AF22361E37D6EA9963216D783E18E20FEC001C091C0D1C0C92FE07F7B6BB3FA6BDC1E7DEFEF0BDC6E6FD3192D93537A1646291D7834E94CFB45130FFF8BF514FC8727198B46A5863E976179EF55E35CF210F39A4897487F951C837FEDBD4EBF8FFF8573ABB03DEFE93937931FB6AD13B4E9E1B61CB809B6C87FC69BEA97764D06B31D7834B6147CDB4F06255F218D554206C50B7AE6436ACEFCDA9B
+	7A695AF067A934A1C05870C49FED18502D8D63B5B630B27376B13DB2938DF10D2FE219C928956B122F221DBFE7744D4EDFF762535AD9732A1E2F7A4D946BC442064D0B7BE6430ECEFCDA9B82F5EDB8BA8BED8895B63C51C79B5E6F560698DD9B964FC69B1223500641CB7AE6431D1D7834B6D4C46959F0DB32D8C797B69C4A6C1B8DA7BB71AD53BC7BC56955074F1D53298F492C538E27EC62F66EA944353BA0E1677C2C3E59195D09CF6B2BA8DDDF6D7DD62C038A9B7E56C79B46F5EBC371EBFA3EFA26B43D332F
+	F636AA8A5DE34D6CEC0847B5602A57C4BFEAE95F6C746F4427355377B5BD3E0AE5FD53F724931FD65F1057747266C29C26B9D824B9E9F95FECD85809CFDB0EA76B26F9F49F750D6FD61F71F55D7AB73BEF7A86F762537AB8CBD75F6195FD53F72A93DF27327E3ADED91F1027331ECF26602DAC4F8BDAC5B9FF9D574A535A68DAB9BC8F818AFEDD7487D67631BF5009CF1BB7E3F4FDB53E0F7ADE6F442775D5142E2FF2D6EF11FAF92E2528E1719D7A28836B586942EF03D77531BD6A442775DB719BFAFC5F6674CD
+	DFF3A7BE2D3EAA0DBEB65E58F00E6E8900B0658D9CDB5CF1066CA5467503EA3B45C6769131309A7A6D165DE9E93258907B06E20DF6A7BD9001E1FE4D5E4FEA985C2CFFD6434D4D7AE7B55C515C7579BAF7B7FBBB4B011D0573AC5DFF678B698BGE2184FDA44028596378E318801DDA130C801452FC7ACDAE03E82B3CEC2ACA19F318C01DDAD30FC01A5EEC02CDCE07D84D6A330198508B58B6CDA01DD94586C0D088D94D8FF01858AECCEA1E22384769B010D91585CA244A68AEC2040E284B6EF93E2C9EFA276BB
+	01E589EC41E6448A85B608E29570DCAF30A345847301E73FB745994264B567E57E006A7E79E23DF304AE9571B9314B2A0325F96C96CCF3007043A3DB918B9258B55B50DF238436278463C58AFFED5E6E76D1196A7E31124B6F2F17AE2B8E16660737E31AA789BFDCD50AD80C408E6FC1CCFA8B31DDFB91CB96582CFD68578C017DFD9F46ABFB8B7D9ADC697665C32A7BBD15175F2F27AE2B8E1666722FB14D7B049FE66CC72CC6E0E384F6DAE0FF29C24CAAB05F83784E378BAC61A0E27D85F6B5458260B9CCE00F
+	D6E31EC4894C076EFFCCFA9B6A1537C57DFDC454AB823B196EF92CF81B4D85B02C041EFFD38B18D5440BEAA058C0F89EAA3094976A8DFD9B737DC105FC47B3D1BCBFC61F495E82DEA7A917AAEF088E7D7CBFF349F4E84F31F267FF965D5B998BB6A4CF46342550BDED99701C8FD48ED483649061D9B45C483FEDA15F2D78CEE65F25307000A4355D791C37BB9B090E8C2E2F7BF763FE8F9D24EFB83B9B7904E6F2DFA476685D68C777288602BD23A6E3D9790A4EE5C44273E401752718B4A54410B6C52CAF126EB9
+	3775172A7B54644BDFEF2C3D2CBA16D29FBE3E10747B9C50FD13DDF4823A422418F8589B8A993BF7BAA36B202945FD064013A9B3F91C5D0AFD97B92F051FA1ED715E1F7C54225F1FB41EA57DD8173D5559A8EB7B0C334FE608B0774CB81900A66630B8E914DFB1B91B64CEFD4ECC4A4F423C71671C7556AFE5E9DD142ECE6BA68947B22FACA05F49684C0FCB4A94D22E1E925F83E643F3499476DE54CFE17B4058D8A625CE4C6FCD4131610DF524404540F3725490C34ED4AC13FF286F711A73D4260B597FAF8F7B
+	B70BF2D6FF3247EB519E7286ACD44BAB9672D6FE57D3F9E68FF987972965ED9172061D6A293CF68FF9068C35BC726D847375AF0E0B6F8826222F53CF90DF0743F3A4D00C70752C5A1E6ACE7E0FDAF708076EEDA2AD3F1E59D3F9599E724EAED64BAB9172EAE775D4DE31073CE5CB5472368BF94BE677D45EBE8FF94FAC192512D7D408727E145CD3F9759E722E4E74103789656D77588763780F3B0D7105FBFF55F310073C4AAC8FF91BD1DE5537BD35AF4CC35EA71E720AD1DED3FCD77246296C1B64A16F2FCBBD
+	6409B31AAEAC734037229E1F382E74CCD769C90DD66B79EA3907BCF146CFDC369AF71FBD936E090B73DC7A2D7010D304F6EDEE555A15936D3625A43AF31F002D73762773E0D551EC1DF70E4087D35C2142597A6F920A13E7BF88135E41FD2287D7FA58AB4E541A3B4A83976569538EEFFE3402CC9FA03FF7184DC35FD17B71C58FF9C5A5087FB647835F0E6D4F26F344FE725DA3FB5ECA1FBBA4ECC3649DC4B6EB1FF65B4CFC9207FD7379961D8FD98B9D57E763903B0E4E07EC866CBA89318CBA7731918CA90AC7
+	6CFA0AED0367BA01AD21F39F64C0232B84B6F8BD469BA130ACBA775184BAF385F6A345AA81DBE1C4EC991D7BB88C58FE015DA430D601E553390FC3005DAA301BA936851E1F96E9DBC967BEAC70FCCC683DF5A3467B5C00D8CEA17A65047041ED056817DF08F8EB685C47D140868B9DF7886C8B0165EDC26CD9A16FCE0A9D86ACD148DBC767BEF6G56920779F7CF9B69371EF11ADA204BF054A1B7CA296F1238C162FC0DD0DEFE4672EB34A83316E2A243EAEA102DF02DFD177CB6D3B4B9F2135FAFF3396F0F1329
+	BDAEBBC01C1BB164DDA6F3B83F0E05AB0B5F516A663D733C7BFECC1B7B7EBF6D6E7BEDBF38652F5807722339DC63FB6C1A739E4A37DFF0735EF851FD7F7C0F6E7B0FFEF25F135D92224C51B1E6BAB861A6615BACBA1EACA27E963E351FA6E7BBB4B9CD0EE6CB232BC2F6B5BAAD8E458E1D3B53B134CC9EA4F6D600CD4DC07EC0B5B12A7A0F266505EACC4BD09E964A2F11B1784D505D1B55794072663A43241E40F39778FBF684EDFC48A04E282AA171DA205337536464582153B3283C8EFBAB649A6B8B0EB1219D
+	53C1EF5A7B4C063277D9DF101FD555C06A1086D36339A6273D55E606FE4A7BF49E2E11682D017B53641926EB358B650D85AC8A487881749501AABEC0F96C3B9375A9D78C5F1C54395CFDC52A257F69D9DCEC7F7F50596A7D7F668F58F7CD7EA28DB74D696C4B90F136C590448B7F0079B27683F6A6BA63BBBE1B0C77DB6CE6197950AA5630D3BF44B8374EA6FED0AC8A5DF34F7C70A47DFDB45656FCD8A3769A810F75C3ACAF57D611EFADF47A7D2488C82CDFD9FC0C708682CFA850388F71DB0276B5782DFA506D
+	83243C3F687FEE58441A8D46499F32F4254632AB7916A0EA7B68C456FEAD286BE97F25AAD63D5FEBDEBD316BF42CF63F57F20A7B44EA77FB5DDA077B3D82A04C78910E197FCC7774B44373C50139CEA256CFE05B3FC34CCFE00F1DC2AC60A36CEFDFFD3C2769897AC81D1EEBE87FBD6CA36D6FB48D2278780F343F5314C9F1729C8DE1B59F23CDABEA5126D1828B247BBF4261F93C406C33900B9258165908C58B6C2F4908CD97D883ED2312260598B226A17627C21C4F4A975847BF63FCD63940B2693A31F99AAB
+	3B8CEB7C96ED769571FE0AC75E01823B4908710285F6DD9C468B9358A883460B925857F46DB29A1E0D5391FB7CBC7266CD477C7BDD9BF9A7EB6039994887488FE8A8D02808F3B30DB3EEBABB7B021C3BC14E90A167124408B859ED27F9BE93B95E4AC0A8176D436354F49157CFA70C697ADC686A6A37896670720FF3CEFAF3F1C8B3F5B06633749FB01F53BEC1BF5E3ADE78D1E0FE343FD3854F27857652C6F55E33316CB334AFC27725C33C20CF88A6952B6BD2B2277106012D4B3270CD9E61A44DE4C23CC042EF
+	271FD80DF55374A7EE142C7795FB7D3D4518CF18CFB3BEE557305F57992AF7C4A5B1B9CF55293F17CA3DA14B9867C5CEB5672F7F54DD4731747DED9B26EF6027183E18ED5A743D63113EB5A55A74ED6161FCDF4CBE1499A1E4366E534AFCA5DEAD730EFDDA197B394FF83BF8104C1509AF515CDF4A13A11B94799911716C419C097DC6408A6E6B19DC1784617D01080CA038325F747C391A7C96575E4ABDA55BCD29D22AB462B3925547077C03CBD8D858E75322838282FDFCFCBEA3C11F91045E093F959F911F4F
+	12C825AA9199654613519115F7154E3EFB7595FBA38ECB4F1C79E36EB56956376FBD3B72A9E5E74E595BE7EF2CBFBBA4BEEE5C62CA23CF20737A342C0431C30B572D283DFB7C3903059951BF6CC97E5B62530B13633ECBE907A1404D0E68DA478B0F3E917A5D2187EABE1DBF8BDEA6660F30EAC914273AD9D81E7AC77AC9E901B1715E4AD336B41266FF853F12F260FF4D7A997C7C024318EF97A11C65CB41E1ED3E0D7048375307357956E4E4612C9D08B1E15B9E8CB2A78331367D7582B2CE536EDB3213F3A22B
+	D8A704356FC57437EDF262C69A4A00EA00D87FE189692E7032916FA23F79E0135B32C57958E5375A1DF91B8A8B73B92D653E8AE8D33FB3A533B6F9BF4BA70E794807DF739F2B63F3097BDD6827D1F168278E175A8F442ED76254FE3A4B257563DAC99D7E22C7B83175A30FF7EE2E2275B372B3FF1ECD4D133ABD8BC5F495D9BADE96FD35E8C8874B2F1766E0FE6599C69ACE9BB03F1AD62E6EDA7E41D62B15679C764D58EFAF7A030C61C091C0AC3F2E1C1D217FAE979C5DF1FCB7EBB3BE29694D77816E36E67631
+	5E7231FE4CD05A0F1C88B646F11FB2FC8445E3D4B873D3A94569398971A38DD6A07E7DA9BDB3EEACBCCF86B29AC79A32004A00EA01585CC4FABCB90F234B3D6AB5F6C715FCDE362A36F730B6EADD9D769D2CA00F6FE52267E43443F3FF20G20E02031A2FCB58DAF61E74511F36022A00C1C734677665461BA8861517A271D4B6B4E0F812AB87DD577CC47A3C2075E7AD33C245F266B65317A9DD073AF10020FF79EEF4550A5A7F63FE8167BFE77EC77FDB3DDF7E27E3D71B87A5718007E9BC07B3229701C83D4AE
+	704194A7676055GC64E07E3780A9335BCBE31ADA721FB5F69D13997BE7E5D965501FD242E7AD5BD75271A18DFC612E6047B7641191DFDBBF0015B07A3525C777FCEF75FA7ACF24B68A8A4E3C5273D4D45460A8344B9D48A719F451EE57BED60F9A0909B034F13F09CBA9C30F020A8A0638C480F99D8273C3F119863EAF45A2D568613733845E5E930D8ADCA8737A30F0860F3950362D1DE85705782358379830D1A016D4B7E456E784362B07EF8881F8C141CB852108FD4150871C7ACF12753545AF9AC5D5E0AB2
+	2C40C346523EF07587A2EB65610964F747A71E4F6EA22F06A70ED44D0F6667929D87DCCDD58DD6441EDFC05EA1F15A3508BBFEBDBD4B1C1E8A0D58F759099C5B2958B8D6EEE673866C578A78799B2B084C230AC9E9F5D1D57C2C53FF36295B2364A4160EFC3832707989FA6165C9184FDF52FEFA8D4113B01F9FD80FBE6A8FD8GD09850C4A0E9A66673DD340FCE1A9CF248A8137548C6EC0F33E7623B794FAE3FDB55A356BF78EBA27625029F38CE9AF5F5CC3C37B36E0AE7327C2861575A5F5551ABEB871E4AA4
+	E9710530G20F020C820E82024D9588E1C24EB99644BA4C84E8EC5B1B5B653137E3091A0475B39E1B26949E43FCBA779180CDB63C93BFC5CF4D677542C2F210DBD54F0D6EED4EACCCD92569DCFF4790D2B77BA27EADFEF79D8BF7B1D03BEF0EDE3FFBFB8D7523F5C0E6B49DFE522D2C17F92AFBCC87F92AF2C5AF48C7E92AFDC38301ADDF3530F1BD643754195737A3512EBFB3FBCFA4D5DF7C5FA62055C3655393990FE0C7EA51EBFC37F921DB4BF255CBB385E30D9649DDBF3884BE596BC13F14250D9AC7F5898
+	6261C36AB18436CB040C33C79A2AE73B6BE4D6DE164FD177A72DCFA69997F8A9AF8E4E9B402FC3065471BEC355B2BADE87BC8AA896A8B5996AB62072E4ACABEF46137E5E8E4719A3B2DB24BFE03241DBCE8A86643463CCE58BBC2927EEF91EA5746ABBCBF7DEFFEC6A9BDFD2C35F7ADF3751FEFEFD72C84D770943A85E2C42D97FEBDB8376D395889B1F0C7D2FF34BC9DDD0B6876A65B9683B33B356FBFBC7G2CF65A9D32D369E0A8BD780427255A55B79FC475F80D37FD8EAB8B1C2F53371DBD5377EE2F7918EF
+	255944077D67E8FDBE13627EF334BEDF1102BE8F043024942CEB079DA3BE3742330F406E2798B9DB0A1CC3463072E35D6D37A17C6AE7EBCA4F7BCECC47B75D6A5076153A1AE75292ABCF35095E775E1CCA545FFBA3A76A6F65BE1758756F6E39923D7F6E5E8F096A5F5DE37D1048ECC942B67EFF73DBA32C3D8F7ACE3B3EC0725DAF857BC71F2DF05B755F7D368A5367D72B55C74A5A50946CA75CDEC84AE911700BE315DB7F3BBF93DE4F39020236E60B424F055CA6E1FFA2B485477732249D5F133CAD10F0FCFE
+	1D249D5FFF68917E38249D5FBF6DB13E1FA6E947776912FACE6D41F834A9C65874E63C56260D9EBAB30DDA1BAEF84CC99CB0EAEDBA65417F33D1EB53AFBD6679464521CD79F351A60321EB1B0A8DDD5BF44620356904873F3FC1EB53D203FA3EA920956BA8B358B4840859BA2995ED9D87981B1FD8F81E44CDCE05369628AC954B4EA76769BB82EFB5F931786FCF4A58AF4C3AEB201435BCBAFE1E245F4E572472F923D4779C9B5A9AAFCD48547906290A8C2B78BE3576A49EB7B895ED2FCCC0ECF2AA3ECF192B5D
+	6559FFFDCF663F182C096BD1D64EBC4C330CFCED1E5D6561732F7335F9166E91FEB13F6B322DEC74D636197D93B6926C0C496AF21F377576EA42D38FB636838D819A8E94BE8F5B74771770B3E3F57A4D3B4DCDE48F23CBB111BD9E7CB72CB33D5759AFE712F5C6DEE7932EC6793849E9A1838C717B861368FE29863B2258DB08FC4427E6123AD031BBA8483077B2098F1C1626E605C56578C719341D144FD018750D4B8F79C86EBF9F9F9F9F773D9B8923FFD00BFEB6EDDAF4B414F5788B8CE421A47CB35534B439
+	F3477FCCB3E12D7F475E1DAB8E613BB3917C1CB1FFA4DFCB15AFE29F37701BDFCB05573F67F5CCD4BD1F15F947FCF79F17257345C3654436CF19FDFD211F011775618D55D81E064CE773132338BED6F6766612BE7CD8402200E201129740BB8ED486D485F49A686282ACCB5FAFA5F327ECB2EEAF5F85D1DA3A2B29C2BEEFE91449F96A3C4050CEB663B9360C4CE558445E56EF16294F0CE358F7F4EF1913F758AB4D081B1711B2E336DA69CEDF06D9161149960B4DA55BDC9645F21EC64773691625FA0651CEAA6B
+	6F5C55C0F208FF03213A7F2261726F1FBEFED9F57034AFA77722FF443A67789B474B53A455592074687C23905156446672260975E27F8558AF1DB15B6D23392A7B5C144B6F2F5BE7DDCE9DFCDF084EEF59F97E8E9DEB87DE95E7E484AE40F66689F196C42470D7195437B1C9D8177BB43D73CD68F25FE5973E6D34AF32E7FC41FD641B52EBBEB6363A1676B9525234E32E5FD3BCBBCDBB664ABA0FF5F2BE048DCC43F1EEE0DEB6DCE360B9B5FD242198288A68B4D0BBD0FF2040F42C5F02D7117A4D5B7817AD3A51
+	7652E93258943E6F25DDAFFDE1692C1E9D175EF9DC46788EA66871CD627127FB65FB4D633C465405D0DFAF6CFA6C475B5A555E5B750FD7F75F2E472FE17309CDB279EDBE06A52D215F741EB96312C57FE14E1AD401D53A2A6D24A2365B186D7D8E752D8C7D2157FCAC6FBF223FD9D7827E29823282DD8472DB0879BDF88DA99B1D5BB37A4BA032395AE405D1A66FFFE4D513F4619F7697D8595BD90DE5AF88E4C78979C7F3C9FD52E6B1AB4DA29FEA69FCF433CCBABD081D24712075D445EB48A5152E2B51E433DA
+	ECF235494C7166DC222B21C311DD5532338A4298EE4BA56D2C5924185833B317784E4112006DC0AEC98364324D45BF0A36344BD6967613A62C31630049F50E7521AF10E9A11E9713FA7CCDC556A2751C4D589EFF3FD06841B7703CDB77752A7B1567AFFFBB7479E555413FC14F737EDE0664F57FDEBE1C275F5FFEAC2FF3FFFBF41EFEFFFBEC1E3A3F4D306738DC2778500A617F4AA37DAF36E64326D6491C8ADFF325E3328A483F9AA0068DE847BDC52785A653F11AAFBC7B89ECF482468B9058F4BA868B07E7B2
+	CE625FEA52FD5F11005DA56C0FDBC75FA9134DEC95F64ED8B71F3FA7C7E487F4AD49898E6C87B5796F342DA36F8BB9111ABD4FDF277F3BEC996B487BE6F79D593BF3378D7ACC320B150DFD55FD2B4B0E771A0F257BB331EFB1D678678D31C7501801E3729D6DA4DD640CE9766E3ECA0EAE676BF33737633AD1AA444F812AGB283798A7E0B891E7CB3B63A79DFC9C07EC008BF8AE8BCD0ACD046E25C7FE0DAC37C457B1AA7C85547702C76B9EEFC9F2F7E781C53DA324C4F6F2B48D4946FFB0DE94739081245B886
+	7F383D6BF9137C8E6D987CF10F706FBA34E370E99E6183BB3A1EDFCA1C01B6B904CDDBE6F4EDD3530C2E67F22E1F213569ED0F70A7E6E8EDDA4E6533B27534EE9F247B3218BC23EF6BD4918736C3CE85CD119294A911F72195E99619284C5E61AAA8A8D02484BA8B29C8C65207D22478DD2D705FC826D3A10C4E2052B8B279C520DE44D9C0F5F015AE264C6514D2BC67F362EEDBF4E56A004D2D86A9E90FB4630C496AE8B6D5CA89F450D9A54DEE20B5A0694AD995A9159E963F91F8B7D25E4F2BA4C323CB11B25D
+	F8A341D968D10729D106A8B34DA667B9AA61FB69A7A935CE1AF9465954C095A81221EECF9D2825CFA4F8FE15B4CBE916693E77F6C844A23768EA521164811F37BBC8517FACA2A242C17F3AF109073F3B0C0919A1B205ACE78B1FE28E3A082DF329897047CCD0E1AA3362B6A852FC528D4C06D640195D4278CB95E9A99385834BECB28DEF131D5996D7365D360174E18A98E35C8689678A577E2CDE930C3DEA0157BDE6C332D81FE0F816FB2E107571EE205F78CF86BCE9A9763B5EBAC4F4F8DB6BBD5AE232DA9513
+	755C8E1B192C7B6EA4FDA9895B051B2A09FC97466101AC6C76EAE277D9954F7F81D0CB87884B4839CE57AEGGD01DGGD0CB818294G94G88G88GD5E503AE4B4839CE57AEGGD01DGG8CGGGGGGGGGGGGGGGGGE2F5E9ECE4E5F2A0E4E1F4E1D0CB8586GGGG81G81GBAGGG91AFGGGG
+**end of data**/
+}
+/**
+ * Return the ClearMI property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getClearMI() {
+	if (ivjClearMI == null) {
+		try {
+			ivjClearMI = new java.awt.MenuItem();
+			ivjClearMI.setLabel("Clear");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjClearMI;
+}
+/**
+ * Return the ClearPMI property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getClearPMI() {
+	if (ivjClearPMI == null) {
+		try {
+			ivjClearPMI = new java.awt.MenuItem();
+			ivjClearPMI.setLabel("Clear");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjClearPMI;
+}
+/**
+ * Return the Close property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getClose() {
+	if (ivjClose == null) {
+		try {
+			ivjClose = new java.awt.MenuItem();
+			ivjClose.setLabel("Close");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjClose;
+}
+/**
+ * Return the CloseBtn property value.
+ * @return java.awt.Button
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.Button getCloseBtn() {
+	if (ivjCloseBtn == null) {
+		try {
+			ivjCloseBtn = new java.awt.Button();
+			ivjCloseBtn.setName("CloseBtn");
+			ivjCloseBtn.setBounds(323, 189, 47, 23);
+			ivjCloseBtn.setLabel("Close");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjCloseBtn;
+}
+/**
+ * Return the ContentsPane property value.
+ * @return java.awt.Panel
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.Panel getContentsPane() {
+	if (ivjContentsPane == null) {
+		try {
+			ivjContentsPane = new java.awt.Panel();
+			ivjContentsPane.setName("ContentsPane");
+			ivjContentsPane.setLayout(null);
+			getContentsPane().add(getMsgLbl(), getMsgLbl().getName());
+			getContentsPane().add(getMessageTA(), getMessageTA().getName());
+			getContentsPane().add(getSendTA(), getSendTA().getName());
+			getContentsPane().add(getSendBtn(), getSendBtn().getName());
+			getContentsPane().add(getCloseBtn(), getCloseBtn().getName());
+			getContentsPane().add(getStatusLbl(), getStatusLbl().getName());
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjContentsPane;
+}
+/**
+ * Return the CopyMI property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getCopyMI() {
+	if (ivjCopyMI == null) {
+		try {
+			ivjCopyMI = new java.awt.MenuItem();
+			ivjCopyMI.setLabel("Copy");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjCopyMI;
+}
+/**
+ * Return the CopyPMI property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getCopyPMI() {
+	if (ivjCopyPMI == null) {
+		try {
+			ivjCopyPMI = new java.awt.MenuItem();
+			ivjCopyPMI.setLabel("Copy");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjCopyPMI;
+}
+/**
+ * Return the CutMI property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getCutMI() {
+	if (ivjCutMI == null) {
+		try {
+			ivjCutMI = new java.awt.MenuItem();
+			ivjCutMI.setLabel("Cut");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjCutMI;
+}
+/**
+ * Return the CutPMI property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getCutPMI() {
+	if (ivjCutPMI == null) {
+		try {
+			ivjCutPMI = new java.awt.MenuItem();
+			ivjCutPMI.setLabel("Cut");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjCutPMI;
+}
+/**
+ * Return the EditM property value.
+ * @return java.awt.Menu
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.Menu getEditM() {
+	if (ivjEditM == null) {
+		try {
+			ivjEditM = new java.awt.Menu();
+			ivjEditM.setLabel("Edit");
+			ivjEditM.add(getCutMI());
+			ivjEditM.add(getCopyMI());
+			ivjEditM.add(getPasteMI());
+			ivjEditM.add(getMenuSeparator1());
+			ivjEditM.add(getClearMI());
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjEditM;
+}
+/**
+ * Return the EditPU property value.
+ * @return java.awt.PopupMenu
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.PopupMenu getEditPU() {
+	if (ivjEditPU == null) {
+		try {
+			ivjEditPU = new java.awt.PopupMenu();
+			ivjEditPU.setLabel("Edit");
+			ivjEditPU.add(getCutPMI());
+			ivjEditPU.add(getCopyPMI());
+			ivjEditPU.add(getPastePMI());
+			ivjEditPU.add(getMenuSeparator3());
+			ivjEditPU.add(getClearPMI());
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjEditPU;
+}
+/**
+ * Return the FileDlg property value.
+ * @return java.awt.FileDialog
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.FileDialog getFileDlg() {
+	if (ivjFileDlg == null) {
+		try {
+			ivjFileDlg = new java.awt.FileDialog(this);
+			ivjFileDlg.setName("FileDlg");
+			ivjFileDlg.setLayout(null);
+			ivjFileDlg.setMode(java.awt.FileDialog.SAVE);
+			ivjFileDlg.setTitle("Save Messages As...");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjFileDlg;
+}
+/**
+ * Return the MenuSeparator1 property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getMenuSeparator1() {
+	if (ivjMenuSeparator1 == null) {
+		try {
+			ivjMenuSeparator1 = new java.awt.MenuItem();
+			ivjMenuSeparator1.setLabel("-");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjMenuSeparator1;
+}
+/**
+ * Return the MenuSeparator2 property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getMenuSeparator2() {
+	if (ivjMenuSeparator2 == null) {
+		try {
+			ivjMenuSeparator2 = new java.awt.MenuItem();
+			ivjMenuSeparator2.setLabel("-");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjMenuSeparator2;
+}
+/**
+ * Return the MenuSeparator3 property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getMenuSeparator3() {
+	if (ivjMenuSeparator3 == null) {
+		try {
+			ivjMenuSeparator3 = new java.awt.MenuItem();
+			ivjMenuSeparator3.setLabel("-");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjMenuSeparator3;
+}
+/**
+ * Return the MessageM property value.
+ * @return java.awt.Menu
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.Menu getMessageM() {
+	if (ivjMessageM == null) {
+		try {
+			ivjMessageM = new java.awt.Menu();
+			ivjMessageM.setLabel("Message");
+			ivjMessageM.add(getSaveMI());
+			ivjMessageM.add(getMenuSeparator2());
+			ivjMessageM.add(getClose());
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjMessageM;
+}
+/**
+ * Return the MessageTA property value.
+ * @return MessageTextArea
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private MessageTextArea getMessageTA() {
+	if (ivjMessageTA == null) {
+		try {
+			ivjMessageTA = new oem.edge.ed.odc.meeting.clienta.MessageTextArea("", 0, 0, 1);
+			ivjMessageTA.setName("MessageTA");
+			ivjMessageTA.setBackground(new java.awt.Color(200,200,200));
+			ivjMessageTA.setBounds(10, 10, 360, 85);
+			ivjMessageTA.setEditable(false);
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjMessageTA;
+}
+/**
+ * Return the MessageWindowMenuBar property value.
+ * @return java.awt.MenuBar
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuBar getMessageWindowMenuBar() {
+	if (ivjMessageWindowMenuBar == null) {
+		try {
+			ivjMessageWindowMenuBar = new java.awt.MenuBar();
+			ivjMessageWindowMenuBar.add(getMessageM());
+			ivjMessageWindowMenuBar.add(getEditM());
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjMessageWindowMenuBar;
+}
+/**
+ * Return the Label1 property value.
+ * @return java.awt.Label
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.Label getMsgLbl() {
+	if (ivjMsgLbl == null) {
+		try {
+			ivjMsgLbl = new java.awt.Label();
+			ivjMsgLbl.setName("MsgLbl");
+			ivjMsgLbl.setText("Type your message:");
+			ivjMsgLbl.setBounds(10, 100, 125, 23);
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjMsgLbl;
+}
+/**
+ * Return the PasteMI property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getPasteMI() {
+	if (ivjPasteMI == null) {
+		try {
+			ivjPasteMI = new java.awt.MenuItem();
+			ivjPasteMI.setLabel("Paste");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjPasteMI;
+}
+/**
+ * Return the PastePMI property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getPastePMI() {
+	if (ivjPastePMI == null) {
+		try {
+			ivjPastePMI = new java.awt.MenuItem();
+			ivjPastePMI.setLabel("Paste");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjPastePMI;
+}
+/**
+ * Return the SaveMI property value.
+ * @return java.awt.MenuItem
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.MenuItem getSaveMI() {
+	if (ivjSaveMI == null) {
+		try {
+			ivjSaveMI = new java.awt.MenuItem();
+			ivjSaveMI.setLabel("Save As...");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjSaveMI;
+}
+/**
+ * Return the SendBtn property value.
+ * @return java.awt.Button
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.Button getSendBtn() {
+	if (ivjSendBtn == null) {
+		try {
+			ivjSendBtn = new java.awt.Button();
+			ivjSendBtn.setName("SendBtn");
+			ivjSendBtn.setBounds(270, 189, 43, 23);
+			ivjSendBtn.setLabel("Send");
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjSendBtn;
+}
+/**
+ * Return the TextArea2 property value.
+ * @return java.awt.TextArea
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.TextArea getSendTA() {
+	if (ivjSendTA == null) {
+		try {
+			ivjSendTA = new java.awt.TextArea("", 0, 0, java.awt.TextArea.SCROLLBARS_VERTICAL_ONLY);
+			ivjSendTA.setName("SendTA");
+			ivjSendTA.setRows(1);
+			ivjSendTA.setBackground(java.awt.Color.white);
+			ivjSendTA.setBounds(10, 123, 360, 55);
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjSendTA;
+}
+/**
+ * Return the StatusLbl property value.
+ * @return java.awt.Label
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private java.awt.Label getStatusLbl() {
+	if (ivjStatusLbl == null) {
+		try {
+			ivjStatusLbl = new java.awt.Label();
+			ivjStatusLbl.setName("StatusLbl");
+			ivjStatusLbl.setText("Messaging partner is on-line.");
+			ivjStatusLbl.setBounds(15, 189, 245, 23);
+			// user code begin {1}
+			// user code end
+		} catch (java.lang.Throwable ivjExc) {
+			// user code begin {2}
+			// user code end
+			handleException(ivjExc);
+		}
+	}
+	return ivjStatusLbl;
+}
+/**
+ * Called whenever the part throws an exception.
+ * @param exception java.lang.Throwable
+ */
+private void handleException(java.lang.Throwable exception) {
+
+	/* Uncomment the following lines to print uncaught exceptions to stdout */
+	System.out.println("--------- UNCAUGHT EXCEPTION ---------");
+	exception.printStackTrace(System.out);
+}
+/**
+ * Initializes connections
+ * @exception java.lang.Exception The exception description.
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void initConnections() throws java.lang.Exception {
+	// user code begin {1}
+	// user code end
+	this.addWindowListener(ivjEventHandler);
+	getCutMI().addActionListener(ivjEventHandler);
+	getCopyMI().addActionListener(ivjEventHandler);
+	getPasteMI().addActionListener(ivjEventHandler);
+	getClearMI().addActionListener(ivjEventHandler);
+	getSaveMI().addActionListener(ivjEventHandler);
+	getCutPMI().addActionListener(ivjEventHandler);
+	getCopyPMI().addActionListener(ivjEventHandler);
+	getPastePMI().addActionListener(ivjEventHandler);
+	getClearPMI().addActionListener(ivjEventHandler);
+	getSendTA().addMouseListener(ivjEventHandler);
+	getClose().addActionListener(ivjEventHandler);
+	getCloseBtn().addActionListener(ivjEventHandler);
+	getSendBtn().addActionListener(ivjEventHandler);
+	getContentsPane().addComponentListener(ivjEventHandler);
+	getSendTA().addKeyListener(ivjEventHandler);
+	getMessageTA().addTextListener(ivjEventHandler);
+	getMessageTA().addMouseListener(ivjEventHandler);
+}
+/**
+ * Initialize the class.
+ */
+/* WARNING: THIS METHOD WILL BE REGENERATED. */
+private void initialize() {
+	try {
+		// user code begin {1}
+		// user code end
+		setName("MessageWindow");
+		setMenuBar(getMessageWindowMenuBar());
+		setLayout(new java.awt.BorderLayout());
+		setBackground(new java.awt.Color(200,200,200));
+		setSize(380, 240);
+		add(getContentsPane(), "Center");
+		initConnections();
+		connEtoC15();
+	} catch (java.lang.Throwable ivjExc) {
+		handleException(ivjExc);
+	}
+	// user code begin {2}
+	// user code end
+}
+/**
+ * main entrypoint - starts the part when it is run as an application
+ * @param args java.lang.String[]
+ */
+public static void main(java.lang.String[] args) {
+	try {
+		MessageWindow aMessageWindow;
+		aMessageWindow = new MessageWindow();
+		aMessageWindow.addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(java.awt.event.WindowEvent e) {
+				System.exit(0);
+			};
+		});
+		aMessageWindow.show();
+		java.awt.Insets insets = aMessageWindow.getInsets();
+		aMessageWindow.setSize(aMessageWindow.getWidth() + insets.left + insets.right, aMessageWindow.getHeight() + insets.top + insets.bottom);
+		aMessageWindow.setVisible(true);
+	} catch (Throwable exception) {
+		System.err.println("Exception occurred in main() of java.awt.Frame");
+		exception.printStackTrace(System.out);
+	}
+}
+/**
+ * Insert the method's description here.
+ * Creation date: (8/1/2002 11:41:33 AM)
+ * @param e MessageEvent
+ */
+public void message(MessageEvent e) {
+	// Unicast messages from our partner (toID) are ours,
+	if (e.isUnicast() && e.fromID == toID) {
+		getMessageTA().postMessage(toName + ": " + e.message);
+		this.toFront();
+	}
+}
+/**
+ * Insert the method's description here.
+ * Creation date: (8/2/2002 9:03:07 AM)
+ * @param online boolean
+ */
+public void partnerStatus(boolean online) {
+	if (online) {
+		getStatusLbl().setText("Messaging partner is on-line.");
+		getStatusLbl().setForeground(Color.black);
+	}
+	else {
+		getStatusLbl().setText("Messaging partner is off-line.");
+		getStatusLbl().setForeground(Color.red);
+	}
+
+	getMsgLbl().setEnabled(online);
+	getSendBtn().setEnabled(online);
+	getSendTA().setEnabled(online);
+}
+/**
+ * Comment
+ */
+public void setup() {
+	getSendTA().add(getEditPU());
+	editTarget = getSendTA();
+	return;
+}
+/**
+ * Insert the method's description here.
+ * Creation date: (7/30/2002 1:08:43 PM)
+ * @param from int
+ * @param to int
+ * @param pp PresencePanel
+ */
+static public MessageWindow startChat(int fID, int tID, String fName, String tName, DSMPDispatcher d, String msg) {
+	MessageWindow mw = new MessageWindow();
+	mw.ownerID = fID;
+	mw.toID = tID;
+	mw.ownerName = fName;
+	mw.toName = tName;
+	mw.dispatcher = d;
+
+	if (msg != null) {
+		mw.getMessageTA().postMessage(tName + ": " + msg);
+		mw.setTitle("Chat with " + tName);
+	}
+	else {
+		mw.getMessageTA().setVisible(false);
+		mw.getMsgLbl().setText("To: " + mw.toName);
+		mw.setTitle("Send Message");
+		mw.setSize(320,180);
+		mw.validate();
+	}
+
+	mw.centerWindow();
+	mw.getSendTA().requestFocus();
+	d.addMessageListener(mw);
+
+	return mw;
+}
+/**
+ * Comment
+ */
+public void textChg() {
+	String text = getMessageTA().getText();
+
+	if (text != null && text.length() > 0) {
+		setTitle("Chat with " + toName);
+		getMsgLbl().setText("Type your message:");
+		getMessageTA().setVisible(true);
+		setSize(380,270);
+		validate();
+		getMessageTA().removeTextListener(ivjEventHandler);
+	}
+
+	return;
+}
+}

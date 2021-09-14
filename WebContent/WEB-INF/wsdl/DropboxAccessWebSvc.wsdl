@@ -1,0 +1,3295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://service.dropbox.odc.ed.edge.oem" xmlns:impl="http://service.dropbox.odc.ed.edge.oem" xmlns:intf="http://service.dropbox.odc.ed.edge.oem" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://xml.apache.org/xml-soap" xmlns:tns3="http://common.dsmp.odc.ed.edge.oem" xmlns:tns4="http://common.dropbox.odc.ed.edge.oem" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <wsdl:types>
+  <schema targetNamespace="http://service.dropbox.odc.ed.edge.oem" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://service.dropbox.odc.ed.edge.oem" xmlns:intf="http://service.dropbox.odc.ed.edge.oem" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <element name="arg_0_0" nillable="true" type="xsd:string"/>
+   <element name="arg_0_1" nillable="true" type="xsd:string"/>
+   <element name="arg_1_1" nillable="true" type="xsd:string"/>
+   <element name="arg_0_4" nillable="true" type="xsd:string"/>
+   <element name="arg_1_4" nillable="true" type="xsd:string"/>
+   <element name="arg_2_4" type="xsd:long"/>
+   <element name="arg_3_4" type="xsd:long"/>
+   <element name="arg_5_4" type="xsd:int"/>
+   <element name="arg_6_4" type="xsd:int"/>
+   <element name="createPackageReturn" type="xsd:long"/>
+   <element name="arg_0_5" nillable="true" type="xsd:string"/>
+   <element name="arg_1_5" nillable="true" type="xsd:string"/>
+   <element name="arg_2_5" type="xsd:long"/>
+   <element name="arg_4_5" type="xsd:int"/>
+   <element name="arg_5_5" type="xsd:int"/>
+   <element name="long" type="xsd:long"/>
+   <element name="arg_0_6" nillable="true" type="xsd:string"/>
+   <element name="arg_1_6" nillable="true" type="xsd:string"/>
+   <element name="arg_2_6" type="xsd:long"/>
+   <element name="arg_3_6" type="xsd:int"/>
+   <element name="arg_4_6" type="xsd:int"/>
+   <element name="arg_0_7" nillable="true" type="xsd:string"/>
+   <element name="getLoginMessageReturn" nillable="true" type="xsd:string"/>
+   <element name="arg_0_9" type="xsd:long"/>
+   <element name="arg_1_9" type="xsd:int"/>
+   <element name="arg_2_9" type="xsd:int"/>
+   <element name="arg_0_10" type="xsd:long"/>
+   <element name="arg_0_11" type="xsd:long"/>
+   <element name="arg_0_12" type="xsd:long"/>
+   <element name="arg_1_12" type="xsd:boolean"/>
+   <element name="arg_0_13" type="xsd:long"/>
+   <element name="arg_1_13" nillable="true" type="xsd:string"/>
+   <element name="arg_2_13" type="xsd:byte"/>
+   <element name="arg_0_14" type="xsd:long"/>
+   <element name="arg_0_15" type="xsd:long"/>
+   <element name="arg_1_15" nillable="true" type="xsd:string"/>
+   <element name="arg_2_15" type="xsd:byte"/>
+   <element name="arg_0_16" type="xsd:long"/>
+   <element name="arg_1_16" nillable="true" type="xsd:string"/>
+   <element name="arg_0_17" type="xsd:long"/>
+   <element name="arg_1_17" nillable="true" type="xsd:string"/>
+   <element name="arg_0_18" nillable="true" type="xsd:string"/>
+   <element name="arg_1_18" nillable="true" type="xsd:string"/>
+   <element name="arg_2_18" type="xsd:boolean"/>
+   <element name="arg_0_19" type="xsd:long"/>
+   <element name="arg_1_19" nillable="true" type="xsd:string"/>
+   <element name="arg_0_20" type="xsd:long"/>
+   <element name="arg_1_20" nillable="true" type="xsd:string"/>
+   <element name="arg_0_21" type="xsd:long"/>
+   <element name="arg_1_21" nillable="true" type="xsd:string"/>
+   <element name="arg_0_22" nillable="true" type="xsd:string"/>
+   <element name="arg_1_22" nillable="true" type="xsd:string"/>
+   <element name="arg_2_22" type="xsd:boolean"/>
+   <element name="arg_0_23" type="xsd:long"/>
+   <element name="arg_1_23" nillable="true" type="xsd:string"/>
+   <element name="arg_0_24" type="xsd:long"/>
+   <element name="arg_1_24" type="xsd:long"/>
+   <element name="arg_0_25" type="xsd:long"/>
+   <element name="arg_0_27" type="xsd:long"/>
+   <element name="arg_1_27" nillable="true" type="xsd:string"/>
+   <element name="arg_0_30" nillable="true" type="xsd:string"/>
+   <element name="getOptionReturn" nillable="true" type="xsd:string"/>
+   <element name="arg_0_32" nillable="true" type="xsd:string"/>
+   <element name="arg_1_32" nillable="true" type="xsd:string"/>
+   <element name="arg_0_34" nillable="true" type="xsd:string"/>
+   <element name="arg_1_34" type="xsd:boolean"/>
+   <element name="arg_2_34" type="xsd:boolean"/>
+   <element name="arg_3_34" type="xsd:boolean"/>
+   <element name="arg_4_34" type="xsd:boolean"/>
+   <element name="arg_5_34" type="xsd:boolean"/>
+   <element name="arg_0_35" type="xsd:boolean"/>
+   <element name="arg_1_35" type="xsd:boolean"/>
+   <element name="arg_2_35" type="xsd:boolean"/>
+   <element name="arg_3_35" type="xsd:boolean"/>
+   <element name="arg_0_36" type="xsd:long"/>
+   <element name="arg_1_36" type="xsd:boolean"/>
+   <element name="arg_0_37" type="xsd:long"/>
+   <element name="arg_0_38" nillable="true" type="xsd:string"/>
+   <element name="arg_1_38" type="xsd:boolean"/>
+   <element name="arg_2_38" type="xsd:boolean"/>
+   <element name="arg_0_39" type="xsd:boolean"/>
+   <element name="arg_0_40" type="xsd:long"/>
+   <element name="arg_0_41" type="xsd:long"/>
+   <element name="arg_1_41" type="xsd:boolean"/>
+   <element name="arg_0_42" type="xsd:long"/>
+   <element name="arg_1_42" type="xsd:long"/>
+   <element name="arg_0_43" type="xsd:long"/>
+   <element name="arg_1_43" type="xsd:long"/>
+   <element name="arg_0_44" type="xsd:long"/>
+   <element name="arg_1_44" type="xsd:long"/>
+   <element name="arg_0_45" type="xsd:long"/>
+   <element name="arg_1_45" nillable="true" type="xsd:string"/>
+   <element name="arg_2_45" type="xsd:long"/>
+   <element name="uploadFileToPackageReturn" type="xsd:long"/>
+   <element name="arg_0_46" type="xsd:long"/>
+   <element name="arg_1_46" type="xsd:long"/>
+   <element name="arg_2_46" type="xsd:int"/>
+   <element name="arg_0_47" type="xsd:long"/>
+   <element name="arg_1_47" type="xsd:long"/>
+   <element name="arg_2_47" type="xsd:long"/>
+   <element name="arg_3_47" type="xsd:boolean"/>
+   <element name="arg_0_48" type="xsd:long"/>
+   <element name="arg_1_48" type="xsd:long"/>
+   <element name="arg_0_49" type="xsd:long"/>
+   <element name="arg_1_49" type="xsd:long"/>
+   <element name="arg_2_49" type="xsd:long"/>
+   <element name="arg_0_50" type="xsd:long"/>
+   <element name="arg_1_50" type="xsd:long"/>
+   <element name="arg_2_50" type="xsd:long"/>
+   <element name="arg_0_51" type="xsd:long"/>
+   <element name="arg_1_51" type="xsd:long"/>
+   <element name="arg_2_51" type="xsd:long"/>
+   <element name="arg_3_51" nillable="true" type="xsd:string"/>
+   <element name="arg_0_52" type="xsd:long"/>
+   <element name="arg_1_52" nillable="true" type="xsd:string"/>
+   <element name="arg_0_53" type="xsd:long"/>
+   <element name="arg_1_53" type="xsd:long"/>
+   <element name="arg_0_54" type="xsd:long"/>
+   <element name="arg_1_54" type="xsd:long"/>
+   <element name="arg_2_54" type="xsd:long"/>
+   <element name="arg_3_54" type="xsd:long"/>
+   <element name="arg_0_55" type="xsd:long"/>
+   <element name="arg_1_55" type="xsd:long"/>
+   <element name="arg_2_55" type="xsd:long"/>
+   <complexType name="ArrayOf_xsd_string">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <element name="ArrayOf_xsd_string" nillable="true" type="impl:ArrayOf_xsd_string"/>
+   <element name="arg_0_56" nillable="true" type="xsd:string"/>
+   <element name="arg_1_56" type="xsd:byte"/>
+   <element name="arg_2_56" type="xsd:byte"/>
+   <element name="arg_0_57" nillable="true" type="xsd:string"/>
+   <element name="arg_0_58" nillable="true" type="xsd:string"/>
+   <element name="arg_0_59" nillable="true" type="xsd:string"/>
+   <element name="arg_1_59" type="xsd:byte"/>
+   <element name="arg_2_59" type="xsd:byte"/>
+   <element name="arg_0_60" nillable="true" type="xsd:string"/>
+   <element name="arg_1_60" type="xsd:boolean"/>
+   <element name="arg_2_60" type="xsd:boolean"/>
+   <element name="arg_3_60" type="xsd:boolean"/>
+   <element name="arg_0_61" type="xsd:boolean"/>
+   <element name="arg_1_61" type="xsd:boolean"/>
+   <element name="arg_0_62" nillable="true" type="xsd:string"/>
+  </schema>
+  <schema targetNamespace="http://xml.apache.org/xml-soap" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://service.dropbox.odc.ed.edge.oem" xmlns:intf="http://service.dropbox.odc.ed.edge.oem" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="Item">
+    <all>
+     <element name="key" type="xsd:anyType"/>
+     <element name="value" type="xsd:anyType"/>
+    </all>
+   </complexType>
+   <complexType name="Map">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="tns2:Item"/>
+    </sequence>
+   </complexType>
+   <element name="Map" nillable="true" type="tns2:Map"/>
+   <complexType name="Vector">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="xsd:anyType"/>
+    </sequence>
+   </complexType>
+   <element name="Vector" nillable="true" type="tns2:Vector"/>
+  </schema>
+  <schema targetNamespace="http://common.dsmp.odc.ed.edge.oem" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://service.dropbox.odc.ed.edge.oem" xmlns:intf="http://service.dropbox.odc.ed.edge.oem" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://xml.apache.org/xml-soap" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="DboxException">
+    <sequence>
+     <element name="errorCode" type="xsd:int"/>
+     <element name="majorCode" type="xsd:int"/>
+     <element name="minorCode" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <element name="DboxException" nillable="true" type="tns3:DboxException"/>
+   <complexType name="GroupInfo">
+    <sequence>
+     <element name="groupName" nillable="true" type="xsd:string"/>
+     <element name="groupOwner" nillable="true" type="xsd:string"/>
+     <element name="groupCompany" nillable="true" type="xsd:string"/>
+     <element name="groupCreated" type="xsd:long"/>
+     <element name="groupVisibility" type="xsd:byte"/>
+     <element name="groupListability" type="xsd:byte"/>
+     <element name="groupMembersValid" type="xsd:boolean"/>
+     <element name="groupAccessValid" type="xsd:boolean"/>
+     <element name="groupMembers" nillable="true" type="tns2:Vector"/>
+     <element name="groupAccess" nillable="true" type="tns2:Vector"/>
+    </sequence>
+   </complexType>
+   <element name="GroupInfo" nillable="true" type="tns3:GroupInfo"/>
+  </schema>
+  <schema targetNamespace="http://common.dropbox.odc.ed.edge.oem" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://service.dropbox.odc.ed.edge.oem" xmlns:intf="http://service.dropbox.odc.ed.edge.oem" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="AclInfo">
+    <sequence>
+     <element name="aclName" nillable="true" type="xsd:string"/>
+     <element name="aclProjectName" nillable="true" type="xsd:string"/>
+     <element name="aclCompany" nillable="true" type="xsd:string"/>
+     <element name="aclStatus" type="xsd:byte"/>
+     <element name="xferRate" type="xsd:int"/>
+     <element name="aclCreateTime" type="xsd:long"/>
+    </sequence>
+   </complexType>
+   <element name="AclInfo" nillable="true" type="tns4:AclInfo"/>
+   <complexType name="PoolInfo">
+    <sequence>
+     <element name="poolId" type="xsd:long"/>
+     <element name="poolName" nillable="true" type="xsd:string"/>
+     <element name="poolMaxDays" type="xsd:int"/>
+     <element name="poolDefaultDays" type="xsd:int"/>
+     <element name="poolDescription" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <element name="PoolInfo" nillable="true" type="tns4:PoolInfo"/>
+   <complexType name="PackageInfo">
+    <sequence>
+     <element name="packageNumElements" type="xsd:int"/>
+     <element name="packageStatus" type="xsd:byte"/>
+     <element name="packageDescription" nillable="true" type="xsd:string"/>
+     <element name="packageExpiration" type="xsd:long"/>
+     <element name="packageCreation" type="xsd:long"/>
+     <element name="packageCommitted" type="xsd:long"/>
+     <element name="packageSize" type="xsd:long"/>
+     <element name="packageName" nillable="true" type="xsd:string"/>
+     <element name="packageId" type="xsd:long"/>
+     <element name="packageOwner" nillable="true" type="xsd:string"/>
+     <element name="packageCompany" nillable="true" type="xsd:string"/>
+     <element name="packagePoolId" type="xsd:long"/>
+     <element name="packageMarked" type="xsd:boolean"/>
+     <element name="packageCompleted" type="xsd:boolean"/>
+     <element name="packageHidden" type="xsd:boolean"/>
+     <element name="packageReturnReceipt" type="xsd:boolean"/>
+     <element name="packageSendNotification" type="xsd:boolean"/>
+     <element name="packageFlags" type="xsd:byte"/>
+    </sequence>
+   </complexType>
+   <element name="PackageInfo" nillable="true" type="tns4:PackageInfo"/>
+   <complexType name="FileInfo">
+    <sequence>
+     <element name="fileStatus" type="xsd:byte"/>
+     <element name="fileExpiration" type="xsd:long"/>
+     <element name="fileCreation" type="xsd:long"/>
+     <element name="fileSize" type="xsd:long"/>
+     <element name="fileName" nillable="true" type="xsd:string"/>
+     <element name="fileMD5" nillable="true" type="xsd:string"/>
+     <element name="fileId" type="xsd:long"/>
+    </sequence>
+   </complexType>
+   <element name="FileInfo" nillable="true" type="tns4:FileInfo"/>
+   <complexType name="FileSlot">
+    <sequence>
+     <element name="fileId" type="xsd:long"/>
+     <element name="slotId" type="xsd:long"/>
+     <element name="startingOffset" type="xsd:long"/>
+     <element name="length" type="xsd:long"/>
+     <element name="intendedLength" type="xsd:long"/>
+     <element name="sessionId" type="xsd:long"/>
+     <element name="MD5" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <element name="FileSlot" nillable="true" type="tns4:FileSlot"/>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="createSessionResponse1">
+
+      <wsdl:part name="createSessionReturn" type="tns2:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadFileToPackageRequest">
+
+      <wsdl:part name="arg_0_45" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_45" type="xsd:string"/>
+
+      <wsdl:part name="arg_2_45" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="releaseFileSlotRequest">
+
+      <wsdl:part name="arg_0_50" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_50" type="xsd:long"/>
+
+      <wsdl:part name="arg_2_50" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeFileSlotResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="modifyGroupAttributesRequest">
+
+      <wsdl:part name="arg_0_59" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_59" type="xsd:byte"/>
+
+      <wsdl:part name="arg_2_59" type="xsd:byte"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="closeSessionRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="DboxException">
+
+      <wsdl:part name="fault" type="tns3:DboxException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="deletePackageRequest">
+
+      <wsdl:part name="arg_0_10" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackageFileAclsResponse">
+
+      <wsdl:part name="queryPackageFileAclsReturn" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="allocateUploadFileSlotResponse">
+
+      <wsdl:part name="allocateUploadFileSlotReturn" type="tns4:FileSlot"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackagesRequest">
+
+      <wsdl:part name="arg_0_34" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_34" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_2_34" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_3_34" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_4_34" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_5_34" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="setPackageDescriptionRequest">
+
+      <wsdl:part name="arg_0_27" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_27" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getProjectListRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="modifyGroupAttributesResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="addUserAclRequest">
+
+      <wsdl:part name="arg_0_16" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_16" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryGroupResponse">
+
+      <wsdl:part name="queryGroupReturn" type="tns3:GroupInfo"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadPackageItemResponse">
+
+      <wsdl:part name="downloadPackageItemReturn" type="soapenc:base64"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="addPackageAclResponse1">
+
+   </wsdl:message>
+
+   <wsdl:message name="queryStoragePoolInformationRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="getPackageItemMD5Response">
+
+      <wsdl:part name="getPackageItemMD5Return" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeProjectAclRequest">
+
+      <wsdl:part name="arg_0_23" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_23" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="releaseFileSlotResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackageRequest">
+
+      <wsdl:part name="arg_0_36" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_36" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackageAclsRequest">
+
+      <wsdl:part name="arg_0_41" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_41" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createGroupRequest">
+
+      <wsdl:part name="arg_0_56" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_56" type="xsd:byte"/>
+
+      <wsdl:part name="arg_2_56" type="xsd:byte"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeFileSlotRequest">
+
+      <wsdl:part name="arg_0_49" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_49" type="xsd:long"/>
+
+      <wsdl:part name="arg_2_49" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="setPackageFlagsResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="deletePackageResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="queryGroupRequest">
+
+      <wsdl:part name="arg_0_62" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createGroupRequest1">
+
+      <wsdl:part name="arg_0_57" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="markPackageRequest">
+
+      <wsdl:part name="arg_0_12" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_12" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="addPackageAclRequest1">
+
+      <wsdl:part name="arg_0_14" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_14" type="tns4:AclInfo"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackagesResponse">
+
+      <wsdl:part name="queryPackagesReturn" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeUserAclResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="addPackageAclRequest">
+
+      <wsdl:part name="arg_0_13" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_13" type="xsd:string"/>
+
+      <wsdl:part name="arg_2_13" type="xsd:byte"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="addGroupAclResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="addItemToPackageResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="createPackageResponse3">
+
+      <wsdl:part name="createPackageReturn" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackageFileAclsRequest">
+
+      <wsdl:part name="arg_0_42" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_42" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadFileSlotToPackageResponse">
+
+      <wsdl:part name="uploadFileSlotToPackageReturn" type="tns4:FileSlot"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="addGroupAclRequest">
+
+      <wsdl:part name="arg_0_17" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_17" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryFilesResponse1">
+
+      <wsdl:part name="queryFilesReturn" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createSessionRequest1">
+
+      <wsdl:part name="arg_0_1" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_1" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeGroupAclRequest">
+
+      <wsdl:part name="arg_0_21" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_21" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeGroupAclResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getOptionsRequest1">
+
+      <wsdl:part name="arg_0_29" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="commitUploadedFileResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="setOptionResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getLoginMessageResponse">
+
+      <wsdl:part name="getLoginMessageReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackagesResponse1">
+
+      <wsdl:part name="queryPackagesReturn" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryFilesRequest">
+
+      <wsdl:part name="arg_0_38" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_38" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_2_38" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="commitPackageResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="setPackageFlagsRequest">
+
+      <wsdl:part name="arg_0_9" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_9" type="xsd:int"/>
+
+      <wsdl:part name="arg_2_9" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="addProjectAclResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="addGroupAclRequest1">
+
+      <wsdl:part name="arg_0_18" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_18" type="xsd:string"/>
+
+      <wsdl:part name="arg_2_18" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createSessionRequest">
+
+      <wsdl:part name="arg_0_0" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="addPackageAclResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="queryGroupsRequest">
+
+      <wsdl:part name="arg_0_60" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_60" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_2_60" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_3_60" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryFilesResponse">
+
+      <wsdl:part name="queryFilesReturn" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryFileResponse">
+
+      <wsdl:part name="queryFileReturn" type="tns4:FileInfo"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadPackageRequest">
+
+      <wsdl:part name="arg_0_52" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_52" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadPackageItemResponse1">
+
+      <wsdl:part name="downloadPackageItemReturn" type="soapenc:base64"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="changePackageExpirationRequest">
+
+      <wsdl:part name="arg_0_24" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_24" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackageContentsResponse">
+
+      <wsdl:part name="queryPackageContentsReturn" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeGroupAclRequest1">
+
+      <wsdl:part name="arg_0_22" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_22" type="xsd:string"/>
+
+      <wsdl:part name="arg_2_22" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="markPackageResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackageContentsRequest">
+
+      <wsdl:part name="arg_0_37" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeGroupAclResponse1">
+
+   </wsdl:message>
+
+   <wsdl:message name="removeUserAclRequest">
+
+      <wsdl:part name="arg_0_20" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_20" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removePackageAclResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="changePackageExpirationResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="addUserAclResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadPackageResponse">
+
+      <wsdl:part name="downloadPackageReturn" type="soapenc:base64"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="refreshSessionResponse">
+
+      <wsdl:part name="refreshSessionReturn" type="tns2:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryGroupsRequest1">
+
+      <wsdl:part name="arg_0_61" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_1_61" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteGroupResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="addGroupAclResponse1">
+
+   </wsdl:message>
+
+   <wsdl:message name="removeItemFromPackageResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getOptionResponse">
+
+      <wsdl:part name="getOptionReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="setOptionsRequest">
+
+      <wsdl:part name="arg_0_31" type="tns2:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPackageItemMD5Request">
+
+      <wsdl:part name="arg_0_55" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_55" type="xsd:long"/>
+
+      <wsdl:part name="arg_2_55" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="addProjectAclRequest">
+
+      <wsdl:part name="arg_0_19" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_19" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="addItemToPackageRequest">
+
+      <wsdl:part name="arg_0_43" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_43" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadFileToPackageResponse">
+
+      <wsdl:part name="uploadFileToPackageReturn" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createGroupResponse1">
+
+   </wsdl:message>
+
+   <wsdl:message name="closeSessionResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="queryGroupsResponse">
+
+      <wsdl:part name="queryGroupsReturn" type="tns2:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createPackageResponse1">
+
+      <wsdl:part name="createPackageReturn" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeItemFromPackageRequest">
+
+      <wsdl:part name="arg_0_44" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_44" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryFileSlotsRequest">
+
+      <wsdl:part name="arg_0_48" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_48" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getOptionRequest">
+
+      <wsdl:part name="arg_0_30" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getStoragePoolInstanceRequest">
+
+      <wsdl:part name="arg_0_25" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="allocateUploadFileSlotRequest">
+
+      <wsdl:part name="arg_0_46" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_46" type="xsd:long"/>
+
+      <wsdl:part name="arg_2_46" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createSessionResponse">
+
+      <wsdl:part name="createSessionReturn" type="tns2:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="setPackageDescriptionResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getOptionsRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackageAclsResponse">
+
+      <wsdl:part name="queryPackageAclsReturn" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="setOptionRequest">
+
+      <wsdl:part name="arg_0_32" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_32" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createPackageResponse2">
+
+      <wsdl:part name="createPackageReturn" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="commitUploadedFileRequest">
+
+      <wsdl:part name="arg_0_51" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_51" type="xsd:long"/>
+
+      <wsdl:part name="arg_2_51" type="xsd:long"/>
+
+      <wsdl:part name="arg_3_51" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="refreshSessionRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="getStoragePoolInstanceResponse">
+
+      <wsdl:part name="getStoragePoolInstanceReturn" type="tns4:PoolInfo"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createPackageRequest">
+
+      <wsdl:part name="arg_0_4" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_4" type="xsd:string"/>
+
+      <wsdl:part name="arg_2_4" type="xsd:long"/>
+
+      <wsdl:part name="arg_3_4" type="xsd:long"/>
+
+      <wsdl:part name="arg_4_4" type="tns2:Vector"/>
+
+      <wsdl:part name="arg_5_4" type="xsd:int"/>
+
+      <wsdl:part name="arg_6_4" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="commitPackageRequest">
+
+      <wsdl:part name="arg_0_11" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackageResponse">
+
+      <wsdl:part name="queryPackageReturn" type="tns4:PackageInfo"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createPackageRequest2">
+
+      <wsdl:part name="arg_0_6" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_6" type="xsd:string"/>
+
+      <wsdl:part name="arg_2_6" type="xsd:long"/>
+
+      <wsdl:part name="arg_3_6" type="xsd:int"/>
+
+      <wsdl:part name="arg_4_6" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadFileSlotToPackageRequest">
+
+      <wsdl:part name="arg_0_47" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_47" type="xsd:long"/>
+
+      <wsdl:part name="arg_2_47" type="xsd:long"/>
+
+      <wsdl:part name="arg_3_47" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_4_47" type="soapenc:base64"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadPackageItemRequest">
+
+      <wsdl:part name="arg_0_53" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_53" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getOptionsResponse1">
+
+      <wsdl:part name="getOptionsReturn" type="tns2:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removePackageAclRequest">
+
+      <wsdl:part name="arg_0_15" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_15" type="xsd:string"/>
+
+      <wsdl:part name="arg_2_15" type="xsd:byte"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryFileSlotsResponse">
+
+      <wsdl:part name="queryFileSlotsReturn" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getOptionsResponse">
+
+      <wsdl:part name="getOptionsReturn" type="tns2:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryStoragePoolInformationResponse">
+
+      <wsdl:part name="queryStoragePoolInformationReturn" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createPackageResponse">
+
+      <wsdl:part name="createPackageReturn" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getProjectListResponse">
+
+      <wsdl:part name="getProjectListReturn" type="tns2:Vector"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPackagesRequest1">
+
+      <wsdl:part name="arg_0_35" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_1_35" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_2_35" type="xsd:boolean"/>
+
+      <wsdl:part name="arg_3_35" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteGroupRequest">
+
+      <wsdl:part name="arg_0_58" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="setOptionsResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadPackageItemRequest1">
+
+      <wsdl:part name="arg_0_54" type="xsd:long"/>
+
+      <wsdl:part name="arg_1_54" type="xsd:long"/>
+
+      <wsdl:part name="arg_2_54" type="xsd:long"/>
+
+      <wsdl:part name="arg_3_54" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createPackageRequest3">
+
+      <wsdl:part name="arg_0_7" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryFilesRequest1">
+
+      <wsdl:part name="arg_0_39" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryGroupsResponse1">
+
+      <wsdl:part name="queryGroupsReturn" type="tns2:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createGroupResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getLoginMessageRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="removeProjectAclResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="createPackageRequest1">
+
+      <wsdl:part name="arg_0_5" type="xsd:string"/>
+
+      <wsdl:part name="arg_1_5" type="xsd:string"/>
+
+      <wsdl:part name="arg_2_5" type="xsd:long"/>
+
+      <wsdl:part name="arg_3_5" type="tns2:Vector"/>
+
+      <wsdl:part name="arg_4_5" type="xsd:int"/>
+
+      <wsdl:part name="arg_5_5" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryFileRequest">
+
+      <wsdl:part name="arg_0_40" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="DropboxAccess">
+
+      <wsdl:operation name="createSession" parameterOrder="arg_0_0">
+
+         <wsdl:input message="impl:createSessionRequest" name="createSessionRequest"/>
+
+         <wsdl:output message="impl:createSessionResponse" name="createSessionResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createSession" parameterOrder="arg_0_1 arg_1_1">
+
+         <wsdl:input message="impl:createSessionRequest1" name="createSessionRequest1"/>
+
+         <wsdl:output message="impl:createSessionResponse1" name="createSessionResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="refreshSession">
+
+         <wsdl:input message="impl:refreshSessionRequest" name="refreshSessionRequest"/>
+
+         <wsdl:output message="impl:refreshSessionResponse" name="refreshSessionResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="closeSession">
+
+         <wsdl:input message="impl:closeSessionRequest" name="closeSessionRequest"/>
+
+         <wsdl:output message="impl:closeSessionResponse" name="closeSessionResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createPackage" parameterOrder="arg_0_4 arg_1_4 arg_2_4 arg_3_4 arg_4_4 arg_5_4 arg_6_4">
+
+         <wsdl:input message="impl:createPackageRequest" name="createPackageRequest"/>
+
+         <wsdl:output message="impl:createPackageResponse" name="createPackageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createPackage" parameterOrder="arg_0_5 arg_1_5 arg_2_5 arg_3_5 arg_4_5 arg_5_5">
+
+         <wsdl:input message="impl:createPackageRequest1" name="createPackageRequest1"/>
+
+         <wsdl:output message="impl:createPackageResponse1" name="createPackageResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createPackage" parameterOrder="arg_0_6 arg_1_6 arg_2_6 arg_3_6 arg_4_6">
+
+         <wsdl:input message="impl:createPackageRequest2" name="createPackageRequest2"/>
+
+         <wsdl:output message="impl:createPackageResponse2" name="createPackageResponse2"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createPackage" parameterOrder="arg_0_7">
+
+         <wsdl:input message="impl:createPackageRequest3" name="createPackageRequest3"/>
+
+         <wsdl:output message="impl:createPackageResponse3" name="createPackageResponse3"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getLoginMessage">
+
+         <wsdl:input message="impl:getLoginMessageRequest" name="getLoginMessageRequest"/>
+
+         <wsdl:output message="impl:getLoginMessageResponse" name="getLoginMessageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="setPackageFlags" parameterOrder="arg_0_9 arg_1_9 arg_2_9">
+
+         <wsdl:input message="impl:setPackageFlagsRequest" name="setPackageFlagsRequest"/>
+
+         <wsdl:output message="impl:setPackageFlagsResponse" name="setPackageFlagsResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="deletePackage" parameterOrder="arg_0_10">
+
+         <wsdl:input message="impl:deletePackageRequest" name="deletePackageRequest"/>
+
+         <wsdl:output message="impl:deletePackageResponse" name="deletePackageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="commitPackage" parameterOrder="arg_0_11">
+
+         <wsdl:input message="impl:commitPackageRequest" name="commitPackageRequest"/>
+
+         <wsdl:output message="impl:commitPackageResponse" name="commitPackageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="markPackage" parameterOrder="arg_0_12 arg_1_12">
+
+         <wsdl:input message="impl:markPackageRequest" name="markPackageRequest"/>
+
+         <wsdl:output message="impl:markPackageResponse" name="markPackageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addPackageAcl" parameterOrder="arg_0_13 arg_1_13 arg_2_13">
+
+         <wsdl:input message="impl:addPackageAclRequest" name="addPackageAclRequest"/>
+
+         <wsdl:output message="impl:addPackageAclResponse" name="addPackageAclResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addPackageAcl" parameterOrder="arg_0_14 arg_1_14">
+
+         <wsdl:input message="impl:addPackageAclRequest1" name="addPackageAclRequest1"/>
+
+         <wsdl:output message="impl:addPackageAclResponse1" name="addPackageAclResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removePackageAcl" parameterOrder="arg_0_15 arg_1_15 arg_2_15">
+
+         <wsdl:input message="impl:removePackageAclRequest" name="removePackageAclRequest"/>
+
+         <wsdl:output message="impl:removePackageAclResponse" name="removePackageAclResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addUserAcl" parameterOrder="arg_0_16 arg_1_16">
+
+         <wsdl:input message="impl:addUserAclRequest" name="addUserAclRequest"/>
+
+         <wsdl:output message="impl:addUserAclResponse" name="addUserAclResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addGroupAcl" parameterOrder="arg_0_17 arg_1_17">
+
+         <wsdl:input message="impl:addGroupAclRequest" name="addGroupAclRequest"/>
+
+         <wsdl:output message="impl:addGroupAclResponse" name="addGroupAclResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addGroupAcl" parameterOrder="arg_0_18 arg_1_18 arg_2_18">
+
+         <wsdl:input message="impl:addGroupAclRequest1" name="addGroupAclRequest1"/>
+
+         <wsdl:output message="impl:addGroupAclResponse1" name="addGroupAclResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addProjectAcl" parameterOrder="arg_0_19 arg_1_19">
+
+         <wsdl:input message="impl:addProjectAclRequest" name="addProjectAclRequest"/>
+
+         <wsdl:output message="impl:addProjectAclResponse" name="addProjectAclResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeUserAcl" parameterOrder="arg_0_20 arg_1_20">
+
+         <wsdl:input message="impl:removeUserAclRequest" name="removeUserAclRequest"/>
+
+         <wsdl:output message="impl:removeUserAclResponse" name="removeUserAclResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeGroupAcl" parameterOrder="arg_0_21 arg_1_21">
+
+         <wsdl:input message="impl:removeGroupAclRequest" name="removeGroupAclRequest"/>
+
+         <wsdl:output message="impl:removeGroupAclResponse" name="removeGroupAclResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeGroupAcl" parameterOrder="arg_0_22 arg_1_22 arg_2_22">
+
+         <wsdl:input message="impl:removeGroupAclRequest1" name="removeGroupAclRequest1"/>
+
+         <wsdl:output message="impl:removeGroupAclResponse1" name="removeGroupAclResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeProjectAcl" parameterOrder="arg_0_23 arg_1_23">
+
+         <wsdl:input message="impl:removeProjectAclRequest" name="removeProjectAclRequest"/>
+
+         <wsdl:output message="impl:removeProjectAclResponse" name="removeProjectAclResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="changePackageExpiration" parameterOrder="arg_0_24 arg_1_24">
+
+         <wsdl:input message="impl:changePackageExpirationRequest" name="changePackageExpirationRequest"/>
+
+         <wsdl:output message="impl:changePackageExpirationResponse" name="changePackageExpirationResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getStoragePoolInstance" parameterOrder="arg_0_25">
+
+         <wsdl:input message="impl:getStoragePoolInstanceRequest" name="getStoragePoolInstanceRequest"/>
+
+         <wsdl:output message="impl:getStoragePoolInstanceResponse" name="getStoragePoolInstanceResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryStoragePoolInformation">
+
+         <wsdl:input message="impl:queryStoragePoolInformationRequest" name="queryStoragePoolInformationRequest"/>
+
+         <wsdl:output message="impl:queryStoragePoolInformationResponse" name="queryStoragePoolInformationResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="setPackageDescription" parameterOrder="arg_0_27 arg_1_27">
+
+         <wsdl:input message="impl:setPackageDescriptionRequest" name="setPackageDescriptionRequest"/>
+
+         <wsdl:output message="impl:setPackageDescriptionResponse" name="setPackageDescriptionResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getOptions">
+
+         <wsdl:input message="impl:getOptionsRequest" name="getOptionsRequest"/>
+
+         <wsdl:output message="impl:getOptionsResponse" name="getOptionsResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getOptions" parameterOrder="arg_0_29">
+
+         <wsdl:input message="impl:getOptionsRequest1" name="getOptionsRequest1"/>
+
+         <wsdl:output message="impl:getOptionsResponse1" name="getOptionsResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getOption" parameterOrder="arg_0_30">
+
+         <wsdl:input message="impl:getOptionRequest" name="getOptionRequest"/>
+
+         <wsdl:output message="impl:getOptionResponse" name="getOptionResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="setOptions" parameterOrder="arg_0_31">
+
+         <wsdl:input message="impl:setOptionsRequest" name="setOptionsRequest"/>
+
+         <wsdl:output message="impl:setOptionsResponse" name="setOptionsResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="setOption" parameterOrder="arg_0_32 arg_1_32">
+
+         <wsdl:input message="impl:setOptionRequest" name="setOptionRequest"/>
+
+         <wsdl:output message="impl:setOptionResponse" name="setOptionResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getProjectList">
+
+         <wsdl:input message="impl:getProjectListRequest" name="getProjectListRequest"/>
+
+         <wsdl:output message="impl:getProjectListResponse" name="getProjectListResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackages" parameterOrder="arg_0_34 arg_1_34 arg_2_34 arg_3_34 arg_4_34 arg_5_34">
+
+         <wsdl:input message="impl:queryPackagesRequest" name="queryPackagesRequest"/>
+
+         <wsdl:output message="impl:queryPackagesResponse" name="queryPackagesResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackages" parameterOrder="arg_0_35 arg_1_35 arg_2_35 arg_3_35">
+
+         <wsdl:input message="impl:queryPackagesRequest1" name="queryPackagesRequest1"/>
+
+         <wsdl:output message="impl:queryPackagesResponse1" name="queryPackagesResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackage" parameterOrder="arg_0_36 arg_1_36">
+
+         <wsdl:input message="impl:queryPackageRequest" name="queryPackageRequest"/>
+
+         <wsdl:output message="impl:queryPackageResponse" name="queryPackageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackageContents" parameterOrder="arg_0_37">
+
+         <wsdl:input message="impl:queryPackageContentsRequest" name="queryPackageContentsRequest"/>
+
+         <wsdl:output message="impl:queryPackageContentsResponse" name="queryPackageContentsResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryFiles" parameterOrder="arg_0_38 arg_1_38 arg_2_38">
+
+         <wsdl:input message="impl:queryFilesRequest" name="queryFilesRequest"/>
+
+         <wsdl:output message="impl:queryFilesResponse" name="queryFilesResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryFiles" parameterOrder="arg_0_39">
+
+         <wsdl:input message="impl:queryFilesRequest1" name="queryFilesRequest1"/>
+
+         <wsdl:output message="impl:queryFilesResponse1" name="queryFilesResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryFile" parameterOrder="arg_0_40">
+
+         <wsdl:input message="impl:queryFileRequest" name="queryFileRequest"/>
+
+         <wsdl:output message="impl:queryFileResponse" name="queryFileResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackageAcls" parameterOrder="arg_0_41 arg_1_41">
+
+         <wsdl:input message="impl:queryPackageAclsRequest" name="queryPackageAclsRequest"/>
+
+         <wsdl:output message="impl:queryPackageAclsResponse" name="queryPackageAclsResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackageFileAcls" parameterOrder="arg_0_42 arg_1_42">
+
+         <wsdl:input message="impl:queryPackageFileAclsRequest" name="queryPackageFileAclsRequest"/>
+
+         <wsdl:output message="impl:queryPackageFileAclsResponse" name="queryPackageFileAclsResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addItemToPackage" parameterOrder="arg_0_43 arg_1_43">
+
+         <wsdl:input message="impl:addItemToPackageRequest" name="addItemToPackageRequest"/>
+
+         <wsdl:output message="impl:addItemToPackageResponse" name="addItemToPackageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeItemFromPackage" parameterOrder="arg_0_44 arg_1_44">
+
+         <wsdl:input message="impl:removeItemFromPackageRequest" name="removeItemFromPackageRequest"/>
+
+         <wsdl:output message="impl:removeItemFromPackageResponse" name="removeItemFromPackageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadFileToPackage" parameterOrder="arg_0_45 arg_1_45 arg_2_45">
+
+         <wsdl:input message="impl:uploadFileToPackageRequest" name="uploadFileToPackageRequest"/>
+
+         <wsdl:output message="impl:uploadFileToPackageResponse" name="uploadFileToPackageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="allocateUploadFileSlot" parameterOrder="arg_0_46 arg_1_46 arg_2_46">
+
+         <wsdl:input message="impl:allocateUploadFileSlotRequest" name="allocateUploadFileSlotRequest"/>
+
+         <wsdl:output message="impl:allocateUploadFileSlotResponse" name="allocateUploadFileSlotResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadFileSlotToPackage" parameterOrder="arg_0_47 arg_1_47 arg_2_47 arg_3_47 arg_4_47">
+
+         <wsdl:input message="impl:uploadFileSlotToPackageRequest" name="uploadFileSlotToPackageRequest"/>
+
+         <wsdl:output message="impl:uploadFileSlotToPackageResponse" name="uploadFileSlotToPackageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryFileSlots" parameterOrder="arg_0_48 arg_1_48">
+
+         <wsdl:input message="impl:queryFileSlotsRequest" name="queryFileSlotsRequest"/>
+
+         <wsdl:output message="impl:queryFileSlotsResponse" name="queryFileSlotsResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeFileSlot" parameterOrder="arg_0_49 arg_1_49 arg_2_49">
+
+         <wsdl:input message="impl:removeFileSlotRequest" name="removeFileSlotRequest"/>
+
+         <wsdl:output message="impl:removeFileSlotResponse" name="removeFileSlotResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="releaseFileSlot" parameterOrder="arg_0_50 arg_1_50 arg_2_50">
+
+         <wsdl:input message="impl:releaseFileSlotRequest" name="releaseFileSlotRequest"/>
+
+         <wsdl:output message="impl:releaseFileSlotResponse" name="releaseFileSlotResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="commitUploadedFile" parameterOrder="arg_0_51 arg_1_51 arg_2_51 arg_3_51">
+
+         <wsdl:input message="impl:commitUploadedFileRequest" name="commitUploadedFileRequest"/>
+
+         <wsdl:output message="impl:commitUploadedFileResponse" name="commitUploadedFileResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadPackage" parameterOrder="arg_0_52 arg_1_52">
+
+         <wsdl:input message="impl:downloadPackageRequest" name="downloadPackageRequest"/>
+
+         <wsdl:output message="impl:downloadPackageResponse" name="downloadPackageResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadPackageItem" parameterOrder="arg_0_53 arg_1_53">
+
+         <wsdl:input message="impl:downloadPackageItemRequest" name="downloadPackageItemRequest"/>
+
+         <wsdl:output message="impl:downloadPackageItemResponse" name="downloadPackageItemResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadPackageItem" parameterOrder="arg_0_54 arg_1_54 arg_2_54 arg_3_54">
+
+         <wsdl:input message="impl:downloadPackageItemRequest1" name="downloadPackageItemRequest1"/>
+
+         <wsdl:output message="impl:downloadPackageItemResponse1" name="downloadPackageItemResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPackageItemMD5" parameterOrder="arg_0_55 arg_1_55 arg_2_55">
+
+         <wsdl:input message="impl:getPackageItemMD5Request" name="getPackageItemMD5Request"/>
+
+         <wsdl:output message="impl:getPackageItemMD5Response" name="getPackageItemMD5Response"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createGroup" parameterOrder="arg_0_56 arg_1_56 arg_2_56">
+
+         <wsdl:input message="impl:createGroupRequest" name="createGroupRequest"/>
+
+         <wsdl:output message="impl:createGroupResponse" name="createGroupResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createGroup" parameterOrder="arg_0_57">
+
+         <wsdl:input message="impl:createGroupRequest1" name="createGroupRequest1"/>
+
+         <wsdl:output message="impl:createGroupResponse1" name="createGroupResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="deleteGroup" parameterOrder="arg_0_58">
+
+         <wsdl:input message="impl:deleteGroupRequest" name="deleteGroupRequest"/>
+
+         <wsdl:output message="impl:deleteGroupResponse" name="deleteGroupResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="modifyGroupAttributes" parameterOrder="arg_0_59 arg_1_59 arg_2_59">
+
+         <wsdl:input message="impl:modifyGroupAttributesRequest" name="modifyGroupAttributesRequest"/>
+
+         <wsdl:output message="impl:modifyGroupAttributesResponse" name="modifyGroupAttributesResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryGroups" parameterOrder="arg_0_60 arg_1_60 arg_2_60 arg_3_60">
+
+         <wsdl:input message="impl:queryGroupsRequest" name="queryGroupsRequest"/>
+
+         <wsdl:output message="impl:queryGroupsResponse" name="queryGroupsResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryGroups" parameterOrder="arg_0_61 arg_1_61">
+
+         <wsdl:input message="impl:queryGroupsRequest1" name="queryGroupsRequest1"/>
+
+         <wsdl:output message="impl:queryGroupsResponse1" name="queryGroupsResponse1"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryGroup" parameterOrder="arg_0_62">
+
+         <wsdl:input message="impl:queryGroupRequest" name="queryGroupRequest"/>
+
+         <wsdl:output message="impl:queryGroupResponse" name="queryGroupResponse"/>
+
+         <wsdl:fault message="impl:DboxException" name="DboxException"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="DropboxAccessWebSvcSoapBinding" type="impl:DropboxAccess">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="createSession">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createSessionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createSessionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createSession">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createSessionRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createSessionResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="refreshSession">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="refreshSessionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="refreshSessionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="closeSession">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="closeSessionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="closeSessionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createPackageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createPackageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createPackageRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createPackageResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createPackageRequest2">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createPackageResponse2">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createPackageRequest3">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createPackageResponse3">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getLoginMessage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getLoginMessageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getLoginMessageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="setPackageFlags">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="setPackageFlagsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="setPackageFlagsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="deletePackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="deletePackageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="deletePackageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="commitPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="commitPackageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="commitPackageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="markPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="markPackageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="markPackageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addPackageAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="addPackageAclRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="addPackageAclResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addPackageAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="addPackageAclRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="addPackageAclResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removePackageAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="removePackageAclRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="removePackageAclResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addUserAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="addUserAclRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="addUserAclResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addGroupAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="addGroupAclRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="addGroupAclResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addGroupAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="addGroupAclRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="addGroupAclResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addProjectAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="addProjectAclRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="addProjectAclResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeUserAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="removeUserAclRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="removeUserAclResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeGroupAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="removeGroupAclRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="removeGroupAclResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeGroupAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="removeGroupAclRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="removeGroupAclResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeProjectAcl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="removeProjectAclRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="removeProjectAclResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="changePackageExpiration">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="changePackageExpirationRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="changePackageExpirationResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getStoragePoolInstance">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getStoragePoolInstanceRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getStoragePoolInstanceResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryStoragePoolInformation">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryStoragePoolInformationRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryStoragePoolInformationResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="setPackageDescription">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="setPackageDescriptionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="setPackageDescriptionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getOptions">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getOptionsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getOptionsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getOptions">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getOptionsRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getOptionsResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getOption">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getOptionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getOptionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="setOptions">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="setOptionsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="setOptionsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="setOption">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="setOptionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="setOptionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getProjectList">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getProjectListRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getProjectListResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackages">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryPackagesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryPackagesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackages">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryPackagesRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryPackagesResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryPackageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryPackageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackageContents">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryPackageContentsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryPackageContentsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryFiles">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryFilesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryFilesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryFiles">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryFilesRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryFilesResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryFile">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryFileRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryFileResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackageAcls">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryPackageAclsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryPackageAclsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPackageFileAcls">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryPackageFileAclsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryPackageFileAclsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="addItemToPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="addItemToPackageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="addItemToPackageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeItemFromPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="removeItemFromPackageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="removeItemFromPackageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadFileToPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadFileToPackageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadFileToPackageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="allocateUploadFileSlot">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="allocateUploadFileSlotRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="allocateUploadFileSlotResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadFileSlotToPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadFileSlotToPackageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadFileSlotToPackageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryFileSlots">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryFileSlotsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryFileSlotsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeFileSlot">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="removeFileSlotRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="removeFileSlotResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="releaseFileSlot">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="releaseFileSlotRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="releaseFileSlotResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="commitUploadedFile">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="commitUploadedFileRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="commitUploadedFileResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadPackage">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadPackageRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadPackageResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadPackageItem">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadPackageItemRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadPackageItemResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadPackageItem">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadPackageItemRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadPackageItemResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPackageItemMD5">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getPackageItemMD5Request">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getPackageItemMD5Response">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createGroup">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createGroupRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createGroupResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createGroup">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createGroupRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createGroupResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="deleteGroup">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="deleteGroupRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="deleteGroupResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="modifyGroupAttributes">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="modifyGroupAttributesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="modifyGroupAttributesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryGroups">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryGroupsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryGroupsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryGroups">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryGroupsRequest1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryGroupsResponse1">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryGroup">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryGroupRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryGroupResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://service.dropbox.odc.ed.edge.oem" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DboxException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="DboxException" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="DropboxAccessService">
+
+      <wsdl:port binding="impl:DropboxAccessWebSvcSoapBinding" name="DropboxAccessWebSvc">
+
+         <wsdlsoap:address location="http://edesign4.fishkill.ibm.com/technologyconnect/odc/DropboxAccessWebSvc"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

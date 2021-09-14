@@ -1,0 +1,39 @@
+#!/bin/ksh
+#
+# This script will generate a pair of certificate files (sftpserver.jks and
+#  sftpclient.jks) and a common trust store (commontrust.jks). Default password
+#  for keystore (and keys) is changeit
+#
+
+PGM="$0"
+
+function usage {
+   typeset bn="$(basename $PGM)"
+   print "Usage $bn [options]:\n"
+   print "  -password storepass  (default changeit)"
+   print "  -dir      storedir   (default curdir)"
+}
+
+
+PW=""
+dir=""
+
+while [ $# -gt 0 ] ; do
+   case "$1" in
+      -pw|-pass*|-pwd) PW="$2" ; shift ;;
+      -dir*|-d)        dir="$2"; shift ;;
+      -?)              usage; exit 1   ;;
+      *)               print "Unsupported option specified $1"; usage; exit 2 ;;
+   esac
+done
+
+
+PW="${PW:-changeit}"
+dir="${dir:-.}"
+
+keytool -genkey -validity 5000 -keystore $dir/sftpserver.jks -alias sftpserver  -dname "CN=Sftp Server, OU=IBM, O=IBM, L=BLD, ST=CO, C=US" -keypass $PW -storepass $PW
+keytool -genkey -validity 5000 -keystore $dir/sftpclient.jks -alias sftpclient -dname "CN=Sftp Client, OU=IBM, O=IBM, L=BLD, ST=CO, C=US" -keypass $PW -storepass $PW
+keytool -export -alias sftpserver -file $dir/server.cert -storepass $PW -keypass $PW -keystore $dir/sftpserver.jks
+keytool -export -alias sftpclient -file $dir/client.cert -storepass $PW -keypass $PW -keystore $dir/sftpclient.jks
+keytool -import -noprompt -alias sftpserver -keypass $PW -storepass $PW -file $dir/server.cert -keystore commontrust.jks
+keytool -import -noprompt -alias sftpclient -keypass $PW -storepass $PW -file $dir/client.cert -keystore commontrust.jks

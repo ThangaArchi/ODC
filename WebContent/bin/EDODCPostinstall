@@ -1,0 +1,49 @@
+#!/bin/ksh
+
+#
+# This is the version for the Postinstall file. Do not change!
+#
+myver="#VERSION=5.4.1"
+
+#
+# EDODCPostinstall
+#
+
+#
+# NOTE: There should be NO MASTER_ODC* variables left after customization
+#
+
+#------------------------------------------------------------------------
+# Customize these for the local install
+#------------------------------------------------------------------------
+export ODCEARDIR="/web/installedApps/edesign4Network/odc.ear"
+export ODCWARDIR=$ODCEARDIR/ODC.war
+export EDINSTDIR=$ODCWARDIR
+export EDBINDIR=$EDINSTDIR/bin
+export EDPROPDIR=$ODCEARDIR/properties  
+
+echo "========================================================="
+echo "Copying .sh files to non .sh form and chmoding"
+#---------------------------------------------------------------------
+# Nothing to change down here
+#---------------------------------------------------------------------
+for shfile in $EDBINDIR/*.sh ; do
+   if [ "$shfile" = "$EDBINDIR/"'*' ] ; then
+      echo "! Zoinks ... this is not good. In postinstall, no sh files!"
+      exit 3
+   fi
+   i=$(basename $shfile .sh)
+   
+   cp $shfile $EDBINDIR/$i
+
+   chmod 755 $EDBINDIR/$i
+done
+
+chmod 555 $EDBINDIR/edgeping_tool
+chmod 555 $EDBINDIR/FTPDaemon
+chmod 555 $EDBINDIR/applyMasterSettings
+chmod 555 $EDBINDIR/makeMutualAuthCertificates
+
+echo "-> Postinstall completed"
+
+return 0
